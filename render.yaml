@@ -4,7 +4,8 @@ services:
     name: tapetes-kalke-api
     runtime: docker
     plan: free
-    region: oregon
+    # Mesma região do banco no Supabase (us-east-1), para reduzir a latência.
+    region: virginia
     rootDir: backend
     dockerfilePath: ./Dockerfile
     healthCheckPath: /actuator/health
