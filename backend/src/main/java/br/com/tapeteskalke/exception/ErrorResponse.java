@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.exception; public record ErrorResponse(boolean success,Object data,String message,String errorCode,String timestamp,String path) {}

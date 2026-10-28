@@ -1,0 +1,2 @@
+package br.com.tapeteskalke.entity; import jakarta.persistence.*; import java.math.BigDecimal; import java.time.LocalDate; import lombok.Getter; import lombok.Setter;
+@Entity @Table(name="despesa") @Getter @Setter public class Despesa extends BaseAuditEntity { @Column(nullable=false) private String tipo; @Column(nullable=false) private String descricao; @Column(nullable=false,precision=15,scale=2) private BigDecimal valor; @Column(name="data_despesa",nullable=false) private LocalDate dataDespesa; @Column(columnDefinition="TEXT") private String observacoes; }

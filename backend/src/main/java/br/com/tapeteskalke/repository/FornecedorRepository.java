@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.repository; import br.com.tapeteskalke.entity.Fornecedor; import java.util.*; import org.springframework.data.jpa.repository.*; public interface FornecedorRepository extends JpaRepository<Fornecedor,String> { @Query("select f from Fornecedor f where f.deletedAt is null and f.ativo=true order by f.nomeEmpresa") List<Fornecedor> active(); }

@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.util; public final class Normalizer { private Normalizer(){} public static String digits(String value){return value==null?null:value.replaceAll("\\D","");} public static String blankToNull(String value){return value==null||value.isBlank()?null:value.trim();} }

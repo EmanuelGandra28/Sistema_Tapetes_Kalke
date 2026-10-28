@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.exception; import org.springframework.http.HttpStatus; public class AccessDeniedBusinessException extends BusinessException { public AccessDeniedBusinessException(String message){super("ACESSO_NEGADO",message,HttpStatus.FORBIDDEN);} }

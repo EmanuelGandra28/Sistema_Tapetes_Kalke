@@ -1,0 +1,2 @@
+import { Navigate } from 'react-router-dom'; import { useAuth } from '../contexts/AuthContext'; import { Loading } from './State';
+export default function ProtectedRoute({ page, children }) { const { user, restoring, canPage } = useAuth(); if (restoring) return <Loading />; if (!user) return <Navigate to="/login" replace />; return !canPage(page) ? <main className="centered"><h1>Acesso não autorizado</h1><p>Você não possui permissão para esta área.</p></main> : children; }

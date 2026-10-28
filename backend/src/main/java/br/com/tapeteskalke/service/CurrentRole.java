@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.service; import br.com.tapeteskalke.security.CurrentUser; import org.springframework.stereotype.Component; @Component public class CurrentRole { private final CurrentUser user; public CurrentRole(CurrentUser user){this.user=user;} public String value(){return user.require().role();} }

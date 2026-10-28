@@ -1,0 +1,2 @@
+import js from '@eslint/js';
+export default [js.configs.recommended, { ignores: ['dist', 'node_modules'], languageOptions: { ecmaVersion: 'latest', sourceType: 'module', parserOptions: { ecmaFeatures: { jsx: true } }, globals: { window: 'readonly', document: 'readonly', crypto: 'readonly' } }, rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] } }];

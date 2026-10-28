@@ -1,0 +1,34 @@
+# Configuração lida pelo Render (New > Blueprint) para criar a API automaticamente a partir deste repositório.
+services:
+  - type: web
+    name: tapetes-kalke-api
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      # Conexão do Supabase (Project Settings > Database > Connection string > JDBC, modo "Session pooler").
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # Gerado pelo próprio Render: valor aleatório e secreto.
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_SECONDS
+        value: "3600"
+      # Endereço do site no GitHub Pages (somente a origem, sem o caminho).
+      - key: FRONTEND_URL
+        value: https://emanuelgandra28.github.io
+      # Primeiro administrador: criado só se o e-mail ainda não existir no banco.
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: DB_POOL_SIZE
+        value: "5"

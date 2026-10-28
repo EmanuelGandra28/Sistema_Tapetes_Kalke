@@ -1,0 +1,1 @@
+export function Loading() { return <p className="state">Carregando…</p>; } export function Empty({ children = 'Nenhum registro encontrado.' }) { return <p className="state">{children}</p>; } export function Failure({ error }) { return <p className="state error">{error?.message ?? 'Não foi possível carregar os dados.'}</p>; }

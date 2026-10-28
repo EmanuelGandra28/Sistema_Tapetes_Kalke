@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.exception; import org.springframework.http.HttpStatus; public class ResourceNotFoundException extends BusinessException { public ResourceNotFoundException(String resource,String id){super(resource.toUpperCase()+"_NAO_ENCONTRADO",resource+" não encontrado: "+id,HttpStatus.NOT_FOUND);} }

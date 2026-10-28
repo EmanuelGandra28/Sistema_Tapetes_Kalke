@@ -1,0 +1,28 @@
+# Java / Maven
+backend/target/
+*.class
+*.log
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# IDE and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Arquivos pessoais e temporários fora do escopo do sistema
+tmp/
+*.zip

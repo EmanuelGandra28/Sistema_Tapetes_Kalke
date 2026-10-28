@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.repository; import br.com.tapeteskalke.entity.Funcionario; import java.util.*; import org.springframework.data.jpa.repository.*; public interface FuncionarioRepository extends JpaRepository<Funcionario,String> { @Query("select f from Funcionario f join fetch f.cargo where f.deletedAt is null order by f.nome") List<Funcionario> activeList(); }

@@ -1,0 +1,1 @@
+package br.com.tapeteskalke.dto; import java.util.Map; public final class PermissionDtos { private PermissionDtos(){} public record UpdateRequest(Map<String,Boolean> pages,Map<String,Boolean> actions){} }
