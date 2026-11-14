@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useDebounce } from '../hooks/useDebounce';
 import { api } from '../services/api';
 
 /**
@@ -9,7 +10,8 @@ import { api } from '../services/api';
 export default function SearchSelect({ label, endpoint, value, onChange, filter = () => true, describe = (o) => o.nome, placeholder = 'Digite para buscar…', required = false }) {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
-  const q = useQuery({ queryKey: [endpoint, 'busca', search], queryFn: () => api.get(endpoint, { params: { search, size: 20 } }) });
+  const termo = useDebounce(search.trim());
+  const q = useQuery({ queryKey: [endpoint, 'busca', termo], queryFn: () => api.get(endpoint, { params: { search: termo, size: 20 } }), placeholderData: keepPreviousData });
   const found = (q.data?.data?.content ?? []).filter(filter);
   const options = selected && selected.id === value && !found.some((o) => o.id === value) ? [selected, ...found] : found;
   const choose = (id) => { const option = options.find((o) => o.id === id) ?? null; setSelected(option); onChange(option); };

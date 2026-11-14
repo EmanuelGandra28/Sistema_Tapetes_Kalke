@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '../hooks/useDebounce';
 import { api } from '../services/api';
 import { useCodigos } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
@@ -30,10 +31,11 @@ export default function Produtos() {
   const [editing, setEditing] = useState(null); // null = fechado, {} = novo, produto = edição
   const [ajuste, setAjuste] = useState(null);
   const [search, setSearch] = useState('');
+  const termo = useDebounce(search.trim());
   const { canAction } = useAuth();
   const { tiposProduto, unidadesMedida } = useCodigos();
   const queryClient = useQueryClient();
-  const q = useQuery({ queryKey: ['/produtos', 'lista', search], queryFn: () => api.get('/produtos', { params: { search, size: 100 } }) });
+  const q = useQuery({ queryKey: ['/produtos', 'lista', termo], queryFn: () => api.get('/produtos', { params: { search: termo, size: 100 } }), placeholderData: keepPreviousData });
   const fornecedores = useQuery({ queryKey: ['fornecedores'], queryFn: () => api.get('/fornecedores'), enabled: editing !== null });
   const form = useForm({ defaultValues: defaults });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['/produtos'] }); queryClient.invalidateQueries({ queryKey: ['dashboard'] }); };

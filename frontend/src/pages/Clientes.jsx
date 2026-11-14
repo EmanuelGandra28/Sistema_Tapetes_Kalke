@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useDebounce} from '../hooks/useDebounce';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import Modal from '../components/Modal';
@@ -24,11 +25,13 @@ const defaults = {
 export default function Clientes() {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
+    const termo = useDebounce(search.trim());
     const {canAction} = useAuth();
     const queryClient = useQueryClient();
     const q = useQuery({
-        queryKey: ['clientes', search],
-        queryFn: () => api.get('/clientes', {params: {search, size: 50}})
+        queryKey: ['clientes', termo],
+        queryFn: () => api.get('/clientes', {params: {search: termo, size: 50}}),
+        placeholderData: keepPreviousData
     });
     const form = useForm({defaultValues: defaults});
     const save = useMutation({
@@ -38,22 +41,22 @@ export default function Clientes() {
             queryClient.invalidateQueries({queryKey: ['clientes']});
         }
     });
-    if (q.isPending) return <Loading/>;
-    if (q.isError) return <Failure error={q.error}/>;
-    const rows = q.data.data.content;
+    // Cabeçalho e busca ficam sempre montados; só a lista mostra carregando/erro (senão o campo perde o foco a cada letra).
+    const rows = q.data?.data?.content ?? [];
     return <>
         <section className="page-heading">
             <div><h1>Clientes</h1><p>Cadastros e acompanhamento de relacionamento.</p></div>
             {canAction('clientes_criar') && <button onClick={() => setOpen(true)}>Novo cliente</button>}</section>
         <input className="search" placeholder="Buscar por nome, telefone ou cidade" value={search}
                onChange={(e) => setSearch(e.target.value)}/>
+        {q.isPending ? <Loading/> : q.isError ? <Failure error={q.error}/> :
         <section className="card-grid">{rows.length ? rows.map((c) => <article className="customer-card" key={c.id}>
             <div><h2>{c.nome}</h2><span
                 className={`badge ${c.classificacao.toLowerCase()}`}>{c.classificacao.replace('_', ' ')}</span></div>
             <p>{c.telefone} · {c.cidade ?? 'Cidade não informada'}</p><p>Última compra: {date(c.ultimaCompra)}</p>
             <strong>{money(c.totalCompras)}</strong>{(['ATENCAO', 'ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) &&
             <a className="whatsapp" href={`https://wa.me/${c.telefone}`} target="_blank" rel="noreferrer">Abrir
-                WhatsApp</a>}</article>) : <Empty/>}</section>
+                WhatsApp</a>}</article>) : <Empty/>}</section>}
         {open && <Modal title="Novo cliente" onClose={() => setOpen(false)}>
             <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}><label>Nome<input
                 required {...form.register('nome')}/></label><label>Telefone<input
