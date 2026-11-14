@@ -5,6 +5,7 @@ import {Loading, Failure, Empty} from '../components/State';
 import {useAuth} from '../contexts/AuthContext';
 
 import {CARGOS} from '../services/codigos';
+import {TEMAS} from '../utils/tema';
 
 const novoUsuario = {nome: '', email: '', senha: '', cargo: 'VENDEDOR'};
 // O DONO não pode perder acesso às configurações (o servidor também bloqueia).
@@ -109,19 +110,38 @@ function Usuarios() {
     </section>;
 }
 
+function EscolhaTema() {
+    const {user, alterarTema} = useAuth();
+    const [erro, setErro] = useState('');
+    const atual = user?.tema ?? 'verde';
+    const escolher = async (tema) => {
+        setErro('');
+        try { await alterarTema(tema); } catch (e) { setErro(e.message ?? 'Não foi possível salvar o tema.'); }
+    };
+    return <section className="panel"><h2>Tema</h2>
+        <p className="muted">Cada pessoa escolhe o seu; a escolha fica salva na sua conta.</p>
+        <div className="theme-grid">{TEMAS.map((t) => <button key={t.id} type="button" className="theme-option" aria-pressed={atual === t.id} onClick={() => escolher(t.id)}>
+            <span className="theme-preview" aria-hidden="true"><span className="side" style={{background: t.cores.side}}/><span className="body" style={{background: t.cores.bg}}>
+                <span className="line" style={{background: t.cores.line}}/><span className="line" style={{background: t.cores.line, width: '70%'}}/><span className="pill" style={{background: t.cores.pill}}/></span></span>
+            <span>{t.nome}{atual === t.id ? ' ✓' : ''}</span><small>{t.descricao}</small>
+        </button>)}</div>
+        {erro && <p className="error">{erro}</p>}
+    </section>;
+}
+
 export default function Configuracoes() {
     const {user} = useAuth();
     const q = useQuery({queryKey: ['configuracoes'], queryFn: () => api.get('/configuracoes')});
     if (q.isPending) return <Loading/>;
     if (q.isError) return <Failure error={q.error}/>;
-    const {pages, actions, theme} = q.data.data;
+    const {pages, actions} = q.data.data;
     return <>
         <section className="page-heading">
             <div><h1>Configurações</h1><p>Permissões exibidas são as aplicadas pela API para o usuário atual.</p></div>
         </section>
         <MinhaSenha/>
         {user?.cargo === 'DONO' && <Usuarios/>}
-        <section className="panel"><h2>Tema</h2><p>{theme === 'dark' ? 'Escuro' : 'Claro'}</p></section>
+        <EscolhaTema/>
         {user?.cargo === 'DONO' ? <EditorPermissoes/> : <section className="split">
             <article className="panel"><h2>Acesso às páginas</h2>
                 <ul className="permission-list">{Object.entries(pages).map(([name, allowed]) => <li key={name}>

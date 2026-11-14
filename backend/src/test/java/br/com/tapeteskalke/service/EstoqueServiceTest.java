@@ -17,7 +17,8 @@ import org.mockito.ArgumentCaptor;
 class EstoqueServiceTest {
     private final MovimentoEstoqueRepository movimentos = mock(MovimentoEstoqueRepository.class);
     private final CurrentUser current = mock(CurrentUser.class);
-    private final EstoqueService service = new EstoqueService(movimentos, current);
+    private final org.springframework.context.ApplicationEventPublisher eventos = mock(org.springframework.context.ApplicationEventPublisher.class);
+    private final EstoqueService service = new EstoqueService(movimentos, current, eventos);
     private Produto produto;
 
     @BeforeEach
@@ -27,6 +28,8 @@ class EstoqueServiceTest {
         produto.setNome("Tapete");
         produto.setEstoqueComercial(new BigDecimal("5.000"));
         produto.setEstoqueProducao(new BigDecimal("2.000"));
+        produto.setId("p1");
+        produto.setEstoqueMinimoComercial(new BigDecimal("2"));
     }
 
     @Test
@@ -47,5 +50,25 @@ class EstoqueServiceTest {
         assertEquals(new BigDecimal("2.000"), captor.getValue().getEstoqueAnterior());
         assertEquals(0, captor.getValue().getEstoquePosterior().signum());
         assertEquals("u1", captor.getValue().getIdUsuario());
+    }
+
+    @Test
+    void saidaQueDeixaSaldoNoMinimoAvisaEstoqueBaixo() {
+        service.change(produto, "COMERCIAL", new BigDecimal("-3"), "SAIDA_VENDA", "VENDA", "v1", null);
+        verify(eventos).publishEvent(new EventosEstoque.EstoqueComercialBaixo("p1"));
+    }
+
+    @Test
+    void saidaQueMantemSaldoAcimaDoMinimoNaoAvisa() {
+        service.change(produto, "COMERCIAL", new BigDecimal("-2"), "SAIDA_VENDA", "VENDA", "v1", null);
+        verifyNoInteractions(eventos);
+    }
+
+    @Test
+    void entradaOuSaldoDeProducaoNaoAvisa() {
+        produto.setEstoqueComercial(new BigDecimal("1"));
+        service.change(produto, "COMERCIAL", new BigDecimal("1"), "ENTRADA_PRODUCAO", "PRODUCAO", "o1", null);
+        service.change(produto, "PRODUCAO", new BigDecimal("-2"), "CONSUMO_PRODUCAO", "PRODUCAO", "o1", null);
+        verifyNoInteractions(eventos);
     }
 }

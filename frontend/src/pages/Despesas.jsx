@@ -22,7 +22,7 @@ function NovaDespesa({ tipos, onClose, onDone }) {
       <label>Valor (R$)<input required type="number" min="0.01" step="0.01" value={form.valor} onChange={set('valor')} /></label>
       <label className="full">Observações<input value={form.observacoes} onChange={set('observacoes')} /></label>
       {save.isError && <p className="error full">{save.error.message}</p>}
-      <footer><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Registrar despesa'}</button></footer>
+      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Registrar despesa'}</button></footer>
     </form>
   </Modal>;
 }

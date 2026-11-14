@@ -44,7 +44,7 @@ export default function Vendas() {
         <button type="button" className="secondary" onClick={add} disabled={!produto}>Adicionar item</button>
       </div>
       {items.length > 0 && <>
-        <ul className="cart">{items.map((i, index) => <li key={`${i.produtoId}-${index}`}><span>{i.nome} × {i.quantidade}</span><span>{money(i.preco * i.quantidade)} <button className="link" aria-label="Remover item" onClick={() => setItems(items.filter((_, x) => x !== index))}>Remover</button></span></li>)}</ul>
+        <ul className="cart">{items.map((i, index) => <li key={`${i.produtoId}-${index}`}><span>{i.nome} × {i.quantidade}</span><span>{money(i.preco * i.quantidade)} <button className="link danger" aria-label="Remover item" onClick={() => setItems(items.filter((_, x) => x !== index))}>Remover</button></span></li>)}</ul>
         <div className="checkout">
           <label>Pagamento<select value={payment} onChange={(e) => setPayment(e.target.value)}>{(formasPagamento.length ? formasPagamento : [{ codigo: 'PIX', nome: 'PIX' }]).map((f) => <option key={f.codigo} value={f.codigo}>{f.nome}</option>)}</select></label>
           <label>Desconto (R$)<input type="number" min="0" step="0.01" value={desconto} onChange={(e) => setDesconto(e.target.value)} /></label>
@@ -59,7 +59,7 @@ export default function Vendas() {
       {cancel.isError && <p className="error">{cancel.error.message}</p>}
       {sales.isPending ? <Loading /> : sales.isError ? <Failure error={sales.error} /> : sales.data.data.length ? <div className="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Desconto</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
         {sales.data.data.map((s) => <tr key={s.id}><td>#{s.numeroVenda}</td><td>{s.cliente}</td><td>{date(s.dataVenda)}</td><td>{money(s.desconto)}</td><td>{money(s.total)}</td><td><span className={`badge ${s.status === 'CANCELADA' ? 'inativo' : ''}`}>{s.status}</span></td>
-          <td>{canAction('vendas_cancelar') && s.status === 'FINALIZADA' && <button className="link" onClick={() => cancelar(s)} disabled={cancel.isPending}>Cancelar</button>}</td></tr>)}
+          <td>{canAction('vendas_cancelar') && s.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(s)} disabled={cancel.isPending}>Cancelar venda</button>}</td></tr>)}
       </tbody></table></div> : <Empty />}
     </section>
   </>;

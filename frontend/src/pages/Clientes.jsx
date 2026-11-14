@@ -74,11 +74,10 @@ export default function Clientes() {
                 className={`badge ${c.classificacao.toLowerCase()}`}>{c.classificacao.replace('_', ' ')}</span></div>
             <p>{c.telefone} · {c.cidade ?? 'Cidade não informada'}</p><p>Última compra: {date(c.ultimaCompra)}</p>
             <strong>{money(c.totalCompras)}</strong>{(['ATENCAO', 'ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) &&
-            <a className="whatsapp" href={`https://wa.me/${c.telefone}`} target="_blank" rel="noreferrer">Abrir
-                WhatsApp</a>}
+            <a className="whatsapp" href={`https://wa.me/${c.telefone}`} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>}
             {(canAction('clientes_editar') || canAction('clientes_excluir')) && <div className="row-actions">
                 {canAction('clientes_editar') && <button className="link" onClick={() => open(c)}>Editar</button>}
-                {canAction('clientes_excluir') && <button className="link" onClick={() => excluir(c)} disabled={remove.isPending}>Excluir</button>}
+                {canAction('clientes_excluir') && <button className="link danger" onClick={() => excluir(c)} disabled={remove.isPending}>Excluir</button>}
             </div>}
         </article>) : <Empty/>}</section>}
         {editing !== null && <Modal title={editing.id ? 'Editar cliente' : 'Novo cliente'} onClose={close}>
@@ -100,7 +99,7 @@ export default function Clientes() {
                 <label className="full">Observações<input {...form.register('observacoes')}/></label>
                 {save.isError && <p className="error full">{save.error.message}</p>}
                 <footer>
-                    <button type="button" className="secondary" onClick={close}>Cancelar</button>
+                    <button type="button" className="secondary" onClick={close}>Fechar</button>
                     <button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Salvar'}</button>
                 </footer>
             </form>

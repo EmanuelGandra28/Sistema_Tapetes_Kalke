@@ -10,6 +10,8 @@ const LABEL = { AGENDADA: 'Agendada', EM_ROTA: 'Em rota', ENTREGUE: 'Entregue', 
 const BADGE = { ENTREGUE: '', EM_ROTA: 'baixo', AGENDADA: 'atencao', NAO_ENTREGUE: 'inativo', CANCELADA: 'inativo' };
 // Próximos status permitidos pelo servidor a partir de cada status.
 const NEXT = { AGENDADA: ['EM_ROTA', 'ENTREGUE', 'NAO_ENTREGUE'], EM_ROTA: ['ENTREGUE', 'NAO_ENTREGUE'], NAO_ENTREGUE: ['AGENDADA'] };
+// Texto do botão que leva a cada status (o rótulo do status em si fica em LABEL).
+const ACAO = { EM_ROTA: 'Saiu para entrega', ENTREGUE: 'Marcar como entregue', NAO_ENTREGUE: 'Não foi entregue', AGENDADA: 'Reagendar' };
 
 function NovaEntrega({ ocupadas, onClose, onDone }) {
   const vendas = useQuery({ queryKey: ['vendas'], queryFn: () => api.get('/vendas') });
@@ -29,7 +31,7 @@ function NovaEntrega({ ocupadas, onClose, onDone }) {
       <label className="full">Endereço (vazio = endereço do cliente)<input value={form.enderecoEntrega} onChange={set('enderecoEntrega')} /></label>
       <label className="full">Observações<input value={form.observacoes} onChange={set('observacoes')} /></label>
       {save.isError && <p className="error full">{save.error.message}</p>}
-      <footer><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={save.isPending || !form.vendaId}>{save.isPending ? 'Salvando…' : 'Agendar'}</button></footer>
+      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending || !form.vendaId}>{save.isPending ? 'Salvando…' : 'Agendar entrega'}</button></footer>
     </form>
   </Modal>;
 }
@@ -47,7 +49,7 @@ export default function Entregas() {
     {status.isError && <p className="error">{status.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Agendada</th><th>Entregador</th><th>Status</th><th></th></tr></thead><tbody>
       {rows.map((e) => <tr key={e.id}><td>#{e.numeroVenda}</td><td>{e.cliente}</td><td>{date(e.dataAgendada)}{e.horario ? ` ${e.horario.slice(0, 5)}` : ''}</td><td>{e.entregador ?? '—'}</td><td><span className={`badge ${BADGE[e.status] ?? ''}`}>{LABEL[e.status] ?? e.status}</span></td>
-        <td className="row-actions">{canAction('entregas_atualizar_status') && (NEXT[e.status] ?? []).map((novo) => <button key={novo} className="link" disabled={status.isPending} onClick={() => status.mutate({ id: e.id, novo })}>{novo === 'AGENDADA' ? 'Reagendar' : LABEL[novo]}</button>)}</td></tr>)}
+        <td className="row-actions">{canAction('entregas_atualizar_status') && (NEXT[e.status] ?? []).map((novo) => <button key={novo} className={novo === 'NAO_ENTREGUE' ? 'link danger' : 'link'} disabled={status.isPending} onClick={() => status.mutate({ id: e.id, novo })}>{ACAO[novo]}</button>)}</td></tr>)}
     </tbody></table></div> : <Empty />}</section>
     {open && <NovaEntrega ocupadas={new Set(rows.map((e) => e.vendaId))} onClose={() => setOpen(false)} onDone={refresh} />}
   </>;

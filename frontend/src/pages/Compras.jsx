@@ -36,13 +36,13 @@ function NovaCompra({ onClose, onDone }) {
           <label>Destino<select value={item.destinoEstoque} onChange={(e) => setItem({ ...item, destinoEstoque: e.target.value })}><option value="COMERCIAL">Comercial</option><option value="PRODUCAO">Produção</option></select></label>
           <label>Qtd.<input type="number" min="0.001" step="0.001" value={item.quantidade} onChange={(e) => setItem({ ...item, quantidade: e.target.value })} /></label>
           <label>Preço unit.<input type="number" min="0" step="0.01" value={item.precoUnitario} onChange={(e) => setItem({ ...item, precoUnitario: e.target.value })} /></label>
-          <button type="button" className="secondary" onClick={add} disabled={!produto}>Adicionar</button>
+          <button type="button" className="secondary" onClick={add} disabled={!produto}>Adicionar item</button>
         </div>
-        {itens.length > 0 && <ul className="cart">{itens.map((i, idx) => <li key={idx}><span>{i.nome} × {i.quantidade} ({i.destinoEstoque === 'PRODUCAO' ? 'produção' : 'comercial'})</span><span>{money(i.quantidade * i.precoUnitario)} <button type="button" className="link" onClick={() => setItens(itens.filter((_, x) => x !== idx))}>Remover</button></span></li>)}</ul>}
+        {itens.length > 0 && <ul className="cart">{itens.map((i, idx) => <li key={idx}><span>{i.nome} × {i.quantidade} ({i.destinoEstoque === 'PRODUCAO' ? 'produção' : 'comercial'})</span><span>{money(i.quantidade * i.precoUnitario)} <button type="button" className="link danger" onClick={() => setItens(itens.filter((_, x) => x !== idx))}>Remover</button></span></li>)}</ul>}
         <strong>Total: {money(total)}</strong>
       </fieldset>
       {save.isError && <p className="error full">{save.error.message}</p>}
-      <footer><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={save.isPending || itens.length === 0}>{save.isPending ? 'Salvando…' : 'Registrar compra'}</button></footer>
+      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending || itens.length === 0}>{save.isPending ? 'Salvando…' : 'Registrar compra'}</button></footer>
     </form>
   </Modal>;
 }
@@ -61,7 +61,7 @@ export default function Compras() {
     {cancel.isError && <p className="error">{cancel.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Data</th><th>Fornecedor</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
       {rows.map((c) => <tr key={c.id}><td>{date(c.dataCompra)}</td><td>{c.fornecedor ?? '—'}</td><td>{money(c.total)}</td><td><span className={`badge ${c.status === 'CANCELADA' ? 'inativo' : ''}`}>{c.status}</span></td>
-        <td>{canAction('compras_cancelar') && c.status === 'FINALIZADA' && <button className="link" onClick={() => cancelar(c)}>Cancelar</button>}</td></tr>)}
+        <td>{canAction('compras_cancelar') && c.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(c)}>Cancelar compra</button>}</td></tr>)}
     </tbody></table></div> : <Empty />}</section>
     {open && <NovaCompra onClose={() => setOpen(false)} onDone={refresh} />}
   </>;

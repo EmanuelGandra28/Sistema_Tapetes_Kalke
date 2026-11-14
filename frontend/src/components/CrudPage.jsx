@@ -31,7 +31,7 @@ export default function CrudPage({ title, subtitle, endpoint, fields, columns, p
     {remove.isError && <p className="error">{remove.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr>{columns.map((c) => <th key={c.key}>{c.label}</th>)}<th></th></tr></thead><tbody>
       {rows.map((row) => <tr key={row.id}>{columns.map((c) => <td key={c.key}>{c.render ? c.render(row) : (row[c.key] ?? '—')}</td>)}
-        <td className="row-actions">{canAction(permissions.edit) && <button className="link" onClick={() => open(row)}>Editar</button>}{canAction(permissions.remove) && <button className="link" onClick={() => excluir(row)}>Excluir</button>}</td></tr>)}
+        <td className="row-actions">{canAction(permissions.edit) && <button className="link" onClick={() => open(row)}>Editar</button>}{canAction(permissions.remove) && <button className="link danger" onClick={() => excluir(row)}>Excluir</button>}</td></tr>)}
     </tbody></table></div> : <Empty />}</section>
     {editing !== null && <Modal title={`${editing.id ? 'Editar' : 'Novo'} ${singular}`} onClose={close}>
       <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>
@@ -40,7 +40,7 @@ export default function CrudPage({ title, subtitle, endpoint, fields, columns, p
             : <input type={f.type ?? 'text'} required={f.required} step={f.type === 'number' ? '0.01' : undefined} min={f.type === 'number' ? '0' : undefined} {...form.register(f.name)} />}
         </label>)}
         {save.isError && <p className="error full">{save.error.message}</p>}
-        <footer><button type="button" className="secondary" onClick={close}>Cancelar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Salvar'}</button></footer>
+        <footer><button type="button" className="secondary" onClick={close}>Fechar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Salvar'}</button></footer>
       </form>
     </Modal>}
   </>;

@@ -6,6 +6,7 @@ import { api } from '../services/api';
 import { useCodigos } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
+import FichaTecnicaModal from '../components/FichaTecnicaModal';
 import { useAuth } from '../contexts/AuthContext';
 import { money } from '../utils/format';
 
@@ -22,7 +23,7 @@ function AjusteModal({ produto, onClose, onDone }) {
       <label>Quantidade (use negativo para baixa)<input required type="number" step="0.001" value={quantidade} onChange={(e) => setQuantidade(e.target.value)} /></label>
       <label className="full">Motivo<input required maxLength="300" value={observacao} onChange={(e) => setObservacao(e.target.value)} /></label>
       {save.isError && <p className="error full">{save.error.message}</p>}
-      <footer><button type="button" className="secondary" onClick={onClose}>Cancelar</button><button disabled={save.isPending || !Number(quantidade)}>{save.isPending ? 'Salvando…' : 'Ajustar'}</button></footer>
+      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending || !Number(quantidade)}>{save.isPending ? 'Salvando…' : 'Salvar ajuste'}</button></footer>
     </form>
   </Modal>;
 }
@@ -30,6 +31,7 @@ function AjusteModal({ produto, onClose, onDone }) {
 export default function Produtos() {
   const [editing, setEditing] = useState(null); // null = fechado, {} = novo, produto = edição
   const [ajuste, setAjuste] = useState(null);
+  const [ficha, setFicha] = useState(null);
   const [search, setSearch] = useState('');
   const termo = useDebounce(search.trim());
   const { canAction } = useAuth();
@@ -55,11 +57,13 @@ export default function Produtos() {
         <td><span className={`badge ${p.statusComercial.toLowerCase()}`}>{p.statusComercial}</span></td>
         <td className="row-actions">
           {canAction('produtos_editar') && <button className="link" onClick={() => open(p)}>Editar</button>}
-          {canAction('estoque_ajustar') && <button className="link" onClick={() => setAjuste(p)}>Ajustar</button>}
-          {canAction('produtos_excluir') && <button className="link" onClick={() => excluir(p)}>Excluir</button>}
+          {canAction('estoque_ajustar') && <button className="link" onClick={() => setAjuste(p)}>Ajustar estoque</button>}
+          {p.podeSerVendido && <button className="link" onClick={() => setFicha(p)}>Ficha técnica</button>}
+          {canAction('produtos_excluir') && <button className="link danger" onClick={() => excluir(p)}>Excluir</button>}
         </td></tr>)}
     </tbody></table></div> : <Empty />}</section>
     {ajuste && <AjusteModal produto={ajuste} onClose={() => setAjuste(null)} onDone={refresh} />}
+    {ficha && <FichaTecnicaModal produto={ficha} podeEditar={canAction('produtos_editar')} onClose={() => setFicha(null)} />}
     {editing !== null && <Modal title={editing.id ? 'Editar produto' : 'Novo produto'} onClose={close}>
       <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>
         <label className="full">Nome<input required maxLength="180" {...form.register('nome')} /></label>
@@ -79,7 +83,7 @@ export default function Produtos() {
         <label className="check"><input type="checkbox" {...form.register('podeSerMateriaPrima')} /> Pode ser matéria-prima</label>
         <label className="check"><input type="checkbox" {...form.register('ativo')} /> Ativo</label>
         {save.isError && <p className="error full">{save.error.message}</p>}
-        <footer><button type="button" className="secondary" onClick={close}>Cancelar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Salvar'}</button></footer>
+        <footer><button type="button" className="secondary" onClick={close}>Fechar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Salvar produto'}</button></footer>
       </form>
     </Modal>}
   </>;
