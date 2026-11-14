@@ -17,6 +17,9 @@ public final class ClienteDtos {
     }
 
     public record Response(String id, String nome, String telefone, String email, String cidade, String statusCadastral,
-                           String classificacao, LocalDate ultimaCompra, BigDecimal totalCompras, boolean ativo) {
+                           String classificacao, LocalDate ultimaCompra, BigDecimal totalCompras, boolean ativo,
+                           // Demais campos do cadastro: a tela de edição precisa deles para não apagá-los ao salvar.
+                           String razaoSocial, String cnpj, String endereco, String bairro, String cep,
+                           LocalDate dataNascimento, String observacoes) {
     }
 }
