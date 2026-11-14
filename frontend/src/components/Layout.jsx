@@ -26,10 +26,10 @@ export default function Layout({children}) {
     return <div className="app-shell">
         <aside>
             <div className="brand">Tapetes <strong>Kalke</strong></div>
-            <nav>{links.filter(([key]) => canPage(key)).map(([key, to, label, Icon]) => <NavLink key={key} to={to}><Icon
+            <nav>{links.filter(([key]) => canPage(key)).map(([key, to, label, Icon]) => <NavLink key={key} to={to} title={label} aria-label={label}><Icon
                 size={18}/><span>{label}</span></NavLink>)}</nav>
             <div className="account"><span>{user?.nome}</span><small>{user?.cargo}</small>
-                <button onClick={leave}><LogOut size={16}/> Sair</button>
+                <button onClick={leave} title="Sair" aria-label="Sair"><LogOut size={16}/><span>Sair</span></button>
             </div>
         </aside>
         <div className="content">

@@ -4,6 +4,7 @@ import { date, money } from '../utils/format';
 import { useAuth } from '../contexts/AuthContext';
 
 const STATUS = [{ value: 'ATIVO', label: 'Ativo' }, { value: 'FERIAS', label: 'Férias' }, { value: 'INATIVO', label: 'Inativo' }];
+const CARGO_LABEL = { DONO: 'Dono', GERENTE: 'Gerente', VENDEDOR: 'Vendedor', ESTOQUISTA: 'Estoquista', ENTREGADOR: 'Entregador' };
 
 export default function Funcionarios() {
   const { user } = useAuth();
@@ -11,7 +12,7 @@ export default function Funcionarios() {
   const verSalario = ['DONO', 'GERENTE'].includes(user?.cargo);
   const fields = [
     { name: 'nome', label: 'Nome', required: true, full: true },
-    { name: 'cargoId', label: 'Cargo', required: true, options: CARGOS.map((c) => ({ value: c, label: c })), default: 'VENDEDOR' },
+    { name: 'cargoId', label: 'Cargo', required: true, options: CARGOS.map((c) => ({ value: c, label: CARGO_LABEL[c] ?? c })), default: 'VENDEDOR' },
     { name: 'status', label: 'Status', options: STATUS, default: 'ATIVO' },
     { name: 'telefone', label: 'Telefone' },
     { name: 'email', label: 'E-mail (o mesmo do usuário, para entregadores)', type: 'email' },
@@ -21,7 +22,8 @@ export default function Funcionarios() {
     { name: 'observacoes', label: 'Observações', full: true }
   ];
   const columns = [
-    { key: 'nome', label: 'Nome' }, { key: 'cargo', label: 'Cargo' }, { key: 'status', label: 'Status' }, { key: 'telefone', label: 'Telefone' },
+    { key: 'nome', label: 'Nome' }, { key: 'cargo', label: 'Cargo', render: (f) => CARGO_LABEL[f.cargo] ?? f.cargo },
+    { key: 'status', label: 'Status', render: (f) => STATUS.find((s) => s.value === f.status)?.label ?? f.status }, { key: 'telefone', label: 'Telefone' },
     { key: 'dataContratacao', label: 'Contratação', render: (f) => date(f.dataContratacao) },
     ...(verSalario ? [{ key: 'salario', label: 'Salário', render: (f) => (f.salario == null ? '—' : money(f.salario)) }] : [])
   ];

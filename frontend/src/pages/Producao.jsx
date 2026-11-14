@@ -25,7 +25,7 @@ function NovaOrdem({ onClose, onDone }) {
   };
   return <Modal title="Nova ordem de produção" onClose={onClose}>
     <form className="form-grid" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-      <div className="full"><SearchSelect label="Produto acabado" endpoint="/produtos" value={acabado?.id} onChange={setAcabado} filter={(p) => p.ativo} required /></div>
+      <div className="full"><SearchSelect label="Produto acabado" endpoint="/produtos" value={acabado?.id} onChange={setAcabado} filter={(p) => p.ativo && p.podeSerVendido} required /></div>
       <label>Quantidade a produzir<input required type="number" min="0.001" step="0.001" value={quantidadeProduzida} onChange={(e) => setQuantidadeProduzida(e.target.value)} /></label>
       <label>Tipo<select value={tipoOrdem} onChange={(e) => setTipoOrdem(e.target.value)}><option value="ESTOQUE">Para estoque</option><option value="ENCOMENDA">Encomenda</option></select></label>
       {tipoOrdem === 'ENCOMENDA' && <div className="full"><SearchSelect label="Cliente da encomenda" endpoint="/clientes" value={cliente?.id} onChange={setCliente} required /></div>}
