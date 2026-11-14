@@ -1,0 +1,22 @@
+name: Manter sistema ativo
+# O Supabase grátis pausa o banco após ~7 dias sem uso, e aí o servidor não sobe ("Não foi possível comunicar com o servidor").
+# Uma chamada diária ao /actuator/health acorda o Render e faz uma consulta no banco, mantendo os dois ativos.
+on:
+  schedule:
+    - cron: '0 12 * * *' # todos os dias às 09:00 de Brasília
+  workflow_dispatch:
+permissions: {}
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acordar API e banco
+        run: |
+          for i in $(seq 1 12); do
+            resposta=$(curl -s --max-time 30 https://tapetes-kalke-api.onrender.com/actuator/health || true)
+            echo "Tentativa $i: $resposta"
+            case "$resposta" in *'"UP"'*) exit 0;; esac
+            sleep 15
+          done
+          echo "::error::A API não respondeu UP. Confira se o projeto do Supabase está pausado e o serviço no Render."
+          exit 1
