@@ -6,6 +6,7 @@ import {
     Factory,
     LayoutDashboard,
     LogOut,
+    Receipt,
     Settings,
     ShoppingBag,
     Truck,
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import {useAuth} from '../contexts/AuthContext';
 
-const links = [['dashboard', '/dashboard', 'Dashboard', LayoutDashboard], ['clientes', '/clientes', 'Clientes', Users], ['funcionarios', '/funcionarios', 'Funcionários', Users], ['produtos', '/produtos', 'Estoque', Box], ['vendas', '/vendas', 'Vendas', ShoppingBag], ['compras', '/compras', 'Compras', WalletCards], ['fornecedores', '/fornecedores', 'Fornecedores', Users], ['producao', '/ordens-producao', 'Produção', Factory], ['entregas', '/entregas', 'Entregas', Truck], ['relatorios', '/relatorios', 'Relatórios', BarChart3], ['configuracoes', '/configuracoes', 'Configurações', Settings]];
+const links = [['dashboard', '/dashboard', 'Dashboard', LayoutDashboard], ['clientes', '/clientes', 'Clientes', Users], ['funcionarios', '/funcionarios', 'Funcionários', Users], ['produtos', '/produtos', 'Estoque', Box], ['vendas', '/vendas', 'Vendas', ShoppingBag], ['compras', '/compras', 'Compras', WalletCards], ['fornecedores', '/fornecedores', 'Fornecedores', Users], ['producao', '/ordens-producao', 'Produção', Factory], ['entregas', '/entregas', 'Entregas', Truck], ['despesas', '/despesas', 'Despesas', Receipt],['relatorios', '/relatorios', 'Relatórios', BarChart3], ['configuracoes', '/configuracoes', 'Configurações', Settings]];
 export default function Layout({children}) {
     const {user, canPage, logout} = useAuth();
     const navigate = useNavigate();
