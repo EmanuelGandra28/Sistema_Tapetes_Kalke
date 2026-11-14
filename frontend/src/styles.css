@@ -154,3 +154,14 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .see-more { display:inline-block; margin-top:.75rem; color:var(--primary); font-weight:600; text-decoration:none; } .see-more:hover { text-decoration:underline; }
 .notice { padding:.6rem .8rem; border-radius:8px; background:var(--warning-soft); color:var(--warning); font-size:.88rem; }
 @media(max-width:900px){ .dash-grid.wide-left { grid-template-columns:1fr; } }
+/* Logomarca */
+:root { --logo-menu-fill:#f3e9d8; } [data-theme="contraste"] { --logo-menu-fill:#ffffff; }
+.logo { display:flex; align-items:center; gap:.7rem; }
+.logo-simbolo { flex:0 0 auto; display:block; }
+.logo-nome { display:grid; line-height:1.05; font-family:Georgia,'Times New Roman',serif; letter-spacing:.02em; }
+.logo-nome span { font-size:1.05rem; } .logo-nome strong { font-size:1.35rem; }
+.logo-login { justify-content:center; color:var(--primary); margin-bottom:.25rem; }
+.logo-login .logo-nome span { font-size:1.25rem; } .logo-login .logo-nome strong { font-size:1.6rem; }
+.logo-menu { color:var(--sidebar-strong); }
+@media(max-width:900px){ .logo-menu { justify-content:center; } .logo-menu .logo-nome { display:none; } }
+@media(max-width:620px){ .logo-menu { display:none; } }
