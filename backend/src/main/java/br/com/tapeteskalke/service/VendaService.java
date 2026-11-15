@@ -12,5 +12,5 @@ import br.com.tapeteskalke.dto.OperacaoDtos.VendaRequest; import br.com.tapetesk
  private void recalculateClient(Cliente c){clienteRepo.lockById(c.getId());var sales=vendas.finalizedByClient(c.getId());c.setTotalCompras(sales.stream().map(Venda::getTotalVenda).reduce(BigDecimal.ZERO,BigDecimal::add));c.setUltimaCompra(sales.stream().map(Venda::getDataVenda).max(LocalDate::compareTo).orElse(null));c.setUpdatedBy(current.require().id());}
  // Vendedor da venda quando a tela não informa: o funcionário ativo com o mesmo e-mail do usuário logado (ou nenhum).
  private br.com.tapeteskalke.entity.Funcionario vendedorLogado(){var email=current.require().email();return email==null?null:funcionarios.ativosPorEmail(email).stream().findFirst().orElse(null);}
- private VendaResponse response(Venda v){return new VendaResponse(v.getId(),v.getNumeroVenda(),v.getCliente().getNome(),v.getDataVenda(),v.getSubtotal(),v.getDesconto(),v.getTotalVenda(),v.getStatus());}
+ private VendaResponse response(Venda v){return new VendaResponse(v.getId(),v.getNumeroVenda(),v.getCliente().getNome(),v.getDataVenda(),v.getSubtotal(),v.getDesconto(),v.getTotalVenda(),v.getStatus(),v.getFormaPagamento());}
 }

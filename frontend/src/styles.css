@@ -199,3 +199,10 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .panel-heading h2 { margin:0; }
 .filters.compact { margin:0; }
 .filters.compact input { width:auto; }
+
+/* PIX */
+.pix-box { display:grid; justify-items:center; gap:.75rem; text-align:center; }
+.pix-box img { border:8px solid #fff; border-radius:8px; background:#fff; }
+.pix-valor { font-size:1.6rem; }
+.pix-aviso { color:var(--danger); font-weight:600; font-size:.9rem; }
+.modal-footer { display:flex; justify-content:flex-end; margin-top:1rem; }

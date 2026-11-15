@@ -138,8 +138,30 @@ function EscolhaTema() {
     </section>;
 }
 
+function DadosLoja() {
+    const queryClient = useQueryClient();
+    const q = useQuery({queryKey: ['configuracoes', 'loja'], queryFn: () => api.get('/configuracoes/loja')});
+    const [form, setForm] = useState(null);
+    const atual = form ?? {pixChave: q.data?.data?.pixChave ?? '', pixNomeRecebedor: q.data?.data?.pixNomeRecebedor ?? '', pixCidade: q.data?.data?.pixCidade ?? ''};
+    const set = (k) => (e) => setForm({...atual, [k]: e.target.value});
+    const save = useMutation({mutationFn: () => api.put('/configuracoes/loja', atual), onSuccess: () => { setForm(null); queryClient.invalidateQueries({queryKey: ['configuracoes', 'loja']}); }});
+    if (q.isPending) return <Loading/>;
+    if (q.isError) return <Failure error={q.error}/>;
+    return <section className="panel"><h2>Dados da loja (PIX)</h2>
+        <p className="hint">Usados para gerar o QR Code PIX nas vendas. O sistema não confirma o pagamento: confira sempre no app do banco.</p>
+        <form className="form-grid" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+            <label className="full">Chave PIX (CPF/CNPJ, e-mail, telefone com +55 ou chave aleatória)<input maxLength="77" value={atual.pixChave} onChange={set('pixChave')}/></label>
+            <label>Nome do recebedor (até 25 letras)<input maxLength="25" value={atual.pixNomeRecebedor} onChange={set('pixNomeRecebedor')}/></label>
+            <label>Cidade (até 15 letras)<input maxLength="15" value={atual.pixCidade} onChange={set('pixCidade')}/></label>
+            {save.isError && <p className="error full">{save.error.message}</p>}
+            {save.isSuccess && !form && <p className="full">Dados salvos.</p>}
+            <footer><button disabled={save.isPending || !form}>{save.isPending ? 'Salvando…' : 'Salvar dados do PIX'}</button></footer>
+        </form>
+    </section>;
+}
+
 export default function Configuracoes() {
-    const {user} = useAuth();
+    const {user, canAction} = useAuth();
     const q = useQuery({queryKey: ['configuracoes'], queryFn: () => api.get('/configuracoes')});
     if (q.isPending) return <Loading/>;
     if (q.isError) return <Failure error={q.error}/>;
@@ -151,15 +173,16 @@ export default function Configuracoes() {
         <MinhaSenha/>
         {user?.cargo === 'DONO' && <Usuarios/>}
         <EscolhaTema/>
+        {canAction("configuracoes_editar") && <DadosLoja/>}
         {user?.cargo === 'DONO' ? <EditorPermissoes/> : <section className="split">
             <article className="panel"><h2>Acesso às páginas</h2>
                 <ul className="permission-list">{Object.entries(pages).map(([name, allowed]) => <li key={name}>
-                    <span>{name}</span><strong
+                    <span title={name}>{rotuloPermissao(name).rotulo}</span><strong
                     className={allowed ? 'allowed' : 'denied'}>{allowed ? 'Permitido' : 'Negado'}</strong></li>)}</ul>
             </article>
             <article className="panel"><h2>Ações</h2>
                 <ul className="permission-list">{Object.entries(actions).map(([name, allowed]) => <li key={name}>
-                    <span>{name}</span><strong
+                    <span title={name}>{rotuloPermissao(name).rotulo}</span><strong
                     className={allowed ? 'allowed' : 'denied'}>{allowed ? 'Permitido' : 'Negado'}</strong></li>)}</ul>
             </article>
         </section>}

@@ -7,6 +7,7 @@ import SearchSelect from '../components/SearchSelect';
 import { date, money, today } from '../utils/format';
 import { useAuth } from '../contexts/AuthContext';
 import { useExportar } from '../hooks/useExportar';
+import PixModal from '../components/PixModal';
 
 export default function Vendas() {
   const queryClient = useQueryClient();
@@ -20,6 +21,7 @@ export default function Vendas() {
   const [payment, setPayment] = useState('PIX');
   const [desconto, setDesconto] = useState(0);
   const exportar = useExportar();
+  const [pix, setPix] = useState(null);
   const [exp, setExp] = useState(() => ({ inicio: today().slice(0, 8) + '01', fim: today() }));
   // Mesma chave enquanto a venda não for concluída: repetir o envio não duplica a venda.
   const [saleKey, setSaleKey] = useState(createKey);
@@ -27,7 +29,7 @@ export default function Vendas() {
   const refresh = () => ['vendas', 'dashboard', '/produtos', '/clientes'].forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
   const checkout = useMutation({
     mutationFn: () => api.post('/vendas', { clienteId: cliente.id, dataVenda: today(), desconto: Number(desconto) || 0, formaPagamento: payment, itens: items.map(({ produtoId, quantidade }) => ({ produtoId, quantidade })), observacoes: '' }, { headers: { 'Idempotency-Key': saleKey } }),
-    onSuccess: () => { setSaleKey(createKey()); setItems([]); setCliente(null); setDesconto(0); refresh(); }
+    onSuccess: (r) => { if (payment === 'PIX') setPix(r.data); setSaleKey(createKey()); setItems([]); setCliente(null); setDesconto(0); refresh(); }
   });
   const cancel = useMutation({ mutationFn: ({ id, motivo }) => api.post(`/vendas/${id}/cancelar`, { motivo }), onSuccess: refresh });
   const add = () => {
@@ -65,8 +67,9 @@ export default function Vendas() {
       {cancel.isError && <p className="error">{cancel.error.message}</p>}
       {sales.isPending ? <Loading /> : sales.isError ? <Failure error={sales.error} /> : sales.data.data.length ? <div className="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Desconto</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
         {sales.data.data.map((s) => <tr key={s.id}><td>#{s.numeroVenda}</td><td>{s.cliente}</td><td>{date(s.dataVenda)}</td><td>{money(s.desconto)}</td><td>{money(s.total)}</td><td><span className={`badge ${s.status === 'CANCELADA' ? 'inativo' : ''}`}>{s.status}</span></td>
-          <td>{canAction('vendas_cancelar') && s.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(s)} disabled={cancel.isPending}>Cancelar venda</button>}</td></tr>)}
+          <td className="row-actions">{s.status === 'FINALIZADA' && s.formaPagamento === 'PIX' && <button className="link" onClick={() => setPix(s)}>QR PIX</button>}{canAction('vendas_cancelar') && s.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(s)} disabled={cancel.isPending}>Cancelar venda</button>}</td></tr>)}
       </tbody></table></div> : <Empty />}
     </section>
+    {pix && <PixModal venda={pix} onClose={() => setPix(null)} />}
   </>;
 }
