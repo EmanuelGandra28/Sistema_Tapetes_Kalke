@@ -11,6 +11,8 @@ import br.com.tapeteskalke.dto.*; import br.com.tapeteskalke.dto.ClienteDtos.*; 
   return new Historico(response(c),total,finalizadas.size(),ticket,ultima,lista);}
  @Transactional(readOnly=true) public PageResponse<Response> list(String search,int page,int size){return PageResponse.from(repo.search(search==null?"":search.trim(),PageRequest.of(page,Math.min(Math.max(size,1),100),Sort.by("nome"))).map(this::response));}
  @Transactional(readOnly=true) public Response get(String id){return response(active(id));}
+ // Todos os clientes ativos, para exportação.
+ @Transactional(readOnly=true) public java.util.List<Response> todos(){return repo.search("",PageRequest.of(0,10000,Sort.by("nome"))).map(this::response).getContent();}
  @Transactional public Response create(Request r){var c=new Cliente();copy(c,r);audit.created(c);return response(repo.save(c));}
  @Transactional public Response update(String id,Request r){var c=active(id);copy(c,r);audit.changed(c);return response(c);}
  @Transactional public void delete(String id){var c=active(id);c.setAtivo(false);c.setDeletedAt(OffsetDateTime.now(clock));c.setDeletedBy(audit.userId());audit.changed(c);}

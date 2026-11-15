@@ -8,6 +8,7 @@ import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
 import FichaTecnicaModal from '../components/FichaTecnicaModal';
 import Abas from '../components/Abas';
+import { useExportar } from '../hooks/useExportar';
 import Movimentacoes from './estoque/Movimentacoes';
 import Inventario from './estoque/Inventario';
 import SugestaoCompra from './estoque/SugestaoCompra';
@@ -34,6 +35,7 @@ function AjusteModal({ produto, onClose, onDone }) {
 
 export default function Produtos() {
   const [aba, setAba] = useState('produtos');
+  const exportar = useExportar();
   const [editing, setEditing] = useState(null); // null = fechado, {} = novo, produto = edição
   const [ajuste, setAjuste] = useState(null);
   const [ficha, setFicha] = useState(null);
@@ -55,11 +57,11 @@ export default function Produtos() {
   const rows = q.data?.data?.content ?? [];
   const abas = [{ id: 'produtos', rotulo: 'Produtos' }, { id: 'movimentacoes', rotulo: 'Movimentações' }, ...(canAction('estoque_ajustar') ? [{ id: 'inventario', rotulo: 'Inventário' }] : []), { id: 'sugestao', rotulo: 'Sugestão de compra' }];
   return <>
-    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{aba === 'produtos' && canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</section>
+    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{aba === 'produtos' && <div className="row-actions"><button type="button" className="secondary" onClick={() => exportar('/estoque/exportar', {}, 'estoque')}>Exportar Excel</button>{canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</div>}</section>
     <Abas abas={abas} ativa={aba} onChange={setAba} />
-    {aba === 'movimentacoes' && <Movimentacoes />}
+    {aba === 'movimentacoes' && <Movimentacoes exportar={exportar} />}
     {aba === 'inventario' && <Inventario />}
-    {aba === 'sugestao' && <SugestaoCompra />}
+    {aba === 'sugestao' && <SugestaoCompra exportar={exportar} />}
     {aba === 'produtos' && <>
     <input className="search" placeholder="Buscar por nome ou código de barras" value={search} onChange={(e) => setSearch(e.target.value)} />
     {remove.isError && <p className="error">{remove.error.message}</p>}

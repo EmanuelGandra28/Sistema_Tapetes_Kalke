@@ -195,3 +195,7 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .badge.abc-a { color:var(--success-text); background:var(--success-soft); }
 .badge.abc-b { color:#865e08; background:#f6edcf; }
 .badge.abc-c { color:var(--text-muted); background:var(--surface-alt); }
+.panel-heading { display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:.75rem; }
+.panel-heading h2 { margin:0; }
+.filters.compact { margin:0; }
+.filters.compact input { width:auto; }

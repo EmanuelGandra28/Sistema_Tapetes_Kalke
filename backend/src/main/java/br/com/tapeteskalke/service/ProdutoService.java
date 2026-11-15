@@ -1,6 +1,8 @@
 package br.com.tapeteskalke.service;
 import br.com.tapeteskalke.dto.*; import br.com.tapeteskalke.dto.ProdutoDtos.*; import br.com.tapeteskalke.entity.*; import br.com.tapeteskalke.exception.*; import br.com.tapeteskalke.repository.*; import java.math.*; import java.time.*; import org.springframework.data.domain.*; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional;
 @Service public class ProdutoService { private final ProdutoRepository repo; private final FornecedorRepository fornecedores; private final AuditService audit; private final CodigoService codigos; public ProdutoService(ProdutoRepository repo,FornecedorRepository fornecedores,AuditService audit,CodigoService codigos){this.codigos=codigos;this.repo=repo;this.fornecedores=fornecedores;this.audit=audit;}
+ // Todos os produtos, para exportação.
+ @Transactional(readOnly=true) public java.util.List<Response> todos(){return repo.search("",PageRequest.of(0,10000,Sort.by("nome"))).map(this::response).getContent();}
  @Transactional(readOnly=true) public PageResponse<Response> list(String search,int page,int size){return PageResponse.from(repo.search(search==null?"":search.trim(),PageRequest.of(page,Math.min(Math.max(1,size),100),Sort.by("nome"))).map(this::response));}
  @Transactional(readOnly=true) public Response get(String id){return response(active(id));}
  @Transactional public Response create(Request r){var p=new Produto();copy(p,r);audit.created(p);return response(repo.save(p));}

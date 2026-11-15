@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { Loading, Failure, Empty } from '../components/State';
 import Abas from '../components/Abas';
+import { useExportar } from '../hooks/useExportar';
 import { money, today as hoje } from '../utils/format';
 
 const LABELS = { receita: 'Receita', custoMercadoriaVendida: 'Custo da mercadoria vendida', lucroBruto: 'Lucro bruto', salarios: 'Salários', outrasDespesas: 'Outras despesas', lucroLiquido: 'Lucro líquido', compras: 'Compras (caixa)', fluxoCaixa: 'Fluxo de caixa' };
@@ -46,7 +47,8 @@ function Vendedores({ dados }) {
 
 const CONTEUDO = { financeiro: Financeiro, abc: CurvaAbc, margem: Margem, vendedores: Vendedores };
 
-export default function Relatorios({ exportar }) {
+export default function Relatorios() {
+  const exportar = useExportar();
   const today = hoje();
   const [aba, setAba] = useState('financeiro');
   const [inicio, setInicio] = useState(today.slice(0, 8) + '01');

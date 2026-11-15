@@ -6,6 +6,7 @@ import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import Modal from '../components/Modal';
 import HistoricoClienteModal from '../components/HistoricoClienteModal';
+import {useExportar} from '../hooks/useExportar';
 import {useAuth} from '../contexts/AuthContext';
 import {date, money} from '../utils/format';
 
@@ -30,6 +31,7 @@ const toPayload = (d) => Object.fromEntries(Object.entries(d).map(([k, v]) => [k
 export default function Clientes() {
     const [editing, setEditing] = useState(null); // null = fechado, {} = novo, cliente = edição
     const [historico, setHistorico] = useState(null);
+    const exportar = useExportar();
     const [search, setSearch] = useState('');
     const termo = useDebounce(search.trim());
     const {canAction} = useAuth();
@@ -66,7 +68,8 @@ export default function Clientes() {
     return <>
         <section className="page-heading">
             <div><h1>Clientes</h1><p>Cadastros e acompanhamento de relacionamento.</p></div>
-            {canAction('clientes_criar') && <button onClick={() => open(null)}>Novo cliente</button>}</section>
+            <div className="row-actions"><button type="button" className="secondary" onClick={() => exportar('/clientes/exportar', {}, 'clientes')}>Exportar Excel</button>
+            {canAction('clientes_criar') && <button onClick={() => open(null)}>Novo cliente</button>}</div></section>
         <input className="search" placeholder="Buscar por nome, telefone ou cidade" value={search}
                onChange={(e) => setSearch(e.target.value)}/>
         {remove.isError && <p className="error">{remove.error.message}</p>}

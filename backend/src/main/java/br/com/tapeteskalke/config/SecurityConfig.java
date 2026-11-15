@@ -52,7 +52,7 @@ public class SecurityConfig {
         c.setAllowedOrigins(List.of(allowedOrigin));
         c.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         c.setAllowedHeaders(List.of("Authorization", "Content-Type", "Idempotency-Key"));
-        c.setExposedHeaders(List.of("Location"));
+        c.setExposedHeaders(List.of("Location", "Content-Disposition"));
         c.setAllowCredentials(false);
         c.setMaxAge(3600L);
         var source = new UrlBasedCorsConfigurationSource();

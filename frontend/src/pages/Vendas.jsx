@@ -6,6 +6,7 @@ import { Loading, Failure, Empty } from '../components/State';
 import SearchSelect from '../components/SearchSelect';
 import { date, money, today } from '../utils/format';
 import { useAuth } from '../contexts/AuthContext';
+import { useExportar } from '../hooks/useExportar';
 
 export default function Vendas() {
   const queryClient = useQueryClient();
@@ -18,6 +19,8 @@ export default function Vendas() {
   const [items, setItems] = useState([]);
   const [payment, setPayment] = useState('PIX');
   const [desconto, setDesconto] = useState(0);
+  const exportar = useExportar();
+  const [exp, setExp] = useState(() => ({ inicio: today().slice(0, 8) + '01', fim: today() }));
   // Mesma chave enquanto a venda não for concluída: repetir o envio não duplica a venda.
   const [saleKey, setSaleKey] = useState(createKey);
   const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.quantidade * i.preco, 0), [items]);
@@ -55,7 +58,10 @@ export default function Vendas() {
         {checkout.isError && <p className="error">{checkout.error.message}</p>}
       </>}
     </section>}
-    <section className="panel"><h2>Histórico</h2>
+    <section className="panel"><div className="panel-heading"><h2>Histórico</h2>
+      <div className="filters compact"><label>De<input type="date" value={exp.inicio} onChange={(e) => setExp({ ...exp, inicio: e.target.value })} /></label>
+        <label>Até<input type="date" value={exp.fim} onChange={(e) => setExp({ ...exp, fim: e.target.value })} /></label>
+        <button type="button" className="secondary" disabled={!exp.inicio || !exp.fim || exp.inicio > exp.fim} onClick={() => exportar('/vendas/exportar', exp, 'vendas')}>Exportar Excel</button></div></div>
       {cancel.isError && <p className="error">{cancel.error.message}</p>}
       {sales.isPending ? <Loading /> : sales.isError ? <Failure error={sales.error} /> : sales.data.data.length ? <div className="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Desconto</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
         {sales.data.data.map((s) => <tr key={s.id}><td>#{s.numeroVenda}</td><td>{s.cliente}</td><td>{date(s.dataVenda)}</td><td>{money(s.desconto)}</td><td>{money(s.total)}</td><td><span className={`badge ${s.status === 'CANCELADA' ? 'inativo' : ''}`}>{s.status}</span></td>
