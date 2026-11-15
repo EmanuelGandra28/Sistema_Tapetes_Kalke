@@ -192,3 +192,6 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .inventario input { width:110px; }
 .filters .grow,.filters label.grow { flex:1; min-width:220px; margin:0; }
 .total-line { text-align:right; margin:.75rem 0 0; }
+.badge.abc-a { color:var(--success-text); background:var(--success-soft); }
+.badge.abc-b { color:#865e08; background:#f6edcf; }
+.badge.abc-c { color:var(--text-muted); background:var(--surface-alt); }

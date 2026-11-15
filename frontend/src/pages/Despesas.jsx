@@ -35,7 +35,7 @@ export default function Despesas() {
   const nomeTipo = (codigo) => tipos.find((t) => t.codigo === codigo)?.nome ?? codigo;
   const queryClient = useQueryClient();
   const q = useQuery({ queryKey: ['despesas'], queryFn: () => api.get('/despesas') });
-  const refresh = () => { queryClient.invalidateQueries({ queryKey: ['despesas'] }); queryClient.invalidateQueries({ queryKey: ['financeiro'] }); };
+  const refresh = () => { queryClient.invalidateQueries({ queryKey: ['despesas'] }); queryClient.invalidateQueries({ queryKey: ['relatorio'] }); };
   const rows = q.data?.data ?? [];
   return <>
     <section className="page-heading"><div><h1>Despesas</h1><p>Salários, fretes, manutenção e outros gastos. Entram em "Salários" e "Outras despesas" nos relatórios.</p></div>{canAction('despesas_criar') && <button onClick={() => setOpen(true)}>Nova despesa</button>}</section>

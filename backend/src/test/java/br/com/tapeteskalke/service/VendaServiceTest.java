@@ -28,7 +28,8 @@ class VendaServiceTest {
     private final CurrentUser current = mock(CurrentUser.class);
     private final NumeroService numeros = mock(NumeroService.class);
     private final Clock clock = Clock.fixed(Instant.parse("2026-10-27T15:00:00Z"), ZoneId.of("America/Sao_Paulo"));
-    private final VendaService service = new VendaService(vendas, clientes, produtos, mock(FuncionarioRepository.class), estoque,
+    private final FuncionarioRepository funcionarios = mock(FuncionarioRepository.class);
+    private final VendaService service = new VendaService(vendas, clientes, produtos, funcionarios, estoque,
             mock(PermissionService.class), current, numeros, clock, mock(EntregaRepository.class), mock(ClienteRepository.class), mock(CodigoService.class));
     private Produto tapete;
 
@@ -97,5 +98,26 @@ class VendaServiceTest {
         when(vendas.findByIdempotencyKey("k1")).thenReturn(Optional.of(original));
         var e = assertThrows(BusinessException.class, () -> service.create(venda("0", "1"), "k1"));
         assertEquals("IDEMPOTENCY_KEY_EM_USO", e.code());
+    }
+
+    @Test
+    void registraComoVendedorOFuncionarioAtivoComOEmailDoUsuario() {
+        var f = new br.com.tapeteskalke.entity.Funcionario();
+        f.setId("f1");
+        f.setNome("Joana");
+        when(funcionarios.ativosPorEmail("a@b.com")).thenReturn(List.of(f));
+        service.create(venda("0", "1"), "k1");
+        var salva = org.mockito.ArgumentCaptor.forClass(Venda.class);
+        verify(vendas).save(salva.capture());
+        assertSame(f, salva.getValue().getVendedor());
+    }
+
+    @Test
+    void vendaSemFuncionarioLigadoFicaSemVendedor() {
+        when(funcionarios.ativosPorEmail("a@b.com")).thenReturn(List.of());
+        service.create(venda("0", "1"), "k1");
+        var salva = org.mockito.ArgumentCaptor.forClass(Venda.class);
+        verify(vendas).save(salva.capture());
+        assertNull(salva.getValue().getVendedor());
     }
 }
