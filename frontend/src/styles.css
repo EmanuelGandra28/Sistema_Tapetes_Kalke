@@ -179,3 +179,16 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .history-row { width:100%; display:flex; justify-content:space-between; gap:1rem; background:var(--surface-alt); color:inherit; font-weight:600; border-radius:0; }
 .history-row:hover { background:var(--primary-soft); }
 .history-list table { min-width:0; }
+
+/* Abas dentro das páginas */
+.tabs { display:flex; gap:.25rem; flex-wrap:wrap; border-bottom:1px solid var(--border); margin-bottom:1rem; }
+.tabs .tab { background:transparent; color:var(--text-muted); border-radius:8px 8px 0 0; border-bottom:3px solid transparent; padding:.6rem .9rem; }
+.tabs .tab:hover { background:var(--primary-soft); color:var(--primary); }
+.tabs .tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+.filters { display:flex; gap:.75rem; flex-wrap:wrap; align-items:end; margin-bottom:1rem; }
+.filters label { display:grid; gap:.3rem; font-size:.85rem; color:var(--label); }
+.qtd-entrada { color:var(--success-text); font-weight:700; }
+.qtd-saida { color:var(--danger); font-weight:700; }
+.inventario input { width:110px; }
+.filters .grow,.filters label.grow { flex:1; min-width:220px; margin:0; }
+.total-line { text-align:right; margin:.75rem 0 0; }

@@ -7,6 +7,10 @@ import { useCodigos } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
 import FichaTecnicaModal from '../components/FichaTecnicaModal';
+import Abas from '../components/Abas';
+import Movimentacoes from './estoque/Movimentacoes';
+import Inventario from './estoque/Inventario';
+import SugestaoCompra from './estoque/SugestaoCompra';
 import { useAuth } from '../contexts/AuthContext';
 import { money } from '../utils/format';
 
@@ -29,6 +33,7 @@ function AjusteModal({ produto, onClose, onDone }) {
 }
 
 export default function Produtos() {
+  const [aba, setAba] = useState('produtos');
   const [editing, setEditing] = useState(null); // null = fechado, {} = novo, produto = edição
   const [ajuste, setAjuste] = useState(null);
   const [ficha, setFicha] = useState(null);
@@ -48,8 +53,14 @@ export default function Produtos() {
   const excluir = (p) => { if (window.confirm(`Excluir o produto "${p.nome}"? O histórico de vendas é mantido.`)) remove.mutate(p.id); };
   const options = (list, fallback) => (list.length ? list : fallback.map((codigo) => ({ codigo, nome: codigo }))).map((o) => <option key={o.codigo} value={o.codigo}>{o.nome}</option>);
   const rows = q.data?.data?.content ?? [];
+  const abas = [{ id: 'produtos', rotulo: 'Produtos' }, { id: 'movimentacoes', rotulo: 'Movimentações' }, ...(canAction('estoque_ajustar') ? [{ id: 'inventario', rotulo: 'Inventário' }] : []), { id: 'sugestao', rotulo: 'Sugestão de compra' }];
   return <>
-    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</section>
+    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{aba === 'produtos' && canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</section>
+    <Abas abas={abas} ativa={aba} onChange={setAba} />
+    {aba === 'movimentacoes' && <Movimentacoes />}
+    {aba === 'inventario' && <Inventario />}
+    {aba === 'sugestao' && <SugestaoCompra />}
+    {aba === 'produtos' && <>
     <input className="search" placeholder="Buscar por nome ou código de barras" value={search} onChange={(e) => setSearch(e.target.value)} />
     {remove.isError && <p className="error">{remove.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Produto</th><th>Comercial</th><th>Produção</th><th>Custo</th><th>Venda</th><th>Status</th><th></th></tr></thead><tbody>
@@ -62,6 +73,7 @@ export default function Produtos() {
           {canAction('produtos_excluir') && <button className="link danger" onClick={() => excluir(p)}>Excluir</button>}
         </td></tr>)}
     </tbody></table></div> : <Empty />}</section>
+    </>}
     {ajuste && <AjusteModal produto={ajuste} onClose={() => setAjuste(null)} onDone={refresh} />}
     {ficha && <FichaTecnicaModal produto={ficha} podeEditar={canAction('produtos_editar')} onClose={() => setFicha(null)} />}
     {editing !== null && <Modal title={editing.id ? 'Editar produto' : 'Novo produto'} onClose={close}>
