@@ -165,3 +165,7 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .logo-menu { color:var(--sidebar-strong); }
 @media(max-width:900px){ .logo-menu { justify-content:center; } .logo-menu .logo-nome { display:none; } }
 @media(max-width:620px){ .logo-menu { display:none; } }
+
+/* Permissões: cabeçalho de grupo e dicas */
+.matrix tr.matrix-group th { text-align:left; padding-top:1rem; color:var(--primary); background:var(--surface-alt); font-size:.8rem; letter-spacing:.04em; }
+.hint { color:var(--text-muted); font-size:.88rem; }

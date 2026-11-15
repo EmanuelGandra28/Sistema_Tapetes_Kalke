@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import {Fragment, useState} from 'react';
+import {agruparPermissoes, CARGO_ROTULO, rotuloPermissao} from '../services/permissoes';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
@@ -11,14 +12,22 @@ const novoUsuario = {nome: '', email: '', senha: '', cargo: 'VENDEDOR'};
 // O DONO não pode perder acesso às configurações (o servidor também bloqueia).
 const travada = (cargo, chave) => cargo === 'DONO' && (chave === 'configuracoes' || chave === 'configuracoes_editar');
 
-function MatrizPermissoes({titulo, itens, cargos, valores, tipo, alterar}) {
-    return <article className="panel"><h2>{titulo}</h2>
-        <div className="table-wrap"><table className="matrix"><thead><tr><th></th>{cargos.map((c) => <th key={c}>{c}</th>)}</tr></thead>
-            <tbody>{itens.map((item) => <tr key={item}><td>{item}</td>{cargos.map((c) => {
-                const chave = `${c}:${item}`;
-                return <td key={c}><input type="checkbox" aria-label={`${c} ${item}`} disabled={travada(c, item)}
-                                          checked={Boolean(valores[chave])} onChange={(e) => alterar(tipo, chave, e.target.checked)}/></td>;
-            })}</tr>)}</tbody></table></div>
+function MatrizPermissoes({titulo, descricao, itens, cargos, valores, tipo, alterar}) {
+    return <article className="panel"><h2>{titulo}</h2>{descricao && <p className="hint">{descricao}</p>}
+        <div className="table-wrap"><table className="matrix"><thead><tr><th></th>{cargos.map((c) => <th key={c}>{CARGO_ROTULO[c] ?? c}</th>)}</tr></thead>
+            <tbody>{agruparPermissoes(itens).map(({grupo, itens: doGrupo}) => <Fragment key={grupo}>
+                <tr className="matrix-group"><th colSpan={cargos.length + 1}>{grupo}</th></tr>
+                {doGrupo.map((item) => {
+                    const {rotulo} = rotuloPermissao(item);
+                    return <tr key={item}><td title={`Chave técnica: ${item}`}>{rotulo}</td>{cargos.map((c) => {
+                        const chave = `${c}:${item}`;
+                        const bloqueada = travada(c, item);
+                        return <td key={c} title={bloqueada ? 'O Dono sempre mantém acesso às configurações' : undefined}>
+                            <input type="checkbox" aria-label={`${CARGO_ROTULO[c] ?? c}: ${rotulo}`} disabled={bloqueada}
+                                   checked={Boolean(valores[chave])} onChange={(e) => alterar(tipo, chave, e.target.checked)}/>{bloqueada && ' 🔒'}</td>;
+                    })}</tr>;
+                })}
+            </Fragment>)}</tbody></table></div>
     </article>;
 }
 
@@ -46,8 +55,8 @@ function EditorPermissoes() {
             {save.isSuccess && <p>Permissões salvas.</p>}
         </section>
         <section className="stack">
-            <MatrizPermissoes titulo="Páginas" itens={paginas} cargos={cargos} valores={{...pages, ...mudancas.pages}} tipo="pages" alterar={alterar}/>
-            <MatrizPermissoes titulo="Ações" itens={acoes} cargos={cargos} valores={{...actions, ...mudancas.actions}} tipo="actions" alterar={alterar}/>
+            <MatrizPermissoes titulo="Telas que cada cargo vê" descricao="Sem a tela, o item some do menu." itens={paginas} cargos={cargos} valores={{...pages, ...mudancas.pages}} tipo="pages" alterar={alterar}/>
+            <MatrizPermissoes titulo="O que cada cargo pode fazer" descricao="Passe o mouse sobre um item para ver o nome técnico." itens={acoes} cargos={cargos} valores={{...actions, ...mudancas.actions}} tipo="actions" alterar={alterar}/>
         </section>
     </>;
 }
