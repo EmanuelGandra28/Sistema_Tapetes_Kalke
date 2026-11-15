@@ -169,3 +169,13 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 /* Permissões: cabeçalho de grupo e dicas */
 .matrix tr.matrix-group th { text-align:left; padding-top:1rem; color:var(--primary); background:var(--surface-alt); font-size:.8rem; letter-spacing:.04em; }
 .hint { color:var(--text-muted); font-size:.88rem; }
+
+/* Histórico do cliente */
+.cards.compact { grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+.cards.compact strong { font-size:1.15rem; }
+.history-list { list-style:none; padding:0; margin:0; display:grid; gap:.5rem; }
+.history-list li { border:1px solid var(--border-soft); border-radius:10px; overflow:hidden; }
+.history-list li.cancelada .history-row { color:var(--text-muted); text-decoration:line-through; }
+.history-row { width:100%; display:flex; justify-content:space-between; gap:1rem; background:var(--surface-alt); color:inherit; font-weight:600; border-radius:0; }
+.history-row:hover { background:var(--primary-soft); }
+.history-list table { min-width:0; }

@@ -6,6 +6,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public final class ClienteDtos {
+    // Histórico de compras: os totais consideram só vendas finalizadas; a lista traz também as canceladas.
+    public record Historico(Response cliente, BigDecimal totalFinalizado, long compras, BigDecimal ticketMedio,
+                            LocalDate ultimaCompra, java.util.List<HistoricoVenda> vendas) {
+    }
+
+    public record HistoricoVenda(String id, Long numero, LocalDate data, String status, String formaPagamento,
+                                 BigDecimal desconto, BigDecimal total, java.util.List<HistoricoItem> itens) {
+    }
+
+    public record HistoricoItem(String produto, BigDecimal quantidade, BigDecimal precoUnitario, BigDecimal subtotal) {
+    }
+
     private ClienteDtos() {
     }
 

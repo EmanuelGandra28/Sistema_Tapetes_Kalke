@@ -1,6 +1,14 @@
 package br.com.tapeteskalke.service;
 import br.com.tapeteskalke.dto.*; import br.com.tapeteskalke.dto.ClienteDtos.*; import br.com.tapeteskalke.entity.Cliente; import br.com.tapeteskalke.exception.ResourceNotFoundException; import br.com.tapeteskalke.repository.ClienteRepository; import br.com.tapeteskalke.util.Normalizer; import java.time.*; import org.springframework.data.domain.*; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional;
-@Service public class ClienteService { private final ClienteRepository repo; private final AuditService audit; private final Clock clock; public ClienteService(ClienteRepository repo,AuditService audit,Clock clock){this.repo=repo;this.audit=audit;this.clock=clock;}
+@Service public class ClienteService { private final ClienteRepository repo; private final AuditService audit; private final Clock clock; private final br.com.tapeteskalke.repository.VendaRepository vendas; public ClienteService(ClienteRepository repo,AuditService audit,Clock clock,br.com.tapeteskalke.repository.VendaRepository vendas){this.repo=repo;this.audit=audit;this.clock=clock;this.vendas=vendas;}
+ @Transactional(readOnly=true) public Historico historico(String id){
+  var c=active(id);
+  var lista=vendas.historyByClient(id).stream().map(v->new HistoricoVenda(v.getId(),v.getNumeroVenda(),v.getDataVenda(),v.getStatus(),v.getFormaPagamento(),v.getDesconto(),v.getTotalVenda(),v.getItens().stream().map(i->new HistoricoItem(i.getProdutoNomeSnapshot(),i.getQuantidade(),i.getPrecoUnitario(),i.getSubtotal())).toList())).toList();
+  var finalizadas=lista.stream().filter(v->"FINALIZADA".equals(v.status())).toList();
+  var total=finalizadas.stream().map(HistoricoVenda::total).reduce(java.math.BigDecimal.ZERO,java.math.BigDecimal::add);
+  var ticket=finalizadas.isEmpty()?java.math.BigDecimal.ZERO:total.divide(java.math.BigDecimal.valueOf(finalizadas.size()),2,java.math.RoundingMode.HALF_UP);
+  var ultima=finalizadas.stream().map(HistoricoVenda::data).max(LocalDate::compareTo).orElse(null);
+  return new Historico(response(c),total,finalizadas.size(),ticket,ultima,lista);}
  @Transactional(readOnly=true) public PageResponse<Response> list(String search,int page,int size){return PageResponse.from(repo.search(search==null?"":search.trim(),PageRequest.of(page,Math.min(Math.max(size,1),100),Sort.by("nome"))).map(this::response));}
  @Transactional(readOnly=true) public Response get(String id){return response(active(id));}
  @Transactional public Response create(Request r){var c=new Cliente();copy(c,r);audit.created(c);return response(repo.save(c));}

@@ -50,10 +50,9 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}/historico-compras")
-    public ApiResponse<?> history(@PathVariable String id) {
+    public ApiResponse<Historico> history(@PathVariable String id) {
         permissions.page("clientes");
-        service.get(id);
-        return ApiResponse.ok(java.util.Map.of("message", "Histórico disponível pela listagem de vendas do cliente."));
+        return ApiResponse.ok(service.historico(id));
     }
 
     @PostMapping("/{id}/whatsapp-link")

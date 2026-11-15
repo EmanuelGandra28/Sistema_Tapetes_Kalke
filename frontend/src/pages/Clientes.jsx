@@ -5,6 +5,7 @@ import {useDebounce} from '../hooks/useDebounce';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import Modal from '../components/Modal';
+import HistoricoClienteModal from '../components/HistoricoClienteModal';
 import {useAuth} from '../contexts/AuthContext';
 import {date, money} from '../utils/format';
 
@@ -28,6 +29,7 @@ const toPayload = (d) => Object.fromEntries(Object.entries(d).map(([k, v]) => [k
 
 export default function Clientes() {
     const [editing, setEditing] = useState(null); // null = fechado, {} = novo, cliente = edição
+    const [historico, setHistorico] = useState(null);
     const [search, setSearch] = useState('');
     const termo = useDebounce(search.trim());
     const {canAction} = useAuth();
@@ -75,11 +77,13 @@ export default function Clientes() {
             <p>{c.telefone} · {c.cidade ?? 'Cidade não informada'}</p><p>Última compra: {date(c.ultimaCompra)}</p>
             <strong>{money(c.totalCompras)}</strong>{(['ATENCAO', 'ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) &&
             <a className="whatsapp" href={`https://wa.me/${c.telefone}`} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>}
-            {(canAction('clientes_editar') || canAction('clientes_excluir')) && <div className="row-actions">
+            <div className="row-actions">
+                <button className="link" onClick={() => setHistorico(c)}>Histórico</button>
                 {canAction('clientes_editar') && <button className="link" onClick={() => open(c)}>Editar</button>}
                 {canAction('clientes_excluir') && <button className="link danger" onClick={() => excluir(c)} disabled={remove.isPending}>Excluir</button>}
-            </div>}
+            </div>
         </article>) : <Empty/>}</section>}
+        {historico && <HistoricoClienteModal cliente={historico} onClose={() => setHistorico(null)}/>}
         {editing !== null && <Modal title={editing.id ? 'Editar cliente' : 'Novo cliente'} onClose={close}>
             <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>
                 <label>Nome<input required maxLength="150" {...form.register('nome')}/></label>
