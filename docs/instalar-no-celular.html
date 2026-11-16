@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instalar o Kalke no celular</title>
+<style>
+  :root { --verde:#1c5c46; --verde-claro:#e2ece7; --ouro:#c8a24a; --creme:#f3e9d8; --texto:#1d2b26; --suave:#5b6f67; --borda:#d9e3dd; --fundo:#f7f5f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--texto); background:var(--fundo); line-height:1.55; }
+  main { max-width:880px; margin:0 auto; padding:24px 16px 48px; }
+  header.capa { display:flex; gap:20px; align-items:center; background:var(--verde); color:#fff; border-radius:16px; padding:24px; }
+  header.capa h1 { margin:0 0 4px; font-size:1.7rem; }
+  header.capa p { margin:0; color:#d7e8df; }
+  .logo { flex:0 0 auto; width:76px; height:76px; }
+  h2 { margin:36px 0 8px; font-size:1.35rem; color:var(--verde); display:flex; align-items:center; gap:10px; }
+  h2 .tag { font-size:.75rem; background:var(--verde-claro); color:var(--verde); border-radius:999px; padding:2px 10px; font-weight:700; }
+  .card { background:#fff; border:1px solid var(--borda); border-radius:14px; padding:18px 20px; margin:14px 0; }
+  .resumo { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .resumo div { background:#fff; border:1px solid var(--borda); border-radius:12px; padding:14px; }
+  .resumo strong { display:block; color:var(--verde); }
+  ol.passos { list-style:none; counter-reset:passo; padding:0; margin:0; }
+  ol.passos > li { counter-increment:passo; display:grid; grid-template-columns:1fr 210px; gap:20px; align-items:center; background:#fff; border:1px solid var(--borda); border-radius:14px; padding:18px 20px; margin:14px 0; }
+  ol.passos > li::before { content:counter(passo); grid-column:1; grid-row:1; align-self:start; width:34px; height:34px; border-radius:50%; background:var(--verde); color:#fff; font-weight:800; display:grid; place-items:center; margin-bottom:6px; }
+  ol.passos > li .texto { grid-column:1; grid-row:1; padding-top:44px; }
+  ol.passos > li svg.tela { grid-column:2; grid-row:1; width:100%; height:auto; }
+  ol.passos h3 { margin:0 0 4px; font-size:1.08rem; }
+  ol.passos p { margin:0; color:var(--suave); }
+  .destaque { background:#fff7e3; border:1px solid #ecd9a6; border-radius:12px; padding:12px 14px; margin:12px 0; }
+  .alerta { background:#fdeeee; border:1px solid #efc6c6; border-radius:12px; padding:12px 14px; margin:12px 0; }
+  .qr { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+  .qr svg { width:150px; height:150px; border:1px solid var(--borda); border-radius:10px; }
+  code, .botao { font-family:inherit; background:var(--verde-claro); color:var(--verde); border-radius:6px; padding:1px 7px; font-weight:700; white-space:nowrap; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--borda); vertical-align:top; }
+  th { color:var(--suave); font-size:.85rem; }
+  footer { margin-top:40px; color:var(--suave); font-size:.85rem; text-align:center; }
+  @media (max-width:620px) {
+    header.capa { flex-direction:column; text-align:center; }
+    ol.passos > li { grid-template-columns:1fr; }
+    ol.passos > li svg.tela { grid-column:1; grid-row:2; max-width:220px; justify-self:center; }
+  }
+  @media print { body { background:#fff; } .card, ol.passos > li { break-inside:avoid; } h2 { break-after:avoid; } }
+</style>
+</head>
+<body>
+<main>
+
+<!-- Logomarca (losango kilim com TK), usada também como ícone do app -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="kalke">
+      <rect width="120" height="120" rx="24" fill="#f3e9d8"/>
+      <polygon points="60,10 110,60 60,110 10,60" fill="#1c5c46"/>
+      <polygon points="60,23 97,60 60,97 23,60" fill="none" stroke="#c8a24a" stroke-width="3"/>
+      <polygon points="60,10 66,16 60,22 54,16" fill="#c8a24a"/><polygon points="60,98 66,104 60,110 54,104" fill="#c8a24a"/>
+      <polygon points="10,60 16,54 22,60 16,66" fill="#c8a24a"/><polygon points="110,60 104,54 98,60 104,66" fill="#c8a24a"/>
+      <text x="60" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#f3e9d8">TK</text>
+    </g>
+  </defs>
+</svg>
+
+<header class="capa">
+  <svg class="logo" viewBox="0 0 120 120" role="img" aria-label="Logomarca Tapetes Kalke"><use href="#kalke"/></svg>
+  <div>
+    <h1>Como instalar o sistema Kalke no celular</h1>
+    <p>O sistema vira um aplicativo na tela inicial, com ícone próprio e abrindo em tela cheia. Não precisa de loja de aplicativos e não ocupa espaço.</p>
+  </div>
+</header>
+
+<section class="card qr">
+  <svg viewBox="0 0 35 35" shape-rendering="crispEdges" role="img" aria-label="QR Code com o endereço do sistema"><path fill="#ffffff" d="M0 0h35v35H0z"/><path stroke="#1c5c46" d="M1 1.5h7m2 0h3m1 0h1m2 0h2m1 0h1m1 0h1m1 0h1m2 0h7M1 2.5h1m5 0h1m4 0h6m3 0h2m4 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h2m3 0h1m1 0h2m1 0h1m2 0h1m4 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h4m4 0h1m3 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h1m2 0h1m3 0h1m2 0h4m1 0h1m2 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m1 0h1m1 0h2m1 0h4m1 0h3m3 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h3m4 0h1m2 0h1m2 0h2m1 0h1M1 9.5h1m1 0h5m4 0h1m1 0h1m1 0h4m3 0h1m3 0h5M1 10.5h1m1 0h1m4 0h1m3 0h1m4 0h2m1 0h3m1 0h1m2 0h2m1 0h2m1 0h1M1 11.5h2m4 0h2m3 0h2m2 0h1m1 0h2m2 0h2m1 0h2m2 0h1m1 0h1M1 12.5h1m2 0h1m1 0h1m1 0h2m3 0h1m1 0h2m3 0h1m1 0h3m1 0h1m2 0h5M6 13.5h2m2 0h4m4 0h1m4 0h4m1 0h3m1 0h2M2 14.5h1m1 0h2m3 0h1m1 0h2m2 0h7m1 0h2m2 0h1m2 0h1m1 0h2M2 15.5h1m1 0h2m1 0h3m2 0h3m4 0h1m1 0h3m1 0h4m1 0h1m1 0h1M1 16.5h1m4 0h1m1 0h1m8 0h1m1 0h2m1 0h1m3 0h2m2 0h2M4 17.5h1m1 0h2m1 0h1m4 0h2m2 0h4m1 0h1m1 0h2m1 0h4m1 0h1M1 18.5h1m2 0h2m2 0h6m3 0h1m1 0h4m1 0h1m2 0h2m1 0h2m1 0h1M3 19.5h2m1 0h2m1 0h2m1 0h2m1 0h2m5 0h2m2 0h4m1 0h2M3 20.5h2m3 0h1m1 0h2m2 0h4m3 0h2m2 0h2m1 0h5M2 21.5h11m3 0h4m3 0h1m2 0h1m2 0h2m2 0h1M1 22.5h1m1 0h4m3 0h1m1 0h5m1 0h2m1 0h2m4 0h1m3 0h1m1 0h1M1 23.5h1m1 0h2m2 0h3m1 0h2m1 0h1m1 0h3m2 0h1m1 0h1m2 0h1m2 0h2m1 0h1M1 24.5h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h2m1 0h1m2 0h6m1 0h1m1 0h1m1 0h2M1 25.5h1m1 0h1m1 0h1m1 0h12m1 0h1m2 0h7m3 0h1M9 26.5h1m2 0h2m3 0h6m2 0h1m3 0h1m1 0h1m1 0h1M1 27.5h7m2 0h4m1 0h4m3 0h4m1 0h1m1 0h1m1 0h2M1 28.5h1m5 0h1m1 0h1m2 0h1m1 0h3m3 0h6m3 0h3m1 0h1M1 29.5h1m1 0h3m1 0h1m1 0h2m1 0h2m5 0h3m1 0h1m1 0h6m1 0h2M1 30.5h1m1 0h3m1 0h1m1 0h2m4 0h3m1 0h1m1 0h6m2 0h1m2 0h2M1 31.5h1m1 0h3m1 0h1m1 0h2m1 0h4m2 0h1m2 0h2m1 0h1m2 0h2m1 0h2M1 32.5h1m5 0h1m3 0h1m3 0h1m1 0h1m2 0h1m1 0h4m3 0h3M1 33.5h7m1 0h1m1 0h1m3 0h1m2 0h1m4 0h4m1 0h1m1 0h1m1 0h1"/></svg>
+  <div>
+    <strong>Endereço do sistema</strong><br>
+    <span>emanuelgandra28.github.io/Sistema_Tapetes_Kalke</span>
+    <p style="margin:8px 0 0;color:var(--suave)">Aponte a câmera do celular para o QR Code ao lado para abrir o sistema direto, sem digitar o endereço.</p>
+  </div>
+</section>
+
+<div class="resumo">
+  <div><strong>Celular Android</strong>Use o navegador <b>Chrome</b>. Leva 1 minuto.</div>
+  <div><strong>iPhone</strong>Use o navegador <b>Safari</b> (o da bússola azul).</div>
+  <div><strong>Computador</strong>Funciona no Chrome e no Edge, se você quiser o atalho na área de trabalho.</div>
+</div>
+
+<div class="destaque"><b>Antes de começar:</b> o celular precisa estar com internet. Você vai precisar do seu e-mail e da sua senha do sistema, os mesmos de sempre.</div>
+
+<!-- ============ ANDROID ============ -->
+<h2>Celular Android <span class="tag">Chrome</span></h2>
+<ol class="passos">
+  <li>
+    <div class="texto"><h3>Abra o sistema no Chrome</h3><p>Abra o <b>Chrome</b> e acesse o endereço acima ou leia o QR Code com a câmera. Entre com seu e-mail e senha.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Celular com o Chrome aberto na tela de login do Kalke">
+      <rect x="4" y="4" width="192" height="372" rx="26" fill="#222"/><rect x="12" y="16" width="176" height="348" rx="18" fill="#fff"/>
+      <rect x="12" y="16" width="176" height="44" rx="18" fill="#eef1f4"/><rect x="22" y="28" width="128" height="22" rx="11" fill="#fff" stroke="#cfd6dc"/>
+      <text x="32" y="43" font-size="9" fill="#555" font-family="sans-serif">emanuelgandra28.github.io</text>
+      <circle cx="170" cy="33" r="2" fill="#555"/><circle cx="170" cy="39" r="2" fill="#555"/><circle cx="170" cy="45" r="2" fill="#555"/>
+      <rect x="12" y="60" width="176" height="304" fill="#f3e9d8"/>
+      <svg x="70" y="90" width="60" height="60" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <text x="100" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#1c5c46" font-family="sans-serif">Entrar</text>
+      <rect x="32" y="186" width="136" height="24" rx="6" fill="#fff" stroke="#cbd5cf"/><text x="40" y="202" font-size="9" fill="#8a9a93" font-family="sans-serif">E-mail</text>
+      <rect x="32" y="218" width="136" height="24" rx="6" fill="#fff" stroke="#cbd5cf"/><text x="40" y="234" font-size="9" fill="#8a9a93" font-family="sans-serif">Senha</text>
+      <rect x="32" y="252" width="136" height="26" rx="6" fill="#1c5c46"/><text x="100" y="269" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="sans-serif">Entrar</text>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Toque nos três pontinhos ⋮</h3><p>Ficam no canto <b>superior direito</b> do Chrome, ao lado do endereço.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Destaque no botão de três pontos do Chrome">
+      <rect x="4" y="4" width="192" height="372" rx="26" fill="#222"/><rect x="12" y="16" width="176" height="348" rx="18" fill="#fff"/>
+      <rect x="12" y="16" width="176" height="44" rx="18" fill="#eef1f4"/><rect x="22" y="28" width="128" height="22" rx="11" fill="#fff" stroke="#cfd6dc"/>
+      <text x="32" y="43" font-size="9" fill="#555" font-family="sans-serif">emanuelgandra28.github.io</text>
+      <circle cx="170" cy="39" r="15" fill="none" stroke="#e0442c" stroke-width="3"/>
+      <circle cx="170" cy="33" r="2" fill="#333"/><circle cx="170" cy="39" r="2" fill="#333"/><circle cx="170" cy="45" r="2" fill="#333"/>
+      <rect x="12" y="60" width="176" height="304" fill="#f7f5f0"/>
+      <rect x="24" y="76" width="152" height="40" rx="8" fill="#fff" stroke="#d9e3dd"/><rect x="24" y="124" width="72" height="50" rx="8" fill="#fff" stroke="#d9e3dd"/><rect x="104" y="124" width="72" height="50" rx="8" fill="#fff" stroke="#d9e3dd"/>
+      <text x="32" y="100" font-size="11" font-weight="700" fill="#1c5c46" font-family="sans-serif">Dashboard</text>
+      <path d="M150 90 l12 -40" stroke="#e0442c" stroke-width="2.5" fill="none" marker-end="url(#seta)"/>
+      <defs><marker id="seta" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e0442c"/></marker></defs>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Escolha “Instalar app”</h3><p>Em alguns celulares o nome é <span class="botao">Adicionar à tela inicial</span>. Se aparecer uma janela, toque em <span class="botao">Instalar</span>.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Menu do Chrome com a opção Instalar app destacada">
+      <rect x="4" y="4" width="192" height="372" rx="26" fill="#222"/><rect x="12" y="16" width="176" height="348" rx="18" fill="#f7f5f0"/>
+      <rect x="70" y="24" width="112" height="230" rx="10" fill="#fff" stroke="#d6dbe0"/>
+      <g font-family="sans-serif" font-size="10" fill="#333">
+        <text x="82" y="48">Nova guia</text><text x="82" y="74">Histórico</text><text x="82" y="100">Downloads</text><text x="82" y="126">Favoritos</text>
+        <rect x="74" y="136" width="104" height="28" rx="6" fill="#e2ece7" stroke="#1c5c46" stroke-width="2"/>
+        <text x="82" y="154" font-weight="700" fill="#1c5c46">Instalar app</text>
+        <text x="82" y="182">Compartilhar…</text><text x="82" y="208">Configurações</text><text x="82" y="234">Ajuda</text>
+      </g>
+      <rect x="22" y="270" width="156" height="78" rx="12" fill="#fff" stroke="#d6dbe0"/>
+      <svg x="32" y="282" width="34" height="34" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <text x="74" y="297" font-size="10" font-weight="700" fill="#222" font-family="sans-serif">Instalar app?</text>
+      <text x="74" y="311" font-size="8" fill="#666" font-family="sans-serif">Tapetes Kalke</text>
+      <rect x="118" y="322" width="50" height="18" rx="9" fill="#1c5c46"/><text x="143" y="335" text-anchor="middle" font-size="8" font-weight="700" fill="#fff" font-family="sans-serif">Instalar</text>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Pronto! Procure o ícone “Kalke”</h3><p>O ícone aparece na tela inicial ou na lista de aplicativos. Toque nele para abrir o sistema em tela cheia, como um app.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Tela inicial do celular com o ícone Kalke">
+      <rect x="4" y="4" width="192" height="372" rx="26" fill="#222"/><rect x="12" y="16" width="176" height="348" rx="18" fill="#3c6e8f"/>
+      <g fill="#ffffff" opacity=".35"><rect x="30" y="60" width="34" height="34" rx="9"/><rect x="83" y="60" width="34" height="34" rx="9"/><rect x="136" y="60" width="34" height="34" rx="9"/><rect x="30" y="122" width="34" height="34" rx="9"/><rect x="136" y="122" width="34" height="34" rx="9"/></g>
+      <svg x="80" y="119" width="40" height="40" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <circle cx="100" cy="139" r="28" fill="none" stroke="#ffd25a" stroke-width="3"/>
+      <text x="100" y="174" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif" font-weight="700">Kalke</text>
+    </svg>
+  </li>
+</ol>
+<div class="alerta"><b>Não apareceu “Instalar app”?</b> Confira se você está mesmo no <b>Chrome</b> (e não dentro do WhatsApp ou do Instagram). Se o link foi aberto pelo WhatsApp, toque nos três pontinhos e escolha <span class="botao">Abrir no Chrome</span>. Depois, recarregue a página e tente de novo.</div>
+
+<!-- ============ IPHONE ============ -->
+<h2>iPhone <span class="tag">Safari</span></h2>
+<ol class="passos">
+  <li>
+    <div class="texto"><h3>Abra o sistema no Safari</h3><p>Use o <b>Safari</b>, o navegador da bússola azul. Acesse o endereço ou leia o QR Code com a câmera e entre com seu e-mail e senha.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="iPhone com o Safari aberto no sistema Kalke">
+      <rect x="4" y="4" width="192" height="372" rx="30" fill="#222"/><rect x="12" y="14" width="176" height="352" rx="24" fill="#f3e9d8"/>
+      <rect x="76" y="20" width="48" height="12" rx="6" fill="#222"/>
+      <svg x="70" y="90" width="60" height="60" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <text x="100" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#1c5c46" font-family="sans-serif">Entrar</text>
+      <rect x="32" y="186" width="136" height="24" rx="6" fill="#fff" stroke="#cbd5cf"/><rect x="32" y="218" width="136" height="24" rx="6" fill="#fff" stroke="#cbd5cf"/>
+      <rect x="32" y="252" width="136" height="26" rx="6" fill="#1c5c46"/>
+      <rect x="12" y="306" width="176" height="60" fill="#f2f2f4"/><rect x="26" y="314" width="148" height="20" rx="8" fill="#fff"/>
+      <text x="100" y="328" text-anchor="middle" font-size="8" fill="#555" font-family="sans-serif">emanuelgandra28.github.io</text>
+      <g stroke="#2f7ef7" stroke-width="2" fill="none"><path d="M40 350 l-5 -5 l5 -5"/><path d="M68 340 l5 5 l-5 5"/><rect x="95" y="342" width="10" height="11" rx="1"/><path d="M100 338 v9 M96 341 l4 -4 l4 4"/></g>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Toque no botão Compartilhar</h3><p>É o quadrado com uma <b>seta para cima</b>, na barra de baixo da tela (no iPad, fica em cima, à direita).</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Destaque no botão Compartilhar do Safari">
+      <rect x="4" y="4" width="192" height="372" rx="30" fill="#222"/><rect x="12" y="14" width="176" height="352" rx="24" fill="#f7f5f0"/>
+      <rect x="24" y="50" width="152" height="40" rx="8" fill="#fff" stroke="#d9e3dd"/><text x="32" y="74" font-size="11" font-weight="700" fill="#1c5c46" font-family="sans-serif">Dashboard</text>
+      <rect x="12" y="306" width="176" height="60" fill="#f2f2f4"/><rect x="26" y="314" width="148" height="20" rx="8" fill="#fff"/>
+      <g stroke="#2f7ef7" stroke-width="2" fill="none"><path d="M40 350 l-5 -5 l5 -5"/><path d="M68 340 l5 5 l-5 5"/><rect x="95" y="342" width="10" height="11" rx="1"/><path d="M100 338 v9 M96 341 l4 -4 l4 4"/></g>
+      <circle cx="100" cy="346" r="15" fill="none" stroke="#e0442c" stroke-width="3"/>
+      <path d="M100 290 v28" stroke="#e0442c" stroke-width="2.5" marker-end="url(#seta2)"/>
+      <defs><marker id="seta2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e0442c"/></marker></defs>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Escolha “Adicionar à Tela de Início”</h3><p>Role a lista para baixo se não aparecer logo. Na tela seguinte, toque em <span class="botao">Adicionar</span>, no canto superior direito.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Menu de compartilhar do iPhone com Adicionar à Tela de Início destacado">
+      <rect x="4" y="4" width="192" height="372" rx="30" fill="#222"/><rect x="12" y="14" width="176" height="352" rx="24" fill="#8e8e93"/>
+      <rect x="12" y="120" width="176" height="246" rx="16" fill="#f2f2f7"/>
+      <g font-family="sans-serif" font-size="10" fill="#222">
+        <rect x="22" y="134" width="156" height="30" rx="8" fill="#fff"/><text x="32" y="153">Copiar</text>
+        <rect x="22" y="170" width="156" height="30" rx="8" fill="#fff"/><text x="32" y="189">Adicionar aos Favoritos</text>
+        <rect x="22" y="206" width="156" height="30" rx="8" fill="#e2ece7" stroke="#1c5c46" stroke-width="2"/><text x="32" y="225" font-weight="700" fill="#1c5c46">Adicionar à Tela de Início</text>
+        <rect x="22" y="242" width="156" height="30" rx="8" fill="#fff"/><text x="32" y="261">Buscar na Página</text>
+      </g>
+      <rect x="22" y="284" width="156" height="66" rx="10" fill="#fff"/>
+      <svg x="30" y="294" width="34" height="34" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <text x="72" y="309" font-size="10" font-weight="700" fill="#222" font-family="sans-serif">Kalke</text>
+      <text x="152" y="342" text-anchor="middle" font-size="9" font-weight="700" fill="#2f7ef7" font-family="sans-serif">Adicionar</text>
+    </svg>
+  </li>
+  <li>
+    <div class="texto"><h3>Pronto! Toque no ícone “Kalke”</h3><p>O ícone fica na tela de início, junto com os outros apps. Ele abre o sistema em tela cheia, sem a barra do Safari.</p></div>
+    <svg class="tela" viewBox="0 0 200 380" role="img" aria-label="Tela de início do iPhone com o ícone Kalke">
+      <rect x="4" y="4" width="192" height="372" rx="30" fill="#222"/><rect x="12" y="14" width="176" height="352" rx="24" fill="#7a5ea8"/>
+      <g fill="#ffffff" opacity=".35"><rect x="28" y="60" width="34" height="34" rx="9"/><rect x="83" y="60" width="34" height="34" rx="9"/><rect x="138" y="60" width="34" height="34" rx="9"/><rect x="28" y="122" width="34" height="34" rx="9"/><rect x="138" y="122" width="34" height="34" rx="9"/></g>
+      <svg x="80" y="119" width="40" height="40" viewBox="0 0 120 120"><use href="#kalke"/></svg>
+      <circle cx="100" cy="139" r="28" fill="none" stroke="#ffd25a" stroke-width="3"/>
+      <text x="100" y="174" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif" font-weight="700">Kalke</text>
+    </svg>
+  </li>
+</ol>
+<div class="alerta"><b>No iPhone, use o Safari.</b> Se o link abriu dentro do WhatsApp ou do Instagram, toque no ícone de bússola (ou em <span class="botao">Abrir no Safari</span>) antes de seguir os passos.</div>
+
+<!-- ============ COMPUTADOR ============ -->
+<h2>Computador <span class="tag">opcional</span></h2>
+<div class="card">
+  <p style="margin-top:0">No <b>Chrome</b> ou no <b>Edge</b>, abra o sistema e procure, no fim da barra de endereço, o ícone de <b>instalar</b> (um monitor com uma seta para baixo). Clique nele e confirme em <span class="botao">Instalar</span>. O Kalke ganha um atalho na área de trabalho e abre numa janela própria.</p>
+  <p style="margin-bottom:0;color:var(--suave)">Se o ícone não aparecer, abra o menu do navegador (⋮ ou …) e procure <span class="botao">Instalar Tapetes Kalke</span> ou <span class="botao">Apps › Instalar este site como um aplicativo</span>.</p>
+</div>
+
+<!-- ============ DÚVIDAS ============ -->
+<h2>Dúvidas comuns</h2>
+<div class="card">
+  <table>
+    <tr><th style="width:38%">Pergunta</th><th>Resposta</th></tr>
+    <tr><td>Precisa de internet?</td><td>Sim. O app abre sem internet, mas as vendas, o estoque e os relatórios só carregam conectado. Assim os números estão sempre atualizados.</td></tr>
+    <tr><td>Demorou para entrar de manhã. É normal?</td><td>Sim. Depois de um tempo sem uso, o servidor “dorme” e pode levar até 1 minuto para acordar na primeira entrada. Depois fica rápido.</td></tr>
+    <tr><td>Preciso atualizar o app?</td><td>Não. Ele se atualiza sozinho sempre que o sistema muda. Se algo parecer antigo, feche o app e abra de novo.</td></tr>
+    <tr><td>Ocupa espaço no celular?</td><td>Quase nada: menos de 1 MB.</td></tr>
+    <tr><td>Cada pessoa usa o próprio login?</td><td>Sim. Cada funcionário entra com o próprio e-mail e senha, e vê só as telas que o cargo dele permite.</td></tr>
+    <tr><td>Como tirar o app do celular?</td><td><b>Android:</b> segure o ícone e escolha <span class="botao">Desinstalar</span> ou <span class="botao">Remover</span>.<br><b>iPhone:</b> segure o ícone e escolha <span class="botao">Remover App</span> › <span class="botao">Apagar da Tela de Início</span>.</td></tr>
+    <tr><td>Perdi o celular. E agora?</td><td>Avise o dono da loja: em Configurações › Usuários ele pode desativar o seu acesso ou trocar a senha.</td></tr>
+  </table>
+</div>
+
+<footer>Tapetes Kalke · Guia de instalação do sistema no celular · novembro de 2026</footer>
+</main>
+</body>
+</html>
