@@ -20,7 +20,7 @@
   .resumo div { background:#fff; border:1px solid var(--borda); border-radius:12px; padding:14px; }
   .resumo strong { display:block; color:var(--verde); }
   ol.passos { list-style:none; counter-reset:passo; padding:0; margin:0; }
-  ol.passos > li { counter-increment:passo; display:grid; grid-template-columns:1fr 210px; gap:20px; align-items:center; background:#fff; border:1px solid var(--borda); border-radius:14px; padding:18px 20px; margin:14px 0; }
+  ol.passos > li { counter-increment:passo; display:grid; grid-template-columns:1fr 210px; gap:20px; align-items:start; background:#fff; border:1px solid var(--borda); border-radius:14px; padding:18px 20px; margin:14px 0; }
   ol.passos > li::before { content:counter(passo); grid-column:1; grid-row:1; align-self:start; width:34px; height:34px; border-radius:50%; background:var(--verde); color:#fff; font-weight:800; display:grid; place-items:center; margin-bottom:6px; }
   ol.passos > li .texto { grid-column:1; grid-row:1; padding-top:44px; }
   ol.passos > li svg.tela { grid-column:2; grid-row:1; width:100%; height:auto; }

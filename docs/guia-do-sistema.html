@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia do sistema Kalke</title>
+<style>
+  :root { --verde:#1c5c46; --verde-claro:#e2ece7; --ouro:#c8a24a; --creme:#f3e9d8; --texto:#1d2b26; --suave:#5b6f67; --borda:#d9e3dd; --fundo:#f7f5f0; --vermelho:#b33a3a; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--texto); background:var(--fundo); line-height:1.6; }
+  main { max-width:900px; margin:0 auto; padding:24px 16px 56px; }
+  header.capa { display:flex; gap:20px; align-items:center; background:var(--verde); color:#fff; border-radius:16px; padding:24px; }
+  header.capa h1 { margin:0 0 4px; font-size:1.75rem; }
+  header.capa p { margin:0; color:#d7e8df; }
+  .logo { flex:0 0 auto; width:76px; height:76px; }
+  nav.indice { background:#fff; border:1px solid var(--borda); border-radius:14px; padding:16px 20px; margin:18px 0; }
+  nav.indice h2 { margin:0 0 8px; font-size:1rem; color:var(--verde); }
+  nav.indice ol { margin:0; padding-left:20px; columns:2; column-gap:28px; }
+  nav.indice a { color:var(--texto); text-decoration:none; }
+  nav.indice a:hover { color:var(--verde); text-decoration:underline; }
+  section.tela { background:#fff; border:1px solid var(--borda); border-radius:16px; padding:6px 22px 18px; margin:22px 0; scroll-margin-top:12px; }
+  section.tela > h2 { display:flex; align-items:center; gap:10px; margin:16px 0 4px; font-size:1.4rem; color:var(--verde); }
+  .num { width:34px; height:34px; border-radius:50%; background:var(--verde); color:#fff; font-size:1rem; font-weight:800; display:grid; place-items:center; flex:0 0 auto; }
+  .onde { color:var(--suave); margin:0 0 10px; font-size:.92rem; }
+  h3 { margin:18px 0 6px; font-size:1.05rem; }
+  .exemplo { background:#fff7e3; border-left:4px solid var(--ouro); border-radius:8px; padding:10px 14px; margin:12px 0; }
+  .exemplo::before { content:"Exemplo na loja"; display:block; font-weight:800; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; color:#8a6a1d; margin-bottom:2px; }
+  .dica { background:var(--verde-claro); border-left:4px solid var(--verde); border-radius:8px; padding:10px 14px; margin:12px 0; }
+  .dica::before { content:"Dica"; display:block; font-weight:800; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; color:var(--verde); margin-bottom:2px; }
+  .atencao { background:#fdeeee; border-left:4px solid var(--vermelho); border-radius:8px; padding:10px 14px; margin:12px 0; }
+  .atencao::before { content:"Atenção"; display:block; font-weight:800; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; color:var(--vermelho); margin-bottom:2px; }
+  .botao { background:var(--verde-claro); color:var(--verde); border-radius:6px; padding:1px 7px; font-weight:700; white-space:nowrap; }
+  ol.passos { padding-left:22px; } ol.passos li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--borda); vertical-align:top; }
+  th { color:var(--suave); font-size:.85rem; }
+  .selo { display:inline-block; border-radius:999px; padding:1px 9px; font-size:.78rem; font-weight:800; }
+  .s-verde { background:#ddefe5; color:#225342; } .s-amarelo { background:#f6edcf; color:#865e08; } .s-vermelho { background:#f7dfdf; color:#a42b2b; } .s-azul { background:#dde8f7; color:#1f4e8c; } .s-cinza { background:#eceff1; color:#55606a; }
+  figure { margin:14px 0; text-align:center; }
+  figure svg { width:100%; max-width:640px; height:auto; }
+  figcaption { color:var(--suave); font-size:.85rem; margin-top:4px; }
+  .grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin:12px 0; }
+  .grade > div { border:1px solid var(--borda); border-radius:12px; padding:12px 14px; background:var(--fundo); }
+  .grade strong { color:var(--verde); display:block; }
+  a.topo { display:inline-block; margin-top:8px; font-size:.85rem; color:var(--suave); }
+  footer { margin-top:40px; color:var(--suave); font-size:.85rem; text-align:center; }
+  @media (max-width:620px) { header.capa { flex-direction:column; text-align:center; } nav.indice ol { columns:1; } section.tela { padding:4px 14px 14px; } }
+  @media print { body { background:#fff; } section.tela, .grade > div { break-inside:avoid; } a.topo { display:none; } }
+</style>
+</head>
+<body>
+<main id="inicio">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="kalke"><rect width="120" height="120" rx="24" fill="#f3e9d8"/><polygon points="60,10 110,60 60,110 10,60" fill="#1c5c46"/><polygon points="60,23 97,60 60,97 23,60" fill="none" stroke="#c8a24a" stroke-width="3"/><polygon points="60,10 66,16 60,22 54,16" fill="#c8a24a"/><polygon points="60,98 66,104 60,110 54,104" fill="#c8a24a"/><polygon points="10,60 16,54 22,60 16,66" fill="#c8a24a"/><polygon points="110,60 104,54 98,60 104,66" fill="#c8a24a"/><text x="60" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#f3e9d8">TK</text></g>
+  <marker id="ponta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1c5c46"/></marker>
+</defs></svg>
+
+<header class="capa">
+  <svg class="logo" viewBox="0 0 120 120" role="img" aria-label="Logomarca Tapetes Kalke"><use href="#kalke"/></svg>
+  <div>
+    <h1>Guia do sistema Kalke</h1>
+    <p>O que cada tela faz, para que serve e como usar no dia a dia da loja, com exemplos.</p>
+  </div>
+</header>
+
+<nav class="indice">
+  <h2>Índice</h2>
+  <ol>
+    <li><a href="#comecando">Começando: login, menu e cargos</a></li>
+    <li><a href="#dia">Um dia na loja (resumo)</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#clientes">Clientes</a></li>
+    <li><a href="#vendas">Vendas e PIX</a></li>
+    <li><a href="#estoque">Estoque</a></li>
+    <li><a href="#compras">Compras</a></li>
+    <li><a href="#fornecedores">Fornecedores</a></li>
+    <li><a href="#producao">Produção</a></li>
+    <li><a href="#entregas">Entregas</a></li>
+    <li><a href="#despesas">Despesas</a></li>
+    <li><a href="#relatorios">Relatórios</a></li>
+    <li><a href="#funcionarios">Funcionários</a></li>
+    <li><a href="#configuracoes">Configurações</a></li>
+    <li><a href="#excel">Exportar para Excel</a></li>
+    <li><a href="#duvidas">Dúvidas e glossário</a></li>
+  </ol>
+</nav>
+
+<!-- 1 -->
+<section class="tela" id="comecando">
+  <h2><span class="num">1</span>Começando: login, menu e cargos</h2>
+  <p class="onde">Endereço: emanuelgandra28.github.io/Sistema_Tapetes_Kalke · também pode ser instalado no celular (veja o guia “Instalar no celular”).</p>
+  <h3>Entrar no sistema</h3>
+  <p>Cada pessoa tem o próprio <b>e-mail e senha</b>, criados pelo dono em Configurações. Na primeira entrada da manhã o sistema pode levar <b>até 1 minuto</b> para acordar; depois fica rápido.</p>
+  <h3>O menu</h3>
+  <p>À esquerda (no celular, em cima) ficam as telas. <b>Cada um vê só as telas que o cargo permite</b>: um vendedor, por exemplo, não vê Relatórios nem Funcionários.</p>
+  <table>
+    <tr><th>Cargo</th><th>O que costuma usar (padrão do sistema, o dono pode mudar)</th></tr>
+    <tr><td><b>Dono</b></td><td>Tudo, inclusive usuários, permissões e dados do PIX.</td></tr>
+    <tr><td><b>Gerente</b></td><td>Tudo da operação e dos relatórios.</td></tr>
+    <tr><td><b>Vendedor</b></td><td>Dashboard, Clientes e Vendas.</td></tr>
+    <tr><td><b>Estoquista</b></td><td>Dashboard, Estoque, Compras e Produção.</td></tr>
+    <tr><td><b>Entregador</b></td><td>Dashboard e as entregas atribuídas a ele.</td></tr>
+  </table>
+  <div class="dica">Botões que você não tem permissão para usar simplesmente não aparecem. Se faltar algo, peça ao dono para liberar em Configurações › Permissões.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 2 -->
+<section class="tela" id="dia">
+  <h2><span class="num">2</span>Um dia na loja (resumo)</h2>
+  <figure>
+    <svg viewBox="0 0 640 150" role="img" aria-label="Fluxo: compra de material, produção, estoque, venda, entrega e relatórios">
+      <g font-family="sans-serif" font-size="12" text-anchor="middle">
+        <rect x="6" y="40" width="92" height="56" rx="10" fill="#e2ece7"/><text x="52" y="64" font-weight="700" fill="#1c5c46">Compras</text><text x="52" y="81" fill="#5b6f67">chega a malha</text>
+        <rect x="112" y="40" width="92" height="56" rx="10" fill="#e2ece7"/><text x="158" y="64" font-weight="700" fill="#1c5c46">Produção</text><text x="158" y="81" fill="#5b6f67">vira tapete</text>
+        <rect x="218" y="40" width="92" height="56" rx="10" fill="#e2ece7"/><text x="264" y="64" font-weight="700" fill="#1c5c46">Estoque</text><text x="264" y="81" fill="#5b6f67">pronto p/ vender</text>
+        <rect x="324" y="40" width="92" height="56" rx="10" fill="#1c5c46"/><text x="370" y="64" font-weight="700" fill="#fff">Venda</text><text x="370" y="81" fill="#d7e8df">no balcão</text>
+        <rect x="430" y="40" width="92" height="56" rx="10" fill="#e2ece7"/><text x="476" y="64" font-weight="700" fill="#1c5c46">Entrega</text><text x="476" y="81" fill="#5b6f67">se precisar</text>
+        <rect x="536" y="40" width="98" height="56" rx="10" fill="#fff7e3"/><text x="585" y="64" font-weight="700" fill="#8a6a1d">Relatórios</text><text x="585" y="81" fill="#8a6a1d">quanto lucrou</text>
+      </g>
+      <g stroke="#1c5c46" stroke-width="2" marker-end="url(#ponta)"><line x1="98" y1="68" x2="110" y2="68"/><line x1="204" y1="68" x2="216" y2="68"/><line x1="310" y1="68" x2="322" y2="68"/><line x1="416" y1="68" x2="428" y2="68"/><line x1="522" y1="68" x2="534" y2="68"/></g>
+      <text x="320" y="128" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#5b6f67">Cada passo atualiza o estoque sozinho, e tudo aparece nos relatórios.</text>
+    </svg>
+  </figure>
+  <div class="exemplo">De manhã, a gerente abre o <b>Dashboard</b> e vê que o “Tapete Kilim 1,5 × 2 m” está acabando. Uma <b>ordem de produção</b> já foi aberta sozinha. À tarde, a vendedora registra a <b>venda</b> de 2 tapetes no PIX; o cliente paga lendo o QR Code. Como ele mora longe, ela agenda a <b>entrega</b> para amanhã. No fim do mês, o dono abre <b>Relatórios</b> e vê receita, custo, lucro e quais tapetes mais venderam.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 3 -->
+<section class="tela" id="dashboard">
+  <h2><span class="num">3</span>Dashboard</h2>
+  <p class="onde">Primeira tela depois do login. Só leitura: mostra um resumo do que importa agora.</p>
+  <div class="grade">
+    <div><strong>Vendas hoje e no mês</strong>Valor vendido, comparando com o período anterior.</div>
+    <div><strong>Ticket médio e lucro bruto</strong>Quanto cada venda vale em média e quanto sobrou depois do custo dos tapetes.</div>
+    <div><strong>Vendas dos últimos 30 dias</strong>Gráfico dia a dia para ver a tendência.</div>
+    <div><strong>Mais vendidos no mês</strong>Os tapetes que estão saindo mais.</div>
+    <div><strong>Entregas de hoje</strong>O que precisa sair da loja hoje.</div>
+    <div><strong>Ordens de produção abertas</strong>O que está sendo fabricado.</div>
+    <div><strong>Estoque que exige atenção</strong>Produtos no mínimo ou esgotados.</div>
+    <div><strong>Clientes para reativar</strong>Quem não compra há algum tempo.</div>
+  </div>
+  <div class="dica">Cada pessoa vê no Dashboard só os blocos do que o cargo dela permite.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 4 -->
+<section class="tela" id="clientes">
+  <h2><span class="num">4</span>Clientes</h2>
+  <p class="onde">Menu › Clientes. Cadastro de quem compra na loja.</p>
+  <h3>Cadastrar</h3>
+  <ol class="passos"><li>Toque em <span class="botao">Novo cliente</span>.</li><li>Preencha pelo menos <b>nome e telefone</b> (endereço, bairro, cidade e CEP ajudam nas entregas).</li><li><span class="botao">Salvar</span>.</li></ol>
+  <h3>A etiqueta de cada cliente</h3>
+  <table>
+    <tr><th>Etiqueta</th><th>O que significa</th></tr>
+    <tr><td><span class="selo s-azul">NOVO</span></td><td>Cadastrado, mas ainda não comprou.</td></tr>
+    <tr><td><span class="selo s-verde">ATIVO</span></td><td>Comprou neste mês.</td></tr>
+    <tr><td><span class="selo s-amarelo">ATENÇÃO</span></td><td>A última compra foi no mês passado. Bom momento para um contato.</td></tr>
+    <tr><td><span class="selo s-vermelho">ATENÇÃO INATIVO</span></td><td>Não compra há 2 meses ou mais. Aparece o botão <span class="botao">Chamar no WhatsApp</span>.</td></tr>
+    <tr><td><span class="selo s-cinza">INATIVO</span></td><td>Cadastro marcado como inativo.</td></tr>
+  </table>
+  <h3>Histórico de compras</h3>
+  <p>O botão <span class="botao">Histórico</span> no card mostra tudo que o cliente já comprou: <b>total gasto, número de compras, ticket médio, data da última compra</b> e cada venda com os itens. Vendas canceladas aparecem riscadas e não contam nos totais.</p>
+  <div class="exemplo">A Dona Maria liga perguntando qual tapete levou ano passado para combinar com um novo. Busque “Maria”, toque em <span class="botao">Histórico</span> e abra a venda: lá estão o modelo e o preço.</div>
+  <h3>Buscar, editar e excluir</h3>
+  <p>O campo de busca procura por nome, telefone ou cidade. <span class="botao">Editar</span> corrige o cadastro; <span class="botao">Excluir</span> tira o cliente da lista, mas as vendas dele continuam guardadas.</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 5 -->
+<section class="tela" id="vendas">
+  <h2><span class="num">5</span>Vendas e PIX</h2>
+  <p class="onde">Menu › Vendas. Onde o vendedor registra cada venda do balcão.</p>
+  <h3>Registrar uma venda</h3>
+  <ol class="passos">
+    <li>Em <b>Cliente</b>, digite parte do nome e escolha na lista (cadastre antes, se for novo).</li>
+    <li>Em <b>Produto</b>, escolha o tapete. A lista mostra o preço e <b>quantos há em estoque</b>.</li>
+    <li>Informe a <b>quantidade</b> e toque em <span class="botao">Adicionar item</span>. Repita para outros tapetes.</li>
+    <li>Escolha a <b>forma de pagamento</b> e, se houver, o <b>desconto em R$</b>.</li>
+    <li>Confira o total e toque em <span class="botao">Finalizar venda</span>.</li>
+  </ol>
+  <div class="exemplo">2 tapetes de R$ 100,00 com R$ 10,00 de desconto: subtotal R$ 200,00, total <b>R$ 190,00</b>. O estoque do tapete cai 2 na hora.</div>
+  <div class="atencao">O sistema não deixa vender mais do que existe no estoque. Se aparecer “Estoque insuficiente”, confira o saldo em Estoque.</div>
+  <h3>Pagamento no PIX com QR Code</h3>
+  <p>Quando a forma de pagamento é <b>PIX</b>, ao finalizar abre uma janela com o <b>QR Code do valor exato</b> e o botão <span class="botao">Copiar código PIX</span> (copia e cola, para mandar pelo WhatsApp). O cliente lê o QR no app do banco e paga.</p>
+  <div class="atencao">O sistema <b>não confirma</b> o pagamento sozinho. Antes de entregar o tapete, confira no app do banco da loja se o dinheiro entrou.</div>
+  <p>Precisa mostrar o QR de novo? No histórico, vendas PIX têm o botão <span class="botao">QR PIX</span>. Para funcionar, o dono cadastra a chave PIX uma vez em Configurações › Dados da loja (PIX).</p>
+  <h3>Cancelar uma venda</h3>
+  <p><span class="botao">Cancelar venda</span> pede o motivo. Os tapetes <b>voltam para o estoque</b> e a venda sai dos relatórios. Se a venda tinha entrega agendada, ela é cancelada junto (a não ser que já esteja em rota).</p>
+  <div class="dica">Quem registra a venda fica como <b>vendedor</b> dela, desde que o usuário tenha um cadastro em Funcionários com o mesmo e-mail. Isso alimenta o relatório de vendas por vendedor.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 6 -->
+<section class="tela" id="estoque">
+  <h2><span class="num">6</span>Estoque</h2>
+  <p class="onde">Menu › Estoque. Tem quatro abas: Produtos, Movimentações, Inventário e Sugestão de compra.</p>
+  <h3>Os dois saldos de cada produto</h3>
+  <figure>
+    <svg viewBox="0 0 640 170" role="img" aria-label="Saldo de produção guarda matéria-prima; saldo comercial guarda o que é vendido">
+      <g font-family="sans-serif" text-anchor="middle">
+        <rect x="20" y="20" width="250" height="110" rx="14" fill="#e2ece7"/><text x="145" y="48" font-size="15" font-weight="800" fill="#1c5c46">Saldo de PRODUÇÃO</text>
+        <text x="145" y="72" font-size="12" fill="#3b4f47">matéria-prima guardada para fabricar</text><text x="145" y="98" font-size="12" fill="#3b4f47">ex.: 40 kg de malha, 12 rolos de fio</text>
+        <rect x="370" y="20" width="250" height="110" rx="14" fill="#1c5c46"/><text x="495" y="48" font-size="15" font-weight="800" fill="#fff">Saldo COMERCIAL</text>
+        <text x="495" y="72" font-size="12" fill="#d7e8df">o que está pronto para vender</text><text x="495" y="98" font-size="12" fill="#d7e8df">ex.: 7 tapetes Kilim 1,5 × 2 m</text>
+        <text x="320" y="62" font-size="12" font-weight="700" fill="#1c5c46">Produção</text><text x="320" y="78" font-size="11" fill="#5b6f67">consome →</text>
+        <text x="320" y="158" font-size="12" fill="#5b6f67">Compras podem entrar em qualquer um dos dois. Vendas sempre saem do comercial.</text>
+      </g>
+      <line x1="272" y1="92" x2="366" y2="92" stroke="#1c5c46" stroke-width="2.5" marker-end="url(#ponta)"/>
+    </svg>
+  </figure>
+  <h3>Aba Produtos</h3>
+  <ul>
+    <li><span class="botao">Novo produto</span>: nome, tipo, unidade (unidade, metro, quilo), preços de custo e de venda e os <b>estoques mínimos</b>. Marque “Pode ser vendido” para tapetes e “Pode ser matéria-prima” para malha, fio etc.</li>
+    <li>A coluna de situação mostra <span class="selo s-verde">OK</span>, <span class="selo s-amarelo">BAIXO</span> (no mínimo ou abaixo) ou <span class="selo s-vermelho">ESGOTADO</span>.</li>
+    <li><span class="botao">Ajustar estoque</span>: corrige um saldo à mão, com motivo obrigatório (ex.: “tapete danificado”, use número negativo para baixa).</li>
+    <li><span class="botao">Ficha técnica</span>: quanto de cada matéria-prima vai em <b>1 unidade</b> do tapete. É ela que permite a ordem de produção automática.</li>
+  </ul>
+  <div class="exemplo">Ficha do “Tapete Kilim 1,5 × 2 m”: 2,5 kg de malha + 1 rolo de fio. Quando o tapete chega ao mínimo, o sistema já sabe quanto material a ordem vai consumir.</div>
+  <h3>Aba Movimentações</h3>
+  <p>O “extrato” do estoque: cada entrada e saída com data, hora, motivo (venda, compra, produção, ajuste, inventário), quantidade, saldo antes → depois e quem fez. Dá para filtrar por produto, saldo e período.</p>
+  <div class="exemplo">“Sumiu 1 tapete?” Filtre pelo produto e veja quem mexeu, quando e por quê.</div>
+  <h3>Aba Inventário (contagem)</h3>
+  <ol class="passos"><li>Escolha o saldo que vai contar: <b>Comercial (loja)</b> ou <b>Produção (matéria-prima)</b>.</li><li>Conte os itens na prateleira e digite em <b>Contado</b>. A coluna <b>Diferença</b> aparece na hora.</li><li>Toque em <span class="botao">Aplicar contagem</span>. Só os itens com diferença são corrigidos; o que ficou em branco não muda.</li></ol>
+  <div class="exemplo">O sistema diz 3, mas na prateleira há 2. Digite 2 e aplique: o estoque passa a 2 e fica registrado como “Inventário” nas movimentações.</div>
+  <h3>Aba Sugestão de compra</h3>
+  <p>Lista do que <b>falta de matéria-prima</b>: soma o que as ordens de produção abertas vão consumir, mais o estoque mínimo de produção, e desconta o que já existe. Mostra o fornecedor principal e o custo estimado.</p>
+  <div class="exemplo">Malha: 10 kg em estoque, ordens abertas vão usar 8 kg e o mínimo é 5 kg → comprar <b>3 kg</b>. A R$ 12,50/kg, custo estimado R$ 37,50.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 7 -->
+<section class="tela" id="compras">
+  <h2><span class="num">7</span>Compras</h2>
+  <p class="onde">Menu › Compras. Registra o que chega dos fornecedores e coloca no estoque.</p>
+  <ol class="passos"><li><span class="botao">Nova compra</span> e escolha o fornecedor (ou digite o nome, se não for cadastrado).</li><li>Adicione os produtos com <b>destino</b>: <b>Comercial</b> (pronto para vender) ou <b>Produção</b> (matéria-prima), quantidade e preço pago.</li><li><span class="botao">Registrar compra</span>: o estoque sobe na hora.</li></ol>
+  <div class="exemplo">Chegaram 20 kg de malha a R$ 10,00: destino Produção. Total R$ 200,00, e o saldo de produção da malha sobe 20 kg.</div>
+  <p><span class="botao">Cancelar</span> desfaz a entrada no estoque. Se o material já foi usado na produção, o sistema não deixa cancelar (não há como “devolver” o que já virou tapete).</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 8 -->
+<section class="tela" id="fornecedores">
+  <h2><span class="num">8</span>Fornecedores</h2>
+  <p class="onde">Menu › Fornecedores. Cadastro das empresas que vendem para a loja: nome, CNPJ, telefone e e-mail.</p>
+  <p>O fornecedor pode ser escolhido nas compras e como <b>fornecedor principal</b> de um produto, que aparece na sugestão de compra.</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 9 -->
+<section class="tela" id="producao">
+  <h2><span class="num">9</span>Produção (ordens de produção)</h2>
+  <p class="onde">Menu › Produção. Controla a fabricação: consome matéria-prima e coloca o tapete pronto no estoque.</p>
+  <figure>
+    <svg viewBox="0 0 640 130" role="img" aria-label="Ordem aberta, finalizada ou cancelada">
+      <g font-family="sans-serif" font-size="13" text-anchor="middle">
+        <rect x="20" y="36" width="170" height="56" rx="12" fill="#f6edcf"/><text x="105" y="60" font-weight="800" fill="#865e08">ABERTA</text><text x="105" y="78" font-size="11" fill="#865e08">em fabricação</text>
+        <rect x="300" y="8" width="320" height="50" rx="12" fill="#ddefe5"/><text x="460" y="30" font-weight="800" fill="#225342">FINALIZADA</text><text x="460" y="47" font-size="11" fill="#225342">sai a matéria-prima, entra o tapete no estoque</text>
+        <rect x="300" y="72" width="320" height="50" rx="12" fill="#f7dfdf"/><text x="460" y="94" font-weight="800" fill="#a42b2b">CANCELADA</text><text x="460" y="111" font-size="11" fill="#a42b2b">nada muda no estoque</text>
+      </g>
+      <g stroke="#1c5c46" stroke-width="2" marker-end="url(#ponta)"><line x1="192" y1="56" x2="296" y2="36"/><line x1="192" y1="72" x2="296" y2="96"/></g>
+    </svg>
+  </figure>
+  <h3>Três tipos de ordem</h3>
+  <table>
+    <tr><th>Tipo</th><th>Quando usar</th></tr>
+    <tr><td><b>Para estoque</b></td><td>Fabricar tapetes para a prateleira.</td></tr>
+    <tr><td><b>Encomenda</b></td><td>Fabricar para um cliente específico (o cliente fica ligado à ordem).</td></tr>
+    <tr><td><span class="selo s-azul">Automática</span></td><td>O sistema abre sozinho quando uma venda deixa o tapete <b>no estoque mínimo ou abaixo</b>. Usa a ficha técnica e fabrica até o dobro do mínimo. Não abre outra se já houver uma aberta para o mesmo tapete.</td></tr>
+  </table>
+  <div class="exemplo">Mínimo do Kilim = 3. Uma venda deixa o saldo em 3 → abre uma ordem automática de 3 tapetes (para chegar a 6), com 7,5 kg de malha e 3 rolos de fio, conforme a ficha. Quando os tapetes ficam prontos, alguém toca em <span class="botao">Finalizar</span>.</div>
+  <div class="atencao">Sem ficha técnica, a ordem automática não é criada. O Dashboard avisa quando há produtos com estoque baixo e sem ficha.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 10 -->
+<section class="tela" id="entregas">
+  <h2><span class="num">10</span>Entregas</h2>
+  <p class="onde">Menu › Entregas. Agenda e acompanha a entrega de vendas.</p>
+  <ol class="passos"><li><span class="botao">Nova entrega</span> e escolha a venda.</li><li>Data, horário, entregador, frete e endereço (em branco = endereço do cliente).</li><li><span class="botao">Agendar</span>.</li></ol>
+  <figure>
+    <svg viewBox="0 0 640 120" role="img" aria-label="Agendada, em rota, entregue ou não entregue">
+      <g font-family="sans-serif" font-size="12" text-anchor="middle" font-weight="800">
+        <rect x="10" y="40" width="130" height="40" rx="20" fill="#f6edcf"/><text x="75" y="65" fill="#865e08">Agendada</text>
+        <rect x="190" y="40" width="130" height="40" rx="20" fill="#dde8f7"/><text x="255" y="65" fill="#1f4e8c">Em rota</text>
+        <rect x="370" y="6" width="130" height="40" rx="20" fill="#ddefe5"/><text x="435" y="31" fill="#225342">Entregue</text>
+        <rect x="370" y="74" width="130" height="40" rx="20" fill="#f7dfdf"/><text x="435" y="99" fill="#a42b2b">Não entregue</text>
+        <text x="575" y="99" font-weight="400" fill="#5b6f67">→ reagendar</text>
+      </g>
+      <g stroke="#1c5c46" stroke-width="2" marker-end="url(#ponta)"><line x1="142" y1="60" x2="186" y2="60"/><line x1="322" y1="54" x2="366" y2="30"/><line x1="322" y1="66" x2="366" y2="92"/></g>
+    </svg>
+  </figure>
+  <p>O entregador vê só as entregas dele e atualiza o status pelo celular. Para isso, o cadastro dele em Funcionários precisa ter o <b>mesmo e-mail</b> do login.</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 11 -->
+<section class="tela" id="despesas">
+  <h2><span class="num">11</span>Despesas</h2>
+  <p class="onde">Menu › Despesas. Os gastos da loja que não são compra de mercadoria.</p>
+  <p>Toque em <span class="botao">Nova despesa</span> e escolha o tipo: <b>Salários, Fretes, Manutenção ou Outros</b>, com descrição, valor e data.</p>
+  <div class="exemplo">Dia 5: “Salário da vendedora – outubro”, tipo Salários, R$ 1.650,00. Ele aparece na linha <b>Salários</b> do relatório financeiro do mês.</div>
+  <div class="dica">O salário cadastrado em Funcionários é só informativo. Para entrar no lucro, lance o pagamento aqui em Despesas.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 12 -->
+<section class="tela" id="relatorios">
+  <h2><span class="num">12</span>Relatórios</h2>
+  <p class="onde">Menu › Relatórios. Escolha o período (início e fim) e a aba. Todos consideram só vendas finalizadas.</p>
+  <h3>Financeiro</h3>
+  <table>
+    <tr><th>Linha</th><th>O que é</th></tr>
+    <tr><td>Receita</td><td>Total vendido no período (já com descontos).</td></tr>
+    <tr><td>Custo da mercadoria vendida</td><td>Quanto custaram os tapetes vendidos.</td></tr>
+    <tr><td>Lucro bruto</td><td>Receita − custo da mercadoria.</td></tr>
+    <tr><td>Salários / Outras despesas</td><td>Lançados na tela Despesas.</td></tr>
+    <tr><td>Lucro líquido</td><td>Lucro bruto − salários − outras despesas.</td></tr>
+    <tr><td>Compras (caixa)</td><td>Quanto foi pago em compras no período.</td></tr>
+    <tr><td>Fluxo de caixa</td><td>Receita − compras − despesas: quanto dinheiro sobrou no caixa.</td></tr>
+  </table>
+  <h3>Curva ABC</h3>
+  <figure>
+    <svg viewBox="0 0 640 140" role="img" aria-label="Classes A, B e C pela receita">
+      <g font-family="sans-serif" text-anchor="middle">
+        <rect x="20" y="30" width="400" height="56" fill="#ddefe5"/><text x="220" y="56" font-size="15" font-weight="800" fill="#225342">A · primeiros 80% da receita</text><text x="220" y="75" font-size="11" fill="#225342">poucos produtos, muito faturamento</text>
+        <rect x="420" y="30" width="100" height="56" fill="#f6edcf"/><text x="470" y="56" font-size="15" font-weight="800" fill="#865e08">B</text><text x="470" y="75" font-size="11" fill="#865e08">até 95%</text>
+        <rect x="520" y="30" width="100" height="56" fill="#eceff1"/><text x="570" y="56" font-size="15" font-weight="800" fill="#55606a">C</text><text x="570" y="75" font-size="11" fill="#55606a">o resto</text>
+        <text x="320" y="118" font-size="12" fill="#5b6f67">Produtos A nunca podem faltar. Produtos C parados podem virar promoção.</text>
+      </g>
+    </svg>
+  </figure>
+  <h3>Margem por produto</h3>
+  <p>Para cada tapete: quantidade vendida, receita, custo, margem em R$ e em %. Mostra o que realmente dá lucro, não só o que vende mais.</p>
+  <div class="exemplo">2 tapetes vendidos por R$ 190,00 com custo de R$ 40,00 cada: custo R$ 80,00, margem R$ 110,00 (57,9%).</div>
+  <h3>Vendedores</h3>
+  <p>Número de vendas, total vendido, ticket médio e descontos dados por cada vendedor. Útil para comissão e metas. Vendas de usuários sem cadastro em Funcionários aparecem como “Sem vendedor”.</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 13 -->
+<section class="tela" id="funcionarios">
+  <h2><span class="num">13</span>Funcionários</h2>
+  <p class="onde">Menu › Funcionários. Cadastro da equipe: nome, cargo, status (Ativo, Férias, Inativo), telefone, e-mail, salário e data de contratação.</p>
+  <div class="atencao">O <b>e-mail do funcionário precisa ser igual ao e-mail do login</b> dele. É assim que o sistema sabe quem é o vendedor de cada venda e quais entregas são de cada entregador.</div>
+  <p>O salário só é visível para Dono e Gerente.</p>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 14 -->
+<section class="tela" id="configuracoes">
+  <h2><span class="num">14</span>Configurações</h2>
+  <p class="onde">Menu › Configurações.</p>
+  <div class="grade">
+    <div><strong>Minha senha</strong>Qualquer pessoa troca a própria senha. Depois é preciso entrar de novo.</div>
+    <div><strong>Tema</strong>Cada um escolhe as cores: Verde Kalke, Escuro, Areia e terracota, Azul-marinho ou Alto contraste (mais fácil de ler).</div>
+    <div><strong>Usuários (Dono)</strong>Criar acessos com e-mail, senha inicial e cargo; desativar quem saiu; redefinir senha esquecida.</div>
+    <div><strong>Dados da loja (PIX)</strong>Chave PIX, nome do recebedor e cidade, usados no QR Code das vendas.</div>
+    <div><strong>Permissões (Dono)</strong>Marca o que cada cargo vê (telas) e pode fazer (ações), agrupado por área. Passe o mouse num item para ver o nome técnico.</div>
+  </div>
+  <div class="exemplo">Contratou um estoquista? Em <b>Usuários</b>, crie o acesso com o e-mail dele e cargo Estoquista. Em <b>Funcionários</b>, cadastre-o com o mesmo e-mail. Pronto: ele entra e vê Estoque, Compras e Produção.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 15 -->
+<section class="tela" id="excel">
+  <h2><span class="num">15</span>Exportar para Excel</h2>
+  <p class="onde">Botão <span class="botao">Exportar Excel</span> nas telas abaixo. O arquivo é baixado no celular ou no computador.</p>
+  <table>
+    <tr><th>Onde</th><th>O que vai na planilha</th></tr>
+    <tr><td>Vendas</td><td>Vendas do período escolhido, com uma segunda aba com os itens.</td></tr>
+    <tr><td>Clientes</td><td>Todos os clientes, com contato, classificação e total comprado.</td></tr>
+    <tr><td>Estoque › Produtos</td><td>Saldos, mínimos, preços e situação.</td></tr>
+    <tr><td>Estoque › Movimentações</td><td>As movimentações, com os mesmos filtros da tela.</td></tr>
+    <tr><td>Estoque › Sugestão de compra</td><td>A lista de compras com custo estimado (boa para mandar ao fornecedor).</td></tr>
+    <tr><td>Relatórios (todas as abas)</td><td>O relatório aberto, no período escolhido.</td></tr>
+  </table>
+  <div class="dica">Valores em R$ já vêm como número com formato de moeda: dá para somar e fazer gráficos direto no Excel.</div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<!-- 16 -->
+<section class="tela" id="duvidas">
+  <h2><span class="num">16</span>Dúvidas e glossário</h2>
+  <table>
+    <tr><th style="width:36%">Pergunta</th><th>Resposta</th></tr>
+    <tr><td>Errei uma venda. E agora?</td><td>Cancele a venda (o estoque volta) e registre de novo.</td></tr>
+    <tr><td>O estoque do sistema não bate com a prateleira.</td><td>Use a aba Inventário. Para entender a diferença, veja Movimentações.</td></tr>
+    <tr><td>Por que o vendedor aparece como “Sem vendedor”?</td><td>O usuário que vendeu não tem cadastro em Funcionários com o mesmo e-mail.</td></tr>
+    <tr><td>O QR do PIX diz “dados não cadastrados”.</td><td>O dono precisa preencher Configurações › Dados da loja (PIX).</td></tr>
+    <tr><td>Não vejo uma tela que preciso.</td><td>Seu cargo não tem permissão. Peça ao dono.</td></tr>
+  </table>
+  <h3>Glossário rápido</h3>
+  <div class="grade">
+    <div><strong>Ticket médio</strong>Valor médio de cada venda (total ÷ número de vendas).</div>
+    <div><strong>Estoque mínimo</strong>Quantidade que acende o alerta e pode abrir ordem automática.</div>
+    <div><strong>Ficha técnica</strong>A “receita” do tapete: material por unidade.</div>
+    <div><strong>Margem</strong>Quanto sobra da venda depois do custo do produto.</div>
+    <div><strong>Matéria-prima</strong>Material usado para fabricar (malha, fio…).</div>
+    <div><strong>Inventário</strong>Contagem física para acertar o estoque do sistema.</div>
+  </div>
+  <a class="topo" href="#inicio">↑ voltar ao índice</a>
+</section>
+
+<footer>Tapetes Kalke · Guia do sistema · novembro de 2026</footer>
+</main>
+</body>
+</html>
