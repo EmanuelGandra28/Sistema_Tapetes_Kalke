@@ -40,7 +40,7 @@ const ROTULOS = {
   configuracoes_editar: ['Alterar configurações e permissões', 'Sistema']
 };
 
-export const CARGO_ROTULO = { DONO: 'Dono', GERENTE: 'Gerente', VENDEDOR: 'Vendedor', ESTOQUISTA: 'Estoquista', ENTREGADOR: 'Entregador' };
+export const CARGO_ROTULO = { ADMINISTRADOR: 'Administrador', DONO: 'Dono', GERENTE: 'Gerente', VENDEDOR: 'Vendedor', ESTOQUISTA: 'Estoquista', ENTREGADOR: 'Entregador' };
 
 export function rotuloPermissao(chave) {
   const conhecido = ROTULOS[chave];
@@ -52,3 +52,6 @@ export function agruparPermissoes(chaves) {
   chaves.forEach((chave) => porGrupo.get(rotuloPermissao(chave).grupo).push(chave));
   return GRUPOS.filter((g) => porGrupo.get(g).length).map((grupo) => ({ grupo, itens: porGrupo.get(grupo) }));
 }
+
+// Dono e Administrador gerenciam usuários e permissões (o Administrador tem tudo o que o Dono tem).
+export const ehGestor = (cargo) => cargo === 'DONO' || cargo === 'ADMINISTRADOR';

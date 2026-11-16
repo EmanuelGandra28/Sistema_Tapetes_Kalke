@@ -1,11 +1,11 @@
 import {Fragment, useState} from 'react';
-import {agruparPermissoes, CARGO_ROTULO, rotuloPermissao} from '../services/permissoes';
+import {agruparPermissoes, CARGO_ROTULO, ehGestor, rotuloPermissao} from '../services/permissoes';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import {useAuth} from '../contexts/AuthContext';
 
-import {CARGOS} from '../services/codigos';
+import {CARGOS_USUARIO} from '../services/codigos';
 import {TEMAS} from '../utils/tema';
 
 const novoUsuario = {nome: '', email: '', senha: '', cargo: 'VENDEDOR'};
@@ -89,33 +89,40 @@ function Usuarios() {
     const create = useMutation({mutationFn: () => api.post('/usuarios', form), onSuccess: () => { setForm(novoUsuario); refresh(); }});
     const update = useMutation({mutationFn: (u) => api.put(`/usuarios/${u.id}`, {nome: u.nome, cargo: u.cargo, ativo: u.ativo}), onSuccess: refresh});
     const reset = useMutation({mutationFn: ({id, senha}) => api.put(`/usuarios/${id}/senha`, {senha})});
+    const remove = useMutation({mutationFn: (id) => api.delete(`/usuarios/${id}`), onSuccess: refresh});
+    const {user: eu} = useAuth();
     const resetSenha = (u) => {
         const senha = window.prompt(`Nova senha para ${u.nome} (mínimo 8 caracteres):`);
         if (senha) reset.mutate({id: u.id, senha});
     };
-    const error = create.error ?? update.error ?? reset.error;
+    // Excluir apaga o acesso de vez (o histórico de vendas e estoque continua). Desativar é a opção reversível.
+    const excluir = (u) => {
+        if (window.confirm(`Excluir o usuário "${u.nome}" (${u.email})?\n\nO acesso é apagado de vez e não pode ser desfeito. As vendas e movimentações feitas por ele continuam no histórico.\n\nSe a pessoa pode voltar, prefira "Desativar".`)) remove.mutate(u.id);
+    };
+    const opcoes = CARGOS_USUARIO.map((c) => <option key={c} value={c}>{CARGO_ROTULO[c] ?? c}</option>);
+    const error = create.error ?? update.error ?? reset.error ?? remove.error;
     return <section className="panel"><h2>Usuários</h2>
         <form className="form-row" onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
             <label>Nome<input required value={form.nome} onChange={(e) => setForm({...form, nome: e.target.value})}/></label>
             <label>E-mail<input required type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}/></label>
             <label>Senha inicial<input required type="password" minLength="8" autoComplete="new-password" value={form.senha}
                                        onChange={(e) => setForm({...form, senha: e.target.value})}/></label>
-            <label>Cargo<select value={form.cargo} onChange={(e) => setForm({...form, cargo: e.target.value})}>{CARGOS.map((c) =>
-                <option key={c}>{c}</option>)}</select></label>
+            <label>Cargo<select value={form.cargo} onChange={(e) => setForm({...form, cargo: e.target.value})}>{opcoes}</select></label>
             <button disabled={create.isPending}>{create.isPending ? 'Criando…' : 'Criar usuário'}</button>
         </form>
         {error && <p className="error">{error.message}</p>}
         {reset.isSuccess && <p>Senha redefinida.</p>}
         {q.isPending ? <Loading/> : q.isError ? <Failure error={q.error}/> : q.data.data.length === 0 ? <Empty/> :
             <div className="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Status</th><th></th></tr></thead>
-                <tbody>{q.data.data.map((u) => <tr key={u.id}>
-                    <td>{u.nome}</td><td>{u.email}</td>
-                    <td><select value={u.cargo} onChange={(e) => update.mutate({...u, cargo: e.target.value})}>{CARGOS.map((c) =>
-                        <option key={c}>{c}</option>)}</select></td>
+                <tbody>{q.data.data.map((u) => { const souEu = u.id === eu?.id; return <tr key={u.id}>
+                    <td>{u.nome}{souEu && <small>(você)</small>}</td><td>{u.email}</td>
+                    <td><select value={u.cargo} aria-label={`Cargo de ${u.nome}`} onChange={(e) => update.mutate({...u, cargo: e.target.value})}>{opcoes}</select></td>
                     <td>{u.ativo ? 'Ativo' : 'Inativo'}</td>
-                    <td><button type="button" className="secondary" onClick={() => update.mutate({...u, ativo: !u.ativo})}>{u.ativo ? 'Desativar' : 'Reativar'}</button>{' '}
-                        <button type="button" className="secondary" onClick={() => resetSenha(u)}>Redefinir senha</button></td>
-                </tr>)}</tbody></table></div>}
+                    <td className="row-actions">
+                        <button type="button" className="secondary" disabled={souEu} title={souEu ? 'Você não pode desativar o seu próprio usuário' : undefined} onClick={() => update.mutate({...u, ativo: !u.ativo})}>{u.ativo ? 'Desativar' : 'Reativar'}</button>
+                        <button type="button" className="secondary" onClick={() => resetSenha(u)}>Redefinir senha</button>
+                        <button type="button" className="danger" disabled={souEu || remove.isPending} title={souEu ? 'Você não pode excluir o seu próprio usuário' : undefined} onClick={() => excluir(u)}>Excluir</button></td>
+                </tr>; })}</tbody></table></div>}
     </section>;
 }
 
@@ -171,10 +178,10 @@ export default function Configuracoes() {
             <div><h1>Configurações</h1><p>Permissões exibidas são as aplicadas pela API para o usuário atual.</p></div>
         </section>
         <MinhaSenha/>
-        {user?.cargo === 'DONO' && <Usuarios/>}
+        {ehGestor(user?.cargo) && <Usuarios/>}
         <EscolhaTema/>
         {canAction("configuracoes_editar") && <DadosLoja/>}
-        {user?.cargo === 'DONO' ? <EditorPermissoes/> : <section className="split">
+        {ehGestor(user?.cargo) ? <EditorPermissoes/> : <section className="split">
             <article className="panel"><h2>Acesso às páginas</h2>
                 <ul className="permission-list">{Object.entries(pages).map(([name, allowed]) => <li key={name}>
                     <span title={name}>{rotuloPermissao(name).rotulo}</span><strong

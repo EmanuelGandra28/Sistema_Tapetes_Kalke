@@ -8,5 +8,7 @@ export const useCodigos = () => {
 };
 
 export const CARGOS = ['DONO', 'GERENTE', 'VENDEDOR', 'ESTOQUISTA', 'ENTREGADOR'];
+// Cargos de login: inclui o ADMINISTRADOR (quem mantém o sistema), que não é cargo de funcionário da loja.
+export const CARGOS_USUARIO = ['ADMINISTRADOR', ...CARGOS];
 
 export const ask = (message) => { const value = window.prompt(message); return value && value.trim() ? value.trim() : null; };

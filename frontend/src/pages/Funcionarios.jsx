@@ -9,7 +9,7 @@ const CARGO_LABEL = { DONO: 'Dono', GERENTE: 'Gerente', VENDEDOR: 'Vendedor', ES
 export default function Funcionarios() {
   const { user } = useAuth();
   // O servidor só mostra e só altera salário para DONO e GERENTE.
-  const verSalario = ['DONO', 'GERENTE'].includes(user?.cargo);
+  const verSalario = ['DONO', 'ADMINISTRADOR', 'GERENTE'].includes(user?.cargo);
   const fields = [
     { name: 'nome', label: 'Nome', required: true, full: true },
     { name: 'cargoId', label: 'Cargo', required: true, options: CARGOS.map((c) => ({ value: c, label: CARGO_LABEL[c] ?? c })), default: 'VENDEDOR' },

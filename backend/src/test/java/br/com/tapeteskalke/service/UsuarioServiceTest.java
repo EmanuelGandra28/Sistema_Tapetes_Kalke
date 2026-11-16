@@ -19,7 +19,8 @@ class UsuarioServiceTest {
     private final UsuarioRepository users = mock(UsuarioRepository.class);
     private final CargoRepository cargos = mock(CargoRepository.class);
     private final CurrentRole role = mock(CurrentRole.class);
-    private final UsuarioService service = new UsuarioService(users, cargos, mock(PasswordEncoder.class), mock(AuditService.class), role);
+    private final AuditService audit = mock(AuditService.class);
+    private final UsuarioService service = new UsuarioService(users, cargos, mock(PasswordEncoder.class), audit, role);
     private Usuario dono;
 
     private static Cargo cargo(String codigo) {
@@ -33,6 +34,8 @@ class UsuarioServiceTest {
         when(role.value()).thenReturn("DONO");
         when(cargos.findByCodigo("DONO")).thenReturn(Optional.of(cargo("DONO")));
         when(cargos.findByCodigo("GERENTE")).thenReturn(Optional.of(cargo("GERENTE")));
+        when(cargos.findByCodigo("ADMINISTRADOR")).thenReturn(Optional.of(cargo("ADMINISTRADOR")));
+        when(audit.userId()).thenReturn("eu");
         dono = new Usuario();
         dono.setNome("Dono");
         dono.setCargo(cargo("DONO"));
@@ -65,5 +68,49 @@ class UsuarioServiceTest {
     void somenteDonoGerenciaUsuarios() {
         when(role.value()).thenReturn("GERENTE");
         assertThrows(AccessDeniedBusinessException.class, service::list);
+    }
+
+    @Test
+    void administradorGerenciaUsuariosComoODono() {
+        when(role.value()).thenReturn("ADMINISTRADOR");
+        when(users.listWithCargo()).thenReturn(java.util.List.of());
+        assertDoesNotThrow(service::list);
+    }
+
+    @Test
+    void ultimoDonoPodeVirarAdministrador() {
+        when(users.countActiveOwners()).thenReturn(1L);
+        service.update("d1", new UpdateRequest("Dono", "ADMINISTRADOR", true));
+        assertEquals("ADMINISTRADOR", dono.getCargo().getCodigo());
+    }
+
+    @Test
+    void excluiUsuario() {
+        var vendedor = new Usuario();
+        vendedor.setCargo(cargo("VENDEDOR"));
+        when(users.findById("v1")).thenReturn(Optional.of(vendedor));
+        service.excluir("v1");
+        verify(users).delete(vendedor);
+    }
+
+    @Test
+    void naoExcluiASiMesmo() {
+        var e = assertThrows(BusinessException.class, () -> service.excluir("eu"));
+        assertEquals("AUTOEXCLUSAO", e.code());
+        verify(users, never()).delete(any());
+    }
+
+    @Test
+    void naoExcluiOUltimoDonoOuAdministrador() {
+        when(users.countActiveOwners()).thenReturn(1L);
+        var e = assertThrows(BusinessException.class, () -> service.excluir("d1"));
+        assertEquals("SELF_LOCKOUT", e.code());
+        verify(users, never()).delete(any());
+    }
+
+    @Test
+    void somenteDonoOuAdministradorExclui() {
+        when(role.value()).thenReturn("GERENTE");
+        assertThrows(AccessDeniedBusinessException.class, () -> service.excluir("d1"));
     }
 }

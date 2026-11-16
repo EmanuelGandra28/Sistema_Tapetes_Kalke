@@ -34,7 +34,7 @@ Não é preciso rodar nenhum SQL no Supabase: a API cria todas as tabelas ao ini
 2. Clique em **New > Blueprint** e escolha este repositório. O Render lê o `render.yaml` e cria o serviço `tapetes-kalke-api`.
 3. Preencha as variáveis pedidas:
    - `DB_URL`, `DB_USERNAME` e `DB_PASSWORD`: os dados do Supabase.
-   - `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD`: o e-mail e a senha do primeiro usuário DONO. Use uma senha nova, que você não use em outros lugares.
+   - `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD`: o e-mail e a senha do primeiro usuário (cargo ADMINISTRADOR, com os mesmos poderes do DONO). Use uma senha nova, que você não use em outros lugares.
 
    O `JWT_SECRET` é gerado automaticamente pelo Render.
 4. Aguarde o primeiro deploy (alguns minutos). O endereço fica parecido com `https://tapetes-kalke-api.onrender.com`; abra `.../actuator/health` e confira se aparece `{"status":"UP"}`.
@@ -51,7 +51,7 @@ O `backend/Dockerfile` é só a receita que o Render usa para montar a API. Voc�
 
 1. Entre com o e-mail e a senha do `BOOTSTRAP_ADMIN_*`.
 2. Em **Configurações**, troque a senha e cadastre os demais usuários.
-3. No Render, apague a variável `BOOTSTRAP_ADMIN_PASSWORD`: ela só é usada para criar o primeiro DONO.
+3. No Render, apague a variável `BOOTSTRAP_ADMIN_PASSWORD`: ela só é usada para criar o primeiro usuário.
 
 ## Rodar no computador (opcional)
 

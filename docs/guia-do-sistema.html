@@ -97,6 +97,7 @@
   <p>À esquerda (no celular, em cima) ficam as telas. <b>Cada um vê só as telas que o cargo permite</b>: um vendedor, por exemplo, não vê Relatórios nem Funcionários.</p>
   <table>
     <tr><th>Cargo</th><th>O que costuma usar (padrão do sistema, o dono pode mudar)</th></tr>
+    <tr><td><b>Administrador</b></td><td>Quem desenvolve e mantém o sistema. Tem tudo o que o Dono tem, sempre: não aparece na tela de permissões porque não há nada para desmarcar.</td></tr>
     <tr><td><b>Dono</b></td><td>Tudo, inclusive usuários, permissões e dados do PIX.</td></tr>
     <tr><td><b>Gerente</b></td><td>Tudo da operação e dos relatórios.</td></tr>
     <tr><td><b>Vendedor</b></td><td>Dashboard, Clientes e Vendas.</td></tr>
@@ -356,7 +357,7 @@
   <div class="grade">
     <div><strong>Minha senha</strong>Qualquer pessoa troca a própria senha. Depois é preciso entrar de novo.</div>
     <div><strong>Tema</strong>Cada um escolhe as cores: Verde Kalke, Escuro, Areia e terracota, Azul-marinho ou Alto contraste (mais fácil de ler).</div>
-    <div><strong>Usuários (Dono)</strong>Criar acessos com e-mail, senha inicial e cargo; desativar quem saiu; redefinir senha esquecida.</div>
+    <div><strong>Usuários (Dono e Administrador)</strong>Criar acessos com e-mail, senha inicial e cargo; redefinir senha esquecida; <b>Desativar</b> (bloqueia, mas dá para reativar depois) ou <b>Excluir</b> (apaga o acesso de vez; o histórico de vendas continua). Ninguém exclui o próprio usuário, e o sistema sempre mantém ao menos um Dono ou Administrador ativo.</div>
     <div><strong>Dados da loja (PIX)</strong>Chave PIX, nome do recebedor e cidade, usados no QR Code das vendas.</div>
     <div><strong>Permissões (Dono)</strong>Marca o que cada cargo vê (telas) e pode fazer (ações), agrupado por área. Passe o mouse num item para ver o nome técnico.</div>
   </div>
