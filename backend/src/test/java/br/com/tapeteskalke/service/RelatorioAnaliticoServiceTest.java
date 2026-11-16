@@ -25,7 +25,8 @@ class RelatorioAnaliticoServiceTest {
         when(vendas.itensVendidos(any(), any())).thenReturn(List.of(item("b", "15", "0", "0"), item("a", "70", "0", "0"), item("d", "5", "0", "0"), item("c", "10", "0", "0")));
         var abc = service.curvaAbc(de, ate);
         assertEquals(List.of("Produto a", "Produto b", "Produto c", "Produto d"), abc.stream().map(RelatorioAnaliticoService.AbcItem::produto).toList());
-        assertEquals(List.of("A", "B", "B", "C"), abc.stream().map(RelatorioAnaliticoService.AbcItem::classe).toList());
+        // A classe vem do acumulado ANTES do item: quem cruza a fronteira dos 80% (ou 95%) ainda fica na classe de cima.
+        assertEquals(List.of("A", "A", "B", "C"), abc.stream().map(RelatorioAnaliticoService.AbcItem::classe).toList());
         assertEquals(0, new BigDecimal("85.00").compareTo(abc.get(1).acumulado()));
     }
 
@@ -61,5 +62,11 @@ class RelatorioAnaliticoServiceTest {
         when(vendas.itensVendidos(any(), any())).thenReturn(List.of(i1, i2));
         var margem = service.margem(de, ate);
         assertEquals(0, new BigDecimal("180").compareTo(margem.stream().map(RelatorioAnaliticoService.MargemItem::receita).reduce(BigDecimal.ZERO, BigDecimal::add)));
+    }
+
+    @Test
+    void produtoUnicoEhClasseA() {
+        when(vendas.itensVendidos(any(), any())).thenReturn(List.<Object[]>of(item("a", "190", "40", "40")));
+        assertEquals("A", service.curvaAbc(de, ate).get(0).classe());
     }
 }

@@ -21,7 +21,7 @@ function Financeiro({ dados }) {
 
 function CurvaAbc({ dados }) {
   if (!dados.length) return <Empty>Nenhuma venda finalizada no período.</Empty>;
-  return <section className="panel"><p className="hint">A: produtos que somam até 80% da receita · B: até 95% · C: o restante.</p>
+  return <section className="panel"><p className="hint">A: os produtos que fazem os primeiros 80% da receita · B: os que levam até 95% · C: o restante.</p>
     <div className="table-wrap"><table><thead><tr><th>Classe</th><th>Produto</th><th>Qtd.</th><th>Receita</th><th>% da receita</th><th>% acumulado</th></tr></thead><tbody>
       {dados.map((d) => <tr key={d.produto}><td><span className={`badge abc-${d.classe.toLowerCase()}`}>{d.classe}</span></td><td>{d.produto}</td><td>{d.quantidade}</td><td>{money(d.receita)}</td><td>{pct(d.percentual)}</td><td>{pct(d.acumulado)}</td></tr>)}
     </tbody></table></div></section>;

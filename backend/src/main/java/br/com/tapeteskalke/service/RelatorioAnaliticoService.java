@@ -59,9 +59,11 @@ public class RelatorioAnaliticoService {
         var lista = new ArrayList<AbcItem>();
         var acumulado = BigDecimal.ZERO;
         for (var a : produtos) {
+            // A classe vem do acumulado ANTES do item: o produto que cruza 80% ainda é A (um produto sozinho com 100% é A, não C).
+            var antes = pct(acumulado, total);
+            var classe = antes.compareTo(BigDecimal.valueOf(80)) < 0 ? "A" : antes.compareTo(BigDecimal.valueOf(95)) < 0 ? "B" : "C";
             acumulado = acumulado.add(a.receita);
             var pctAcumulado = pct(acumulado, total);
-            var classe = pctAcumulado.compareTo(BigDecimal.valueOf(80)) <= 0 ? "A" : pctAcumulado.compareTo(BigDecimal.valueOf(95)) <= 0 ? "B" : "C";
             lista.add(new AbcItem(a.nome, a.quantidade, reais(a.receita), pct(a.receita, total), pctAcumulado, classe));
         }
         return lista;
