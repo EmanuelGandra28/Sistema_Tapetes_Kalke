@@ -126,7 +126,7 @@ public class ExportacaoController {
         var p = periodo(inicio, fim);
         var dados = financeiro.financial(p[0], p[1]);
         var linhas = new ArrayList<List<Object>>();
-        linhas.add(linha("Período", p[0] + " a " + p[1]));
+        linhas.add(linha("Período: " + p[0].format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a " + p[1].format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")), null));
         FINANCEIRO.forEach((chave, rotulo) -> linhas.add(linha(rotulo, dados.get(chave))));
         return excel.exportar("relatorio-financeiro", new Aba("Financeiro", List.of(new Coluna("Indicador", TEXTO), new Coluna("Valor", MOEDA)), linhas));
     }

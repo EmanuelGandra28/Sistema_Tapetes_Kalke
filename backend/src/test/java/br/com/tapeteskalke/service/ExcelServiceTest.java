@@ -40,4 +40,15 @@ class ExcelServiceTest {
         assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", r.getHeaders().getContentType().toString());
         assertTrue(r.getHeaders().getContentDisposition().toString().contains("vendas-2026-11-14.xlsx"));
     }
+
+    @Test
+    void textoEmColunaDeMoedaViraTextoSemQuebrar() throws Exception {
+        var aba = new Aba("Financeiro", List.of(new Coluna("Indicador", Tipo.TEXTO), new Coluna("Valor", Tipo.MOEDA)),
+                List.of(List.of("Período", "2026-11-01 a 2026-11-15"), List.of("Receita", new BigDecimal("190.00"))));
+        try (var wb = new XSSFWorkbook(new ByteArrayInputStream(service.planilha(List.of(aba))))) {
+            var sheet = wb.getSheet("Financeiro");
+            assertEquals("2026-11-01 a 2026-11-15", sheet.getRow(1).getCell(1).getStringCellValue());
+            assertEquals(190.0, sheet.getRow(2).getCell(1).getNumericCellValue(), 0.001);
+        }
+    }
 }

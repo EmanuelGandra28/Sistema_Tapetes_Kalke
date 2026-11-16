@@ -59,7 +59,11 @@ public class ExcelService {
                         var v = valores.get(c);
                         if (v == null) continue;
                         var cell = row.createCell(c);
-                        switch (aba.colunas().get(c).tipo()) {
+                        var tipo = aba.colunas().get(c).tipo();
+                        // Valor que não é número/data na coluna (ex.: uma linha de título) vai como texto, sem derrubar a exportação.
+                        if (!(v instanceof Number) && (tipo == Tipo.MOEDA || tipo == Tipo.NUMERO) && !ehNumero(v.toString())) tipo = Tipo.TEXTO;
+                        if (!(v instanceof java.time.temporal.Temporal) && (tipo == Tipo.DATA || tipo == Tipo.DATAHORA)) tipo = Tipo.TEXTO;
+                        switch (tipo) {
                             case MOEDA -> { cell.setCellValue(numero(v)); cell.setCellStyle(moeda); }
                             case NUMERO -> { cell.setCellValue(numero(v)); cell.setCellStyle(numero); }
                             case DATA -> { cell.setCellValue(v instanceof LocalDate d ? d : LocalDate.parse(v.toString())); cell.setCellStyle(data); }
@@ -77,6 +81,10 @@ public class ExcelService {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private static boolean ehNumero(String s) {
+        try { Double.parseDouble(s); return true; } catch (NumberFormatException e) { return false; }
     }
 
     private static double numero(Object v) {
