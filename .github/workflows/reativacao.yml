@@ -1,0 +1,28 @@
+name: Enviar mensagens da reativação
+# O servidor grátis do Render dorme e não consegue agendar nada sozinho. Esta rotina o acorda e pede para enviar as mensagens
+# que estão na vez das campanhas JÁ APROVADAS. A API só envia entre 08h e 20h e respeita o limite diário e a cota do mês.
+# Precisa do segredo CRON_SECRET (Settings → Secrets and variables → Actions), igual ao CRON_SECRET do Render.
+# Sem o segredo, a rotina não faz nada.
+on:
+  schedule:
+    - cron: '*/30 11-22 * * *' # a cada 30 min, das 08h às 19:30 de Brasília (UTC-3)
+  workflow_dispatch:
+permissions: {}
+jobs:
+  processar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pedir à API para enviar a fila
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          API_URL: ${{ vars.API_URL }}
+        run: |
+          if [ -z "$CRON_SECRET" ] || [ -z "$API_URL" ]; then echo "CRON_SECRET ou API_URL não configurados: nada a fazer."; exit 0; fi
+          for i in $(seq 1 6); do
+            codigo=$(curl -s -o /tmp/resposta.json -w '%{http_code}' --max-time 90 -X POST -H "X-Cron-Secret: $CRON_SECRET" "$API_URL/reativacao/processar" || true)
+            echo "Tentativa $i: HTTP $codigo"
+            if [ "$codigo" = "200" ]; then cat /tmp/resposta.json; exit 0; fi
+            if [ "$codigo" = "403" ]; then echo "::error::Segredo recusado pela API."; exit 1; fi
+            sleep 20
+          done
+          echo "::error::A API não respondeu."; exit 1

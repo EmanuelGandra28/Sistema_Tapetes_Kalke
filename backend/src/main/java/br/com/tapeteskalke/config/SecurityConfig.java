@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .headers(h -> h.contentSecurityPolicy(c -> c.policyDirectives("default-src 'self'")))
                 .authorizeHttpRequests(a -> a.requestMatchers("/api/v1/auth/login", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/imagens/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/webhooks/orquestra", "/api/v1/reativacao/processar").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }

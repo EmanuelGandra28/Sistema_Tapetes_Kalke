@@ -37,6 +37,12 @@ server:
   error:
     include-message: never
 app:
+  whatsapp:
+    url: ${GATEWAY_URL:https://gateway.orquestrasistemas.com.br}
+    api-key: ${GATEWAY_API_KEY:}
+    webhook-secret: ${GATEWAY_WEBHOOK_SECRET:}
+    cron-secret: ${CRON_SECRET:}
+    cota-mensal: ${WHATSAPP_COTA_MENSAL:500}
   cors:
     allowed-origin: ${FRONTEND_URL:http://localhost:5173}
   jwt:

@@ -31,5 +31,13 @@ services:
         sync: false
       - key: BOOTSTRAP_ADMIN_PASSWORD
         sync: false
+      # WhatsApp (Orquestra Gateway): sem a chave o sistema funciona normalmente, só não envia mensagens.
+      - key: GATEWAY_API_KEY
+        sync: false
+      - key: GATEWAY_WEBHOOK_SECRET
+        sync: false
+      # Segredo que a rotina agendada (GitHub Actions) envia para disparar a fila de mensagens.
+      - key: CRON_SECRET
+        sync: false
       - key: DB_POOL_SIZE
         value: "5"
