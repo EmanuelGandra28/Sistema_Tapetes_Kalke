@@ -26,3 +26,6 @@ Thumbs.db
 # Arquivos pessoais e temporários fora do escopo do sistema
 tmp/
 *.zip
+
+# Escritorio visual de brainstorming e ledger de execucao
+.superpowers/
