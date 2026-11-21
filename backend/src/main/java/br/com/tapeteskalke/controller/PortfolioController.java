@@ -46,9 +46,11 @@ public class PortfolioController {
     // (os anteriores podem ser forjados pelo visitante).
     static String ipDe(HttpServletRequest request) {
         var encaminhado = request.getHeader("X-Forwarded-For");
-        if (encaminhado != null && !encaminhado.isBlank()) {
+        if (encaminhado != null) {
             var partes = encaminhado.split(",");
-            return partes[partes.length - 1].trim();
+            for (int i = partes.length - 1; i >= 0; i--) {
+                if (!partes[i].isBlank()) return partes[i].trim();
+            }
         }
         return request.getRemoteAddr();
     }
