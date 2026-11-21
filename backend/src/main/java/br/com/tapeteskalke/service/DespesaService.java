@@ -58,6 +58,12 @@ public class DespesaService {
         return repo.findAllByExcluidaEmIsNullOrderByDataDespesaDesc();
     }
 
+    @Transactional(readOnly = true)
+    public br.com.tapeteskalke.dto.PageResponse<Despesa> page(int page, int size) {
+        var sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Order.desc("dataDespesa"), org.springframework.data.domain.Sort.Order.desc("createdAt"));
+        return br.com.tapeteskalke.dto.PageResponse.from(repo.findAllByExcluidaEmIsNull(org.springframework.data.domain.PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 200), sort)));
+    }
+
     private Despesa ativa(String id) {
         var d = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Despesa", id));
         if (d.getExcluidaEm() != null) throw new ResourceNotFoundException("Despesa", id);

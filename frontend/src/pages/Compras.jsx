@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { ask } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
+import Paginacao from '../components/Paginacao';
 import SearchSelect from '../components/SearchSelect';
 import { useAuth } from '../contexts/AuthContext';
 import { date, money, today } from '../utils/format';
@@ -51,18 +52,19 @@ export default function Compras() {
   const [open, setOpen] = useState(false);
   const { canAction } = useAuth();
   const queryClient = useQueryClient();
-  const q = useQuery({ queryKey: ['compras'], queryFn: () => api.get('/compras') });
+  const [pagina, setPagina] = useState(0);
+  const q = useQuery({ queryKey: ['compras', 'pagina', pagina], queryFn: () => api.get('/compras', { params: { page: pagina, size: 20 } }), placeholderData: keepPreviousData });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['compras'] }); queryClient.invalidateQueries({ queryKey: ['/produtos'] }); };
   const cancel = useMutation({ mutationFn: ({ id, motivo }) => api.post(`/compras/${id}/cancelar`, { motivo }), onSuccess: refresh });
   const cancelar = (c) => { const motivo = ask('Motivo do cancelamento da compra:'); if (motivo) cancel.mutate({ id: c.id, motivo }); };
-  const rows = q.data?.data ?? [];
+  const rows = q.data?.data?.content ?? [];
   return <>
     <section className="page-heading"><div><h1>Compras</h1><p>Entradas de mercadoria e matéria-prima no estoque.</p></div>{canAction('compras_criar') && <button onClick={() => setOpen(true)}>Nova compra</button>}</section>
     {cancel.isError && <p className="error">{cancel.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Data</th><th>Fornecedor</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
       {rows.map((c) => <tr key={c.id}><td>{date(c.dataCompra)}</td><td>{c.fornecedor ?? '—'}</td><td>{money(c.total)}</td><td><span className={`badge ${c.status === 'CANCELADA' ? 'inativo' : ''}`}>{c.status}</span></td>
         <td>{canAction('compras_cancelar') && c.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(c)}>Cancelar compra</button>}</td></tr>)}
-    </tbody></table></div> : <Empty />}</section>
+    </tbody></table></div> : <Empty />}<Paginacao page={pagina} data={q.data?.data} onChange={setPagina} /></section>
     {open && <NovaCompra onClose={() => setOpen(false)} onDone={refresh} />}
   </>;
 }

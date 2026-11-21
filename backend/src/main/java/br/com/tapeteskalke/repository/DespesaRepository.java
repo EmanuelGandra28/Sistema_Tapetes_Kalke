@@ -16,4 +16,6 @@ public interface DespesaRepository extends JpaRepository<Despesa, String> {
     BigDecimal totalByTipo(@Param("tipo") String tipo, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
     List<Despesa> findAllByExcluidaEmIsNullOrderByDataDespesaDesc();
+
+    org.springframework.data.domain.Page<Despesa> findAllByExcluidaEmIsNull(org.springframework.data.domain.Pageable p);
 }

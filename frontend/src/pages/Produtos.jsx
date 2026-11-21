@@ -14,6 +14,7 @@ import Inventario from './estoque/Inventario';
 import SugestaoCompra from './estoque/SugestaoCompra';
 import { useAuth } from '../contexts/AuthContext';
 import { money } from '../utils/format';
+import Paginacao from '../components/Paginacao';
 
 const defaults = { nome: '', tipo: 'TAPETE', categoria: '', cor: '', tamanho: '', unidadeMedida: 'UNIDADE', podeSerVendido: true, podeSerMateriaPrima: false, estoqueMinimoComercial: 1, estoqueMinimoProducao: 1, precoCusto: 0, precoVenda: 0, codigoBarras: '', fornecedorPrincipalId: '', observacoes: '', ativo: true };
 const toForm = (p) => Object.fromEntries(Object.keys(defaults).map((k) => [k, p[k] ?? defaults[k]]));
@@ -40,11 +41,12 @@ export default function Produtos() {
   const [ajuste, setAjuste] = useState(null);
   const [ficha, setFicha] = useState(null);
   const [search, setSearch] = useState('');
+  const [pagina, setPagina] = useState(0);
   const termo = useDebounce(search.trim());
   const { canAction } = useAuth();
   const { tiposProduto, unidadesMedida } = useCodigos();
   const queryClient = useQueryClient();
-  const q = useQuery({ queryKey: ['/produtos', 'lista', termo], queryFn: () => api.get('/produtos', { params: { search: termo, size: 100 } }), placeholderData: keepPreviousData });
+  const q = useQuery({ queryKey: ['/produtos', 'lista', termo, pagina], queryFn: () => api.get('/produtos', { params: { search: termo, page: pagina, size: 25 } }), placeholderData: keepPreviousData });
   const fornecedores = useQuery({ queryKey: ['fornecedores'], queryFn: () => api.get('/fornecedores'), enabled: editing !== null });
   const form = useForm({ defaultValues: defaults });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['/produtos'] }); queryClient.invalidateQueries({ queryKey: ['dashboard'] }); };
@@ -63,7 +65,7 @@ export default function Produtos() {
     {aba === 'inventario' && <Inventario />}
     {aba === 'sugestao' && <SugestaoCompra exportar={exportar} />}
     {aba === 'produtos' && <>
-    <input className="search" placeholder="Buscar por nome ou código de barras" value={search} onChange={(e) => setSearch(e.target.value)} />
+    <input className="search" placeholder="Buscar por nome ou código de barras" value={search} onChange={(e) => { setSearch(e.target.value); setPagina(0); }} />
     {remove.isError && <p className="error">{remove.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Produto</th><th>Comercial</th><th>Produção</th><th>Custo</th><th>Venda</th><th>Status</th><th></th></tr></thead><tbody>
       {rows.map((p) => <tr key={p.id}><td>{p.nome}<small>{p.unidadeMedida}{p.ativo ? '' : ' · inativo'}</small></td><td>{p.estoqueComercial}</td><td>{p.estoqueProducao}</td><td>{money(p.precoCusto)}</td><td>{money(p.precoVenda)}</td>
@@ -74,7 +76,7 @@ export default function Produtos() {
           {p.podeSerVendido && <button className="link" onClick={() => setFicha(p)}>Ficha técnica</button>}
           {canAction('produtos_excluir') && <button className="link danger" onClick={() => excluir(p)}>Excluir</button>}
         </td></tr>)}
-    </tbody></table></div> : <Empty />}</section>
+    </tbody></table></div> : <Empty />}<Paginacao page={pagina} data={q.data?.data} onChange={setPagina} /></section>
     </>}
     {ajuste && <AjusteModal produto={ajuste} onClose={() => setAjuste(null)} onDone={refresh} />}
     {ficha && <FichaTecnicaModal produto={ficha} podeEditar={canAction('produtos_editar')} onClose={() => setFicha(null)} />}

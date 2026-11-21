@@ -5,6 +5,7 @@ import {useDebounce} from '../hooks/useDebounce';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import Modal from '../components/Modal';
+import Paginacao from '../components/Paginacao';
 import HistoricoClienteModal from '../components/HistoricoClienteModal';
 import {useExportar} from '../hooks/useExportar';
 import {useAuth} from '../contexts/AuthContext';
@@ -34,12 +35,13 @@ export default function Clientes() {
     const [historico, setHistorico] = useState(null);
     const exportar = useExportar();
     const [search, setSearch] = useState('');
+    const [pagina, setPagina] = useState(0);
     const termo = useDebounce(search.trim());
     const {canAction} = useAuth();
     const queryClient = useQueryClient();
     const q = useQuery({
-        queryKey: ['clientes', termo],
-        queryFn: () => api.get('/clientes', {params: {search: termo, size: 50}}),
+        queryKey: ['clientes', termo, pagina],
+        queryFn: () => api.get('/clientes', {params: {search: termo, page: pagina, size: 24}}),
         placeholderData: keepPreviousData
     });
     const form = useForm({defaultValues: defaults});
@@ -72,7 +74,7 @@ export default function Clientes() {
             <div className="row-actions"><button type="button" className="secondary" onClick={() => exportar('/clientes/exportar', {}, 'clientes')}>Exportar Excel</button>
             {canAction('clientes_criar') && <button onClick={() => open(null)}>Novo cliente</button>}</div></section>
         <input className="search" placeholder="Buscar por nome, telefone ou cidade" value={search}
-               onChange={(e) => setSearch(e.target.value)}/>
+               onChange={(e) => { setSearch(e.target.value); setPagina(0); }}/>
         {remove.isError && <p className="error">{remove.error.message}</p>}
         {q.isPending ? <Loading/> : q.isError ? <Failure error={q.error}/> :
         <section className="card-grid">{rows.length ? rows.map((c) => <article className="customer-card" key={c.id}>
@@ -91,6 +93,7 @@ export default function Clientes() {
                 {canAction('clientes_excluir') && <button className="link danger" onClick={() => excluir(c)} disabled={remove.isPending}>Excluir</button>}
             </div>
         </article>) : <Empty/>}</section>}
+        <Paginacao page={pagina} data={q.data?.data} onChange={setPagina}/>
         {historico && <HistoricoClienteModal cliente={historico} onClose={() => setHistorico(null)}/>}
         {editing !== null && <Modal title={editing.id ? 'Editar cliente' : 'Novo cliente'} onClose={close}>
             <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>

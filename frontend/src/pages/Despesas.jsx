@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useCodigos } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
+import Paginacao from '../components/Paginacao';
 import { useAuth } from '../contexts/AuthContext';
 import { date, money, today } from '../utils/format';
 
@@ -44,14 +45,15 @@ export default function Despesas() {
   const tipos = tiposDespesa.length ? tiposDespesa : TIPOS_PADRAO;
   const nomeTipo = (codigo) => tipos.find((t) => t.codigo === codigo)?.nome ?? codigo;
   const queryClient = useQueryClient();
-  const q = useQuery({ queryKey: ['despesas'], queryFn: () => api.get('/despesas') });
+  const [pagina, setPagina] = useState(0);
+  const q = useQuery({ queryKey: ['despesas', 'pagina', pagina], queryFn: () => api.get('/despesas', { params: { page: pagina, size: 20 } }), placeholderData: keepPreviousData });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['despesas'] }); queryClient.invalidateQueries({ queryKey: ['relatorio'] }); };
   const remove = useMutation({ mutationFn: ({ id, motivo }) => api.delete(`/despesas/${id}`, { params: { motivo } }), onSuccess: refresh });
   const excluir = (d) => {
     const motivo = window.prompt(`Excluir a despesa "${d.descricao}" (${money(d.valor)})?\nInforme o motivo da exclusão:`);
     if (motivo && motivo.trim()) remove.mutate({ id: d.id, motivo: motivo.trim() });
   };
-  const rows = q.data?.data ?? [];
+  const rows = q.data?.data?.content ?? [];
   const acoes = canAction('despesas_editar') || canAction('despesas_excluir');
   return <>
     <section className="page-heading"><div><h1>Despesas</h1><p>Salários, fretes, manutenção e outros gastos. Entram em "Salários" e "Outras despesas" nos relatórios.</p></div>{canAction('despesas_criar') && <button onClick={() => setEditing({})}>Nova despesa</button>}</section>
@@ -62,7 +64,7 @@ export default function Despesas() {
           {canAction('despesas_editar') && <button className="link" onClick={() => setEditing(d)}>Editar despesa</button>}
           {canAction('despesas_excluir') && <button className="link danger" onClick={() => excluir(d)} disabled={remove.isPending}>Excluir despesa</button>}
         </div></td>}</tr>)}
-    </tbody></table></div> : <Empty />}</section>
+    </tbody></table></div> : <Empty />}<Paginacao page={pagina} data={q.data?.data} onChange={setPagina} /></section>
     {editing !== null && <FormDespesa despesa={editing.id ? editing : null} tipos={tipos} onClose={() => setEditing(null)} onDone={refresh} />}
   </>;
 }

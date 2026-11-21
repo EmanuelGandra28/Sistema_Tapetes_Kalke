@@ -215,3 +215,4 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .pix-aviso { color:var(--danger); font-weight:600; font-size:.9rem; }
 .modal-footer { display:flex; justify-content:flex-end; margin-top:1rem; }
 .whatsapp.disabled { color:var(--muted, #777); opacity:.6; cursor:not-allowed; }
+.paginacao { display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:12px; }

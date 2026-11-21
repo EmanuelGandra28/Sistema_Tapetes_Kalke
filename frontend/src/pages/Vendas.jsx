@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, createKey } from '../services/api';
 import { ask, useCodigos } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
@@ -8,12 +8,14 @@ import { date, money, today } from '../utils/format';
 import { useAuth } from '../contexts/AuthContext';
 import { useExportar } from '../hooks/useExportar';
 import PixModal from '../components/PixModal';
+import Paginacao from '../components/Paginacao';
 
 export default function Vendas() {
   const queryClient = useQueryClient();
   const { canAction } = useAuth();
   const { formasPagamento } = useCodigos();
-  const sales = useQuery({ queryKey: ['vendas'], queryFn: () => api.get('/vendas') });
+  const [pagina, setPagina] = useState(0);
+  const sales = useQuery({ queryKey: ['vendas', 'pagina', pagina], queryFn: () => api.get('/vendas', { params: { page: pagina, size: 20 } }), placeholderData: keepPreviousData });
   const [cliente, setCliente] = useState(null);
   const [produto, setProduto] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -65,10 +67,11 @@ export default function Vendas() {
         <label>Até<input type="date" value={exp.fim} onChange={(e) => setExp({ ...exp, fim: e.target.value })} /></label>
         <button type="button" className="secondary" disabled={!exp.inicio || !exp.fim || exp.inicio > exp.fim} onClick={() => exportar('/vendas/exportar', exp, 'vendas')}>Exportar Excel</button></div></div>
       {cancel.isError && <p className="error">{cancel.error.message}</p>}
-      {sales.isPending ? <Loading /> : sales.isError ? <Failure error={sales.error} /> : sales.data.data.length ? <div className="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Desconto</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
-        {sales.data.data.map((s) => <tr key={s.id}><td>#{s.numeroVenda}</td><td>{s.cliente}</td><td>{date(s.dataVenda)}</td><td>{money(s.desconto)}</td><td>{money(s.total)}</td><td><span className={`badge ${s.status === 'CANCELADA' ? 'inativo' : ''}`}>{s.status}</span></td>
+      {sales.isPending ? <Loading /> : sales.isError ? <Failure error={sales.error} /> : sales.data.data.content.length ? <div className="table-wrap"><table><thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Desconto</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+        {sales.data.data.content.map((s) => <tr key={s.id}><td>#{s.numeroVenda}</td><td>{s.cliente}</td><td>{date(s.dataVenda)}</td><td>{money(s.desconto)}</td><td>{money(s.total)}</td><td><span className={`badge ${s.status === 'CANCELADA' ? 'inativo' : ''}`}>{s.status}</span></td>
           <td className="row-actions">{s.status === 'FINALIZADA' && s.formaPagamento === 'PIX' && <button className="link" onClick={() => setPix(s)}>QR PIX</button>}{canAction('vendas_cancelar') && s.status === 'FINALIZADA' && <button className="link danger" onClick={() => cancelar(s)} disabled={cancel.isPending}>Cancelar venda</button>}</td></tr>)}
       </tbody></table></div> : <Empty />}
+      <Paginacao page={pagina} data={sales.data?.data} onChange={setPagina} />
     </section>
     {pix && <PixModal venda={pix} onClose={() => setPix(null)} />}
   </>;

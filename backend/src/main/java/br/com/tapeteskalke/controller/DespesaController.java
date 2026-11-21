@@ -21,9 +21,9 @@ public class DespesaController {
     }
 
     @GetMapping
-    public ApiResponse<?> list() {
+    public ApiResponse<?> list(@RequestParam(required = false) Integer page, @RequestParam(defaultValue = "20") int size) {
         permissions.page("despesas");
-        return ApiResponse.ok(service.list());
+        return page == null ? ApiResponse.ok(service.list()) : ApiResponse.ok(service.page(page, size));
     }
 
     @PostMapping

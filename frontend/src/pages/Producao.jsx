@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { ask } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
+import Paginacao from '../components/Paginacao';
 import SearchSelect from '../components/SearchSelect';
 import { useAuth } from '../contexts/AuthContext';
 import { date } from '../utils/format';
@@ -61,14 +62,15 @@ export default function Producao() {
   const [open, setOpen] = useState(false);
   const { canAction } = useAuth();
   const queryClient = useQueryClient();
-  const q = useQuery({ queryKey: ['ordens'], queryFn: () => api.get('/ordens-producao') });
+  const [pagina, setPagina] = useState(0);
+  const q = useQuery({ queryKey: ['ordens', 'pagina', pagina], queryFn: () => api.get('/ordens-producao', { params: { page: pagina, size: 20 } }), placeholderData: keepPreviousData });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['ordens'] }); queryClient.invalidateQueries({ queryKey: ['/produtos'] }); };
   const finish = useMutation({ mutationFn: (id) => api.post(`/ordens-producao/${id}/finalizar`), onSuccess: refresh });
   const cancel = useMutation({ mutationFn: ({ id, motivo }) => api.post(`/ordens-producao/${id}/cancelar`, { motivo }), onSuccess: refresh });
   const finalizar = (o) => { if (window.confirm(`Finalizar a ordem #${o.numeroOrdem}? As matérias-primas serão baixadas e ${o.quantidade} unidade(s) entrarão no estoque comercial.`)) finish.mutate(o.id); };
   const cancelar = (o) => { const motivo = ask(`Motivo do cancelamento da ordem #${o.numeroOrdem}:`); if (motivo) cancel.mutate({ id: o.id, motivo }); };
   const error = finish.error ?? cancel.error;
-  const rows = q.data?.data ?? [];
+  const rows = q.data?.data?.content ?? [];
   return <>
     <section className="page-heading"><div><h1>Ordens de produção</h1><p>Consumo de matéria-prima e entrada do produto acabado.</p></div>{canAction('producao_criar') && <button onClick={() => setOpen(true)}>Nova ordem</button>}</section>
     {error && <p className="error">{error.message}</p>}
@@ -78,7 +80,7 @@ export default function Producao() {
           {canAction('producao_finalizar') && <button className="link" onClick={() => finalizar(o)} disabled={finish.isPending}>Finalizar produção</button>}
           {canAction('producao_cancelar') && <button className="link danger" onClick={() => cancelar(o)}>Cancelar ordem</button>}
         </>}</td></tr>)}
-    </tbody></table></div> : <Empty />}</section>
+    </tbody></table></div> : <Empty />}<Paginacao page={pagina} data={q.data?.data} onChange={setPagina} /></section>
     {open && <NovaOrdem onClose={() => setOpen(false)} onDone={refresh} />}
   </>;
 }
