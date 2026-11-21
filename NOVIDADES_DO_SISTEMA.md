@@ -111,7 +111,7 @@ O **Administrador** sempre tem acesso a tudo. Tudo isso pode ser ajustado em Con
 
 ### 3.1 Obrigatório para o sistema subir
 1. **Enviar o código ao GitHub** (`git push`): o envio publica as telas e a API sozinho.
-2. As **migrações de banco V15 a V20** rodam sozinhas no deploy.
+2. As **migrações de banco V15 a V22** rodam sozinhas no deploy.
 
 ### 3.2 Só para o WhatsApp funcionar (sem isso tudo funciona, menos o envio)
 | Onde | O quê |
@@ -136,7 +136,7 @@ O **Administrador** sempre tem acesso a tudo. Tudo isso pode ser ajustado em Con
 | V17 | Mensagens (`mensagem_modelo`, `mensagem_modelo_historico`) + permissão `mensagens_gerenciar` |
 | V18 | O que cada usuário já viu (`usuario_visto`) — usado pela Ajuda e pelas Novidades |
 | V19 | Reativação: consentimentos, campanhas, destinatários, mensagens e eventos do WhatsApp + permissões |
-| V20 | Alerta de produção: campos na configuração da loja e fila `alerta_producao` |
+| V22 | Alerta de produção: campos na configuração da loja e fila `alerta_producao` |
 
 Todas as tabelas novas já nascem com **RLS ligado** (bloqueia o acesso pela API pública do Supabase).
 
@@ -162,7 +162,7 @@ Dois defeitos foram **encontrados e corrigidos pelos testes** durante o trabalho
 ### 5.2 O que NÃO foi testado
 | Item | Por quê |
 |---|---|
-| **Migrações V15 a V20 em um PostgreSQL de verdade** | O computador não tem PostgreSQL nem Docker. Tentei usar um PostgreSQL portátil baixado da internet, mas a execução foi barrada pela permissão de segurança, então desisti desse caminho e apaguei o que tinha baixado. As tabelas foram conferidas contra as entidades por leitura, mas **nunca rodaram**. |
+| **Migrações V15 a V22 em um PostgreSQL de verdade** | O computador não tem PostgreSQL nem Docker. Tentei usar um PostgreSQL portátil baixado da internet, mas a execução foi barrada pela permissão de segurança, então desisti desse caminho e apaguei o que tinha baixado. As tabelas foram conferidas contra as entidades por leitura, mas **nunca rodaram**. |
 | **API subindo com o banco** (Hibernate, consultas das listas em páginas, fila etc.) | Depende do item acima. |
 | **Telas no navegador** (gráficos, fotos, Reativação, Novidades, Ajuda) | Dependem da API rodando. Só foram verificadas por testes automáticos, lint e build. |
 | **Envio real de WhatsApp** | Nenhuma mensagem real foi enviada e a chave do gateway não foi usada (apenas gateway simulado). |
