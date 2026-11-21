@@ -22,6 +22,15 @@ public class MensagemController {
         this.permissions = permissions;
     }
 
+    public record BotaoResponse(String texto) {}
+
+    // Quem trabalha com clientes precisa ler o texto do botão de WhatsApp, mesmo sem poder editar mensagens.
+    @GetMapping("/botao-whatsapp")
+    public ApiResponse<BotaoResponse> botaoWhatsapp() {
+        permissions.page("clientes");
+        return ApiResponse.ok(new BotaoResponse(service.textoBotaoCliente().orElse(null)));
+    }
+
     @GetMapping
     public ApiResponse<?> listar() {
         permissions.action("mensagens_gerenciar");

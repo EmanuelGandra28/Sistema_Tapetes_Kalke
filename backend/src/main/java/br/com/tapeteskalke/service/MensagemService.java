@@ -108,6 +108,13 @@ public class MensagemService {
         return m.isAtivo() ? Optional.of(montar(d, m.getTexto(), dados)) : Optional.empty();
     }
 
+    /** Texto do botão "Chamar no WhatsApp" do cliente (ainda com os campos {nome} e {loja}); vazio se o gatilho estiver desativado. */
+    @Transactional
+    public Optional<String> textoBotaoCliente() {
+        var m = garantir(definicao("BOTAO_WHATSAPP_CLIENTE"));
+        return m.isAtivo() ? Optional.of(m.getTexto()) : Optional.empty();
+    }
+
     // ---------- aba Mensagens ----------
 
     @Transactional

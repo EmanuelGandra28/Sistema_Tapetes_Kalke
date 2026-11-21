@@ -44,6 +44,9 @@ export default function Clientes() {
         queryFn: () => api.get('/clientes', {params: {search: termo, page: pagina, size: 24}}),
         placeholderData: keepPreviousData
     });
+    // Texto do botão de WhatsApp vem do modelo editável em Configurações → Mensagens (desativado = abre a conversa em branco).
+    const botao = useQuery({queryKey: ['mensagens', 'botao'], queryFn: () => api.get('/mensagens/botao-whatsapp'), staleTime: 60000});
+    const modeloBotao = botao.isSuccess ? (botao.data.data.texto ?? '') : MENSAGEM_REATIVACAO_PADRAO;
     const form = useForm({defaultValues: defaults});
     const refresh = () => {
         queryClient.invalidateQueries({queryKey: ['clientes']});
@@ -83,7 +86,7 @@ export default function Clientes() {
             <p>{c.telefone} · {c.cidade ?? 'Cidade não informada'}</p><p>Última compra: {date(c.ultimaCompra)}</p>
             <strong>{money(c.totalCompras)}</strong>{(['ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) && (() => {
                 // Só com 2 meses ou mais sem comprar; o link leva o 55 do Brasil e uma mensagem pronta com o nome do cliente.
-                const link = linkWhatsapp(c.telefone, preencher(MENSAGEM_REATIVACAO_PADRAO, {nome: c.nome.split(' ')[0]}));
+                const link = linkWhatsapp(c.telefone, preencher(modeloBotao, {nome: c.nome.split(' ')[0], loja: 'Tapetes Kalke'}));
                 return link ? <a className="whatsapp" href={link} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>
                     : <span className="whatsapp disabled" title="Cliente sem telefone válido">Chamar no WhatsApp</span>;
             })()}

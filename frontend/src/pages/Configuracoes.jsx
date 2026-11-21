@@ -4,6 +4,8 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import {useAuth} from '../contexts/AuthContext';
+import Abas from '../components/Abas';
+import MensagensConfig from '../components/MensagensConfig';
 
 import {CARGOS_USUARIO} from '../services/codigos';
 import {TEMAS} from '../utils/tema';
@@ -169,6 +171,7 @@ function DadosLoja() {
 
 export default function Configuracoes() {
     const {user, canAction} = useAuth();
+    const [aba, setAba] = useState('geral');
     const q = useQuery({queryKey: ['configuracoes'], queryFn: () => api.get('/configuracoes')});
     if (q.isPending) return <Loading/>;
     if (q.isError) return <Failure error={q.error}/>;
@@ -177,6 +180,8 @@ export default function Configuracoes() {
         <section className="page-heading">
             <div><h1>Configurações</h1><p>Permissões exibidas são as aplicadas pela API para o usuário atual.</p></div>
         </section>
+        {canAction('mensagens_gerenciar') && <Abas abas={[{id: 'geral', rotulo: 'Geral'}, {id: 'mensagens', rotulo: 'Mensagens'}]} ativa={aba} onChange={setAba}/>}
+        {aba === 'mensagens' ? <MensagensConfig/> : <>
         <MinhaSenha/>
         {ehGestor(user?.cargo) && <Usuarios/>}
         <EscolhaTema/>
@@ -193,5 +198,6 @@ export default function Configuracoes() {
                     className={allowed ? 'allowed' : 'denied'}>{allowed ? 'Permitido' : 'Negado'}</strong></li>)}</ul>
             </article>
         </section>}
+        </>}
     </>;
 }

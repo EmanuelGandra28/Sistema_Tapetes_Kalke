@@ -271,3 +271,19 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
   .ajuda-inline { display:none; }
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
+
+/* ---- Configurações → Mensagens ---- */
+.lista-mensagens { list-style:none; margin:1rem 0 0; padding:0; display:grid; gap:.8rem; }
+.lista-mensagens li { display:flex; gap:1rem; justify-content:space-between; align-items:flex-start; padding:.9rem 1rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-alt); }
+.lista-mensagens li.desativada { opacity:.65; }
+.lista-mensagens .trecho { margin:.4rem 0; color:var(--text-muted); font-size:.9rem; white-space:pre-line; max-width:70ch; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.interruptor { display:flex; align-items:center; gap:.4rem; font-size:.85rem; cursor:pointer; }
+.campos-mensagem { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; margin:.6rem 0; font-size:.85rem; color:var(--label); }
+.campos-mensagem .chip { font-family:ui-monospace,monospace; }
+.previa-whatsapp { margin:.8rem 0; padding:.7rem .9rem; border-radius:12px; background:var(--success-soft); color:var(--success-text); }
+.previa-whatsapp p { margin:.3rem 0 0; white-space:pre-line; }
+.aviso { padding:.6rem .8rem; border-radius:8px; background:var(--warning-soft); color:var(--warning); }
+.historico-mensagem article { padding:.6rem 0; border-top:1px solid var(--border-soft); } .historico-mensagem p { margin:.3rem 0; white-space:pre-line; }
+.badge.tipo-aviso_pedido { color:var(--primary); background:var(--primary-soft); } .badge.tipo-campanha { color:var(--warning); background:var(--warning-soft); }
+.badge.tipo-interna { color:var(--text-muted); background:var(--primary-soft); } .badge.tipo-atendimento { color:var(--success-text); background:var(--success-soft); }
+@media (max-width:620px) { .lista-mensagens li { flex-direction:column; } }
