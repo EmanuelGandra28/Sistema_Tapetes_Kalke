@@ -100,7 +100,7 @@ function Campanhas() {
     {q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : lista.length === 0 ? <Empty>Nenhuma campanha ainda.</Empty> :
       <ul className="lista-mensagens">{lista.map((c) => <li key={c.id}>
         <div><strong>{c.nome}</strong> <span className={`badge ${c.status === 'APROVADA' ? 'faixa-boa' : c.status === 'CANCELADA' ? 'inativo' : 'auto'}`}>{STATUS_CAMPANHA[c.status].rotulo}</span>
-          <p className="trecho">{c.destinatarios} clientes · {c.enviadas} mensagens enviadas · {c.intervaloDias} dias entre mensagens · até {c.limiteDiario} por dia</p>
+          <p className="trecho">{c.destinatarios} {c.destinatarios === 1 ? 'cliente' : 'clientes'} · {c.enviadas} {c.enviadas === 1 ? 'mensagem enviada' : 'mensagens enviadas'} · {c.intervaloDias} dias entre mensagens · até {c.limiteDiario} por dia</p>
           <small className="hint">{STATUS_CAMPANHA[c.status].ajuda}</small></div>
         <div className="row-actions">
           <button type="button" className="secondary" onClick={() => setVerResultados(c)}>Ver resultados</button>

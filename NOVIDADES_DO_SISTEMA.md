@@ -111,7 +111,7 @@ O **Administrador** sempre tem acesso a tudo. Tudo isso pode ser ajustado em Con
 
 ### 3.1 Obrigatório para o sistema subir
 1. **Enviar o código ao GitHub** (`git push`): o envio publica as telas e a API sozinho.
-2. As **migrações de banco V15 a V22** rodam sozinhas no deploy.
+2. As **migrações de banco V15 a V22** rodam sozinhas no deploy (a V20 e a V21 são do portfólio, feitas em outro chat).
 
 ### 3.2 Só para o WhatsApp funcionar (sem isso tudo funciona, menos o envio)
 | Onde | O quê |
@@ -144,36 +144,50 @@ Todas as tabelas novas já nascem com **RLS ligado** (bloqueia o acesso pela API
 
 ## 5. Testes
 
-### 5.1 O que foi testado (e passou)
+### 5.1 Testes automáticos
 | Área | Resultado |
 |---|---|
-| Backend (testes automáticos) | **139 passam**, 0 falhas |
-| Frontend (testes automáticos) | **52 passam**, 0 falhas |
-| Qualidade do código do frontend (lint) | sem erros |
-| Montagem do frontend (build) | ok |
-| Conferência das tabelas novas × entidades | as 10 tabelas novas batem com as entidades |
+| Backend | **139 passam**, 0 falhas |
+| Frontend | **58 passam**, 0 falhas; lint e build sem erros |
 
-O que os testes automáticos cobrem: regras de despesas (editar/excluir com motivo), validação de fotos (tipo pelo conteúdo, tamanho, limite, foto principal), relatórios (período anterior, dias sem venda, Excel com título/totais), modelos de mensagens (campos, histórico, restaurar, frase de saída), ajuda e novidades (permissões, primeira visita), **reativação** (horário, limite diário, cota, consentimento, recompra, 402/422, idempotência, respostas), **cliente do gateway** (token em cache, renovação no 401, repetição em 503, upload de foto), **webhook** (assinatura, janela de tempo, evento repetido) e **alerta de produção** (agrupamento, fotos, horário, cota, falhas, evidência).
+Cobrem as regras de despesas, fotos, relatórios, Excel, mensagens, ajuda, novidades, reativação (horário, limite diário, cota, consentimento, recompra, erros do gateway, idempotência, respostas), cliente do gateway (token, renovação, repetição, upload de foto), webhook (assinatura, janela de tempo, evento repetido) e alerta de produção.
 
-Dois defeitos foram **encontrados e corrigidos pelos testes** durante o trabalho:
-- passeio da Ajuda quebraria para quem não tinha nenhuma permissão de ação em Compras e Despesas;
-- o envio de foto ao gateway usaria um recurso do Spring que exige uma biblioteca que o projeto não tem (teria dado erro na primeira foto).
+### 5.2 Teste com banco de dados de verdade (PostgreSQL 17 local) — feito
+Com a sua autorização, subi um PostgreSQL 17 portátil nesta máquina, rodei a API real contra ele e testei pelas chamadas da API e pelo navegador. **Nenhuma mensagem foi enviada a ninguém** (chave falsa, gateway inexistente; a rotina de envio só rodou fora do horário comercial e se recusou a enviar). Tudo foi apagado depois; **nada foi criado no banco do Supabase nem no sistema publicado**.
 
-### 5.2 O que NÃO foi testado
-| Item | Por quê |
+**Migrações:** as **22 migrações aplicaram sem erro** num banco limpo e o Hibernate validou todas as entidades (a API subiu).
+
+**Chamadas da API: 96 verificações, todas corretas**, entre elas:
+- despesas: criar, editar, excluir com motivo (some das listas e do relatório);
+- páginas nas listas (e lista completa quando não se pede página);
+- fotos: primeira vira principal, arquivo falso recusado, leitura pública sem login, trocar/remover a principal;
+- relatórios: resumo, período anterior, ABC, margem e os 4 Excel gerados (arquivos .xlsx válidos);
+- mensagens: 10 gatilhos, campo errado recusado, histórico, restaurar padrão, desativar;
+- ajuda/novidades: marcar visto, repetir, limpar;
+- autorização do cliente (LGPD), candidatos (só quem autorizou e está há 2+ meses sem comprar), campanha: criar, aprovar, pausar, cancelar;
+- rotina agendada: sem segredo e com segredo errado = proibido; fora do horário não envia nada;
+- alerta de produção: venda derrubou o estoque, ordem automática criada, aviso entrou na fila e esperou (fora do horário);
+- webhook assinado: sem assinatura/segredo errado/tempo velho = recusado, válido aceito, repetido ignorado, descadastro revogou a autorização;
+- permissões: o vendedor não vê Reativação, não edita mensagens, não mexe no alerta nem cria campanha, mas lê o texto do botão e registra autorização.
+
+**Telas abertas no navegador com dados reais:** Dashboard, Relatórios (Resumo com gráficos, Produtos que mais dão dinheiro, Quanto sobra em cada tapete), Estoque (miniaturas e botão Fotos), Reativação, Configurações → Mensagens (editor com prévia), Clientes (botão de WhatsApp com `55` e texto do modelo, autorização), Ajuda (passeio) e Novidades.
+
+### 5.3 Defeitos encontrados nesse teste (já corrigidos)
+1. **Duas migrações com a versão 20** (a minha e a do portfólio, criadas ao mesmo tempo por chats diferentes): a API **não subiria**. A minha foi renumerada para **V22**.
+2. **No primeiro login abriam duas janelas juntas** (Novidades e o passeio da Ajuda). Agora a Ajuda espera as Novidades terminarem.
+3. "1 clientes" na lista de campanhas (faltava o singular).
+4. (Antes, nos testes automáticos) o passeio da Ajuda quebraria sem permissões em Compras/Despesas, e o envio de foto ao gateway usaria uma biblioteca que o projeto não tem.
+
+### 5.4 O que NÃO foi testado (de propósito ou por limite)
+| Item | Motivo |
 |---|---|
-| **Migrações V15 a V22 em um PostgreSQL de verdade** | O computador não tem PostgreSQL nem Docker. Tentei usar um PostgreSQL portátil baixado da internet, mas a execução foi barrada pela permissão de segurança, então desisti desse caminho e apaguei o que tinha baixado. As tabelas foram conferidas contra as entidades por leitura, mas **nunca rodaram**. |
-| **API subindo com o banco** (Hibernate, consultas das listas em páginas, fila etc.) | Depende do item acima. |
-| **Telas no navegador** (gráficos, fotos, Reativação, Novidades, Ajuda) | Dependem da API rodando. Só foram verificadas por testes automáticos, lint e build. |
-| **Envio real de WhatsApp** | Nenhuma mensagem real foi enviada e a chave do gateway não foi usada (apenas gateway simulado). |
-| **Webhook real do gateway** | Só com o endereço cadastrado no painel. |
-| **Rotina do GitHub Actions** | Só roda depois do envio ao GitHub e com o segredo. |
-| **Impressão em PDF e Excel abertos no Excel** | Conferidos por teste automático do arquivo, não abertos por uma pessoa. |
+| **Envio real de WhatsApp** (campanhas e alerta) e **webhook real do gateway** | Por decisão sua: nenhum teste que envie mensagem a clientes. Os envios foram testados só com gateway simulado nos testes automáticos. |
+| **Envio dentro do horário comercial** | O teste rodou de madrugada; dentro do horário só há cobertura dos testes automáticos. |
+| **Rotina do GitHub Actions** | Só roda depois do envio ao GitHub e com o segredo cadastrado. |
+| **Impressão em PDF** e **abrir o Excel** no programa | Conferi que os arquivos são válidos, mas ninguém imprimiu/abriu. |
+| **Celular / outros navegadores** | Testado só no navegador do computador. |
 
-**Recomendação:** antes de usar em produção, rodar **um teste completo com o banco** (peço sua autorização para isso) ou, no mínimo, enviar ao GitHub e conferir o deploy no Render (os logs mostram se as migrações rodaram) e abrir cada tela.
-
-### 5.3 Contas de teste e dados
-Nenhum dado foi criado no banco do Supabase nem no sistema publicado.
+**Recomendação antes de usar em produção:** enviar ao GitHub, conferir no Render (logs) que as migrações rodaram e, antes de qualquer campanha real, testar com um número seu e poucas mensagens.
 
 ---
 

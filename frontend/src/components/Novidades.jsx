@@ -1,31 +1,27 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sparkles } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import Modal from './Modal';
-import { NOVIDADES } from '../content/novidades';
-import { chaveNovidade, jaVista, novidadesPendentes, versoesParaUsuario } from '../utils/novidades';
+import { useNovidadesPendentes } from '../hooks/useNovidadesPendentes';
+import { chaveNovidade, jaVista } from '../utils/novidades';
 
 const dataBr = (d) => `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}`;
 
 // "O que há de novo": abre sozinho no primeiro login depois de cada atualização (uma vez por pessoa, guardado na conta)
 // e fica disponível pelo botão "Novidades" para rever o histórico. Mostra só o que a pessoa tem permissão de usar.
 export default function Novidades() {
-  const { user, canPage, canAction } = useAuth();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [aberta, setAberta] = useState(false);
   const [historico, setHistorico] = useState(false); // false = só as novidades novas; true = tudo
-  const vistos = useQuery({ queryKey: ['vistos'], queryFn: () => api.get('/vistos'), enabled: Boolean(user), staleTime: Infinity });
-  const conta = useQuery({ queryKey: ['vistos', 'conta'], queryFn: () => api.get('/vistos/conta'), enabled: Boolean(user), staleTime: Infinity });
+  const { vistos: lista, permitidas, pendentes } = useNovidadesPendentes();
   const marcar = useMutation({
     mutationFn: (ids) => Promise.all(ids.map((id) => api.post('/vistos', { chave: chaveNovidade(id) }))),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['vistos'] })
   });
-  const lista = vistos.data?.data;
-  const permitidas = versoesParaUsuario(NOVIDADES, canPage, canAction);
-  const pendentes = conta.isSuccess ? novidadesPendentes(permitidas, lista, conta.data.data.criadaEm) : [];
   const chavePendentes = pendentes.map((v) => v.id).join(',');
 
   // Primeiro login depois da atualização: abre sozinho.

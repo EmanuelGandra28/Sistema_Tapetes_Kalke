@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleHelp, X } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useNovidadesPendentes } from '../hooks/useNovidadesPendentes';
 import { ajudaDaRota, chaveVisto, passosDoUsuario, primeiraVisita } from '../utils/ajuda';
 
 // Ajuda da tela atual: botão "?" sempre à mão. Na primeira visita de cada pessoa a uma tela, abre sozinha como um passeio
@@ -21,6 +22,8 @@ export default function Ajuda() {
     mutationFn: (id) => api.post('/vistos', { chave: chaveVisto(id) }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vistos'] })
   });
+  const novidades = useNovidadesPendentes();
+  const aguardaNovidades = novidades.carregando || novidades.pendentes.length > 0; // a janela de Novidades vem primeiro
   const permitida = ajuda && canPage(ajuda.pagina);
   const idAjuda = permitida ? ajuda.id : null;
   const jaVisto = vistos.data?.data;
@@ -28,9 +31,9 @@ export default function Ajuda() {
   // Mudou de tela: fecha o painel; se for a primeira visita, abre o passeio.
   useEffect(() => {
     setPasso(0);
-    if (idAjuda && primeiraVisita(idAjuda, jaVisto)) { setModo('passeio'); setAberta(true); } else { setAberta(false); setModo('guia'); }
+    if (idAjuda && !aguardaNovidades && primeiraVisita(idAjuda, jaVisto)) { setModo('passeio'); setAberta(true); } else { setAberta(false); setModo('guia'); }
     // só reage à troca de tela e à chegada da lista de vistos
-  }, [idAjuda, Boolean(jaVisto)]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [idAjuda, Boolean(jaVisto), aguardaNovidades]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!permitida) return null;
   const passos = passosDoUsuario(ajuda, canAction);
