@@ -26,6 +26,7 @@ const ROTULOS = {
   produtos_editar: ['Editar produtos e fornecedores', 'Estoque'],
   produtos_excluir: ['Excluir produtos e fornecedores', 'Estoque'],
   produtos_imagens: ['Anexar e remover fotos dos produtos', 'Estoque'],
+  portfolio_publicar: ['Atualizar o site de portfólio', 'Estoque'],
   mensagens_gerenciar: ['Editar as mensagens automáticas para clientes', 'Sistema'],
   estoque_ajustar: ['Ajustar estoque e fazer inventário', 'Estoque'],
   vendas_criar: ['Registrar vendas', 'Vendas'],

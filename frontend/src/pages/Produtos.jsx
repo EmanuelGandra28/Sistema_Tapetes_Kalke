@@ -20,9 +20,7 @@ import { DICAS } from '../content/ajuda';
 import FotoProduto, { useFotosPrincipais } from '../components/FotoProduto';
 import FotosProdutoModal from '../components/FotosProdutoModal';
 
-const defaults = { nome: '', tipo: 'TAPETE', categoria: '', cor: '', tamanho: '', unidadeMedida: 'UNIDADE', podeSerVendido: true, podeSerMateriaPrima: false, estoqueMinimoComercial: 1, estoqueMinimoProducao: 1, precoCusto: 0, precoVenda: 0, codigoBarras: '', fornecedorPrincipalId: '', observacoes: '', ativo: true };
-const toForm = (p) => Object.fromEntries(Object.keys(defaults).map((k) => [k, p[k] ?? defaults[k]]));
-const toPayload = (d) => ({ ...d, estoqueMinimoComercial: Number(d.estoqueMinimoComercial), estoqueMinimoProducao: Number(d.estoqueMinimoProducao), precoCusto: Number(d.precoCusto), precoVenda: Number(d.precoVenda) });
+import { produtoDefaults as defaults, produtoParaForm as toForm, produtoParaPayload as toPayload } from '../utils/produto';
 
 function AjusteModal({ produto, onClose, onDone }) {
   const [saldo, setSaldo] = useState('COMERCIAL'); const [quantidade, setQuantidade] = useState(''); const [observacao, setObservacao] = useState('');
@@ -60,12 +58,16 @@ export default function Produtos() {
   const close = () => setEditing(null);
   const save = useMutation({ mutationFn: (data) => editing?.id ? api.put(`/produtos/${editing.id}`, toPayload(data)) : api.post('/produtos', toPayload(data)), onSuccess: () => { close(); refresh(); } });
   const remove = useMutation({ mutationFn: (id) => api.delete(`/produtos/${id}`), onSuccess: refresh });
+  const atualizarSite = useMutation({ mutationFn: () => api.post('/portfolio/publicar') });
+  const modoSite = form.watch('portfolioModo');
   const excluir = (p) => { if (window.confirm(`Excluir o produto "${p.nome}"? O histórico de vendas é mantido.`)) remove.mutate(p.id); };
   const options = (list, fallback) => (list.length ? list : fallback.map((codigo) => ({ codigo, nome: codigo }))).map((o) => <option key={o.codigo} value={o.codigo}>{o.nome}</option>);
   const rows = q.data?.data?.content ?? [];
   const abas = [{ id: 'produtos', rotulo: 'Produtos' }, { id: 'movimentacoes', rotulo: 'Movimentações' }, ...(canAction('estoque_ajustar') ? [{ id: 'inventario', rotulo: 'Inventário' }] : []), { id: 'sugestao', rotulo: 'Sugestão de compra' }];
   return <>
-    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{aba === 'produtos' && <div className="row-actions"><button type="button" className="secondary" onClick={() => exportar('/estoque/exportar', {}, 'estoque')}>Exportar Excel</button>{canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</div>}</section>
+    <section className="page-heading"><div><h1>Estoque</h1><p>Produtos, dois saldos e alertas.</p></div>{aba === 'produtos' && <div className="row-actions"><button type="button" className="secondary" onClick={() => exportar('/estoque/exportar', {}, 'estoque')}>Exportar Excel</button>{canAction('portfolio_publicar') && <button type="button" className="secondary" disabled={atualizarSite.isPending} onClick={() => { if (window.confirm('Atualizar o site agora? As mudanças aparecem em 2 a 5 minutos.')) atualizarSite.mutate(); }}>{atualizarSite.isPending ? 'Pedindo…' : 'Atualizar site'}</button>}{canAction('produtos_criar') && <button onClick={() => open(null)}>Novo produto</button>}</div>}</section>
+    {atualizarSite.isSuccess && <p className="hint" role="status">Pedido enviado! O site é atualizado em 2 a 5 minutos.</p>}
+    {atualizarSite.isError && <p className="error" role="alert">{atualizarSite.error.message}</p>}
     <Abas abas={abas} ativa={aba} onChange={setAba} />
     {aba === 'movimentacoes' && <Movimentacoes exportar={exportar} />}
     {aba === 'inventario' && <Inventario />}
@@ -103,6 +105,15 @@ export default function Produtos() {
         <label>Estoque mínimo produção <Dica texto={DICAS.estoqueMinimo} /><input type="number" min="0" step="0.001" {...form.register('estoqueMinimoProducao')} /></label>
         <label className="full">Fornecedor principal<select {...form.register('fornecedorPrincipalId')}><option value="">Nenhum</option>{(fornecedores.data?.data ?? []).map((f) => <option key={f.id} value={f.id}>{f.nomeEmpresa}</option>)}</select></label>
         <label className="full">Observações<input {...form.register('observacoes')} /></label>
+        <h3 className="full">Site (portfólio)</h3>
+        <label>Aparece no site?<select {...form.register('portfolioModo')}><option value="NENHUM">Não aparece</option><option value="VENDA">Sim, à venda (com preço)</option><option value="GALERIA">Só como foto na galeria</option></select></label>
+        {modoSite !== 'NENHUM' && <>
+          <label>Linha<select {...form.register('portfolioLinha')} required={modoSite === 'VENDA'}><option value="">Escolha…</option><option value="BANHEIRO">Banheiro</option><option value="COZINHA">Cozinha</option><option value="SALA">Sala</option><option value="OUTRA">Outra</option></select></label>
+          <label className="full">Descrição para o site<input maxLength="500" placeholder="Ex.: Tulipas vermelhas e amarelas, feitas à mão" {...form.register('portfolioDescricao')} /></label>
+          <label>Ordem de destaque<input type="number" min="0" step="1" {...form.register('portfolioOrdem')} /></label>
+          <label>Selo<select {...form.register('portfolioSelo')}><option value="">Nenhum</option><option value="Novo">Novo</option><option value="Mais pedido">Mais pedido</option></select></label>
+          <p className="hint full">O preço no site é o preço de venda. As fotos vêm do botão "Fotos". Mudanças aparecem no site na próxima atualização (automática a cada 6 horas ou pelo botão "Atualizar site").</p>
+        </>}
         <label className="check"><input type="checkbox" {...form.register('podeSerVendido')} /> Pode ser vendido</label>
         <label className="check"><input type="checkbox" {...form.register('podeSerMateriaPrima')} /> Pode ser matéria-prima</label>
         <label className="check"><input type="checkbox" {...form.register('ativo')} /> Ativo</label>

@@ -58,6 +58,8 @@ export const AJUDA = {
       { texto: 'Em "Produtos", busque pelo nome ou código de barras. A coluna Status mostra OK, Baixo ou Esgotado.' },
       { texto: 'Cadastre com "Novo produto": nome, tipo, preço de custo e de venda, e o estoque mínimo. O mínimo é a quantidade que dispara o alerta.', acao: 'produtos_criar' },
       { texto: '"Fotos" permite anexar até 8 imagens por produto; a primeira vira a principal e aparece nas listas e nas ordens de produção.', acao: 'produtos_imagens' },
+      { texto: 'Para um tapete aparecer no site da loja, edite o produto e, em "Site (portfólio)", escolha "Sim, à venda" (com preço) ou "Só como foto na galeria". Escolha também a linha e coloque fotos no botão "Fotos".', acao: 'produtos_editar' },
+      { texto: 'O site se atualiza sozinho a cada 6 horas. Para ver a mudança antes, use "Atualizar site" no topo da tela; ela aparece em 2 a 5 minutos.', acao: 'portfolio_publicar' },
       { texto: '"Ficha técnica" é a receita: quanto de cada matéria-prima vai em uma unidade do tapete. Sem ela, a produção automática não abre ordem.', acao: 'produtos_editar' },
       { texto: '"Ajustar estoque" corrige o saldo (positivo ou negativo) e exige um motivo, que fica registrado.', acao: 'estoque_ajustar' },
       { texto: 'Na aba "Movimentações" veja toda entrada e saída, com saldo antes e depois e quem fez. "Inventário" compara a contagem física com o sistema; "Sugestão de compra" lista o que falta de matéria-prima.' }
