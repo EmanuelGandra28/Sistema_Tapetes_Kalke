@@ -51,6 +51,12 @@ app:
   bootstrap-admin:
     email: ${BOOTSTRAP_ADMIN_EMAIL:admin@tapeteskalke.local}
     password: ${BOOTSTRAP_ADMIN_PASSWORD:CHANGE_ME_AT_FIRST_START}
+  # Botão "Atualizar site": dispara o workflow do site de portfólio no GitHub. O token (Actions: escrita, só nesse
+  # repositório) vem só da variável de ambiente; sem ele, o botão avisa que ainda não foi configurado.
+  portfolio:
+    github-token: ${PORTFOLIO_GITHUB_TOKEN:}
+    repo: ${PORTFOLIO_REPO:EmanuelGandra28/Portfolio_Tapetes_Kalke}
+    workflow: ${PORTFOLIO_WORKFLOW:publicar.yml}
 # Documentação da API desligada por padrão; ligue com API_DOCS_ENABLED=true apenas em desenvolvimento.
 springdoc:
   api-docs:

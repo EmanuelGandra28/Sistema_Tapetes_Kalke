@@ -39,5 +39,9 @@ services:
       # Segredo que a rotina agendada (GitHub Actions) envia para disparar a fila de mensagens.
       - key: CRON_SECRET
         sync: false
+      # Botão "Atualizar site" do portfólio: token do GitHub com permissão de Actions (escrita) só no repositório do site.
+      # Sem ele o sistema funciona normalmente; o botão apenas avisa que ainda não foi configurado.
+      - key: PORTFOLIO_GITHUB_TOKEN
+        sync: false
       - key: DB_POOL_SIZE
         value: "5"
