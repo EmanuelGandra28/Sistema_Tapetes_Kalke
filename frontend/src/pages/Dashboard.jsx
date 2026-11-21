@@ -69,40 +69,43 @@ export default function Dashboard() {
 
     {v && <div className="dash-grid wide-left"><GraficoVendas dias={v.vendasPorDia} /><MaisVendidos itens={v.maisVendidos} /></div>}
 
-    <div className="dash-grid">
-      {d.entregasHoje && <section className="panel"><h2>Entregas de hoje</h2>
-        {d.entregasHoje.length === 0 ? <Empty children="Nenhuma entrega pendente para hoje." /> :
-          <ul className="alerts">{d.entregasHoje.map((e) => <li key={e.id}>
-            <span><strong>{e.horario ? e.horario.slice(0, 5) : '--:--'}</strong> · #{e.numeroVenda} {e.cliente}{e.bairro ? ` (${e.bairro})` : ''}</span>
-            <span className={`badge ${e.status === 'EM_ROTA' ? 'baixo' : 'atencao'}`}>{STATUS_ENTREGA[e.status] ?? e.status}</span>
-          </li>)}</ul>}
-        <Link to="/entregas" className="see-more">Ver todas as entregas</Link>
-      </section>}
+    {/* Cartões curtos à esquerda; a lista de estoque (que pode ser longa) fica numa coluna própria à direita. */}
+    <div className={d.estoqueBaixo ? 'dash-split' : undefined}>
+      <div className="dash-grid">
+        {d.entregasHoje && <section className="panel"><h2>Entregas de hoje</h2>
+          {d.entregasHoje.length === 0 ? <Empty children="Nenhuma entrega pendente para hoje." /> :
+            <ul className="alerts">{d.entregasHoje.map((e) => <li key={e.id}>
+              <span><strong>{e.horario ? e.horario.slice(0, 5) : '--:--'}</strong> · #{e.numeroVenda} {e.cliente}{e.bairro ? ` (${e.bairro})` : ''}</span>
+              <span className={`badge ${e.status === 'EM_ROTA' ? 'baixo' : 'atencao'}`}>{STATUS_ENTREGA[e.status] ?? e.status}</span>
+            </li>)}</ul>}
+          <Link to="/entregas" className="see-more">Ver todas as entregas</Link>
+        </section>}
 
-      {d.producao && <section className="panel"><h2>Ordens de produção abertas</h2>
-        <p className="muted">{d.producao.abertas} aberta(s){d.producao.automaticas ? `, ${d.producao.automaticas} criada(s) automaticamente` : ''}.</p>
-        {d.producao.ultimas.length === 0 ? <Empty children="Nenhuma ordem aberta." /> :
-          <ul className="alerts">{d.producao.ultimas.map((o) => <li key={o.id}>
-            <span>#{o.numero} · {Number(o.quantidade).toLocaleString('pt-BR')} × {o.produto}</span>
-            {o.origem === 'AUTOMATICA' ? <span className="badge auto">Automática</span> : <span className="muted">{date(o.data)}</span>}
-          </li>)}</ul>}
-        <Link to="/ordens-producao" className="see-more">Ver produção</Link>
-      </section>}
+        {d.producao && <section className="panel"><h2>Ordens de produção abertas</h2>
+          <p className="muted">{d.producao.abertas} aberta(s){d.producao.automaticas ? `, ${d.producao.automaticas} criada(s) automaticamente` : ''}.</p>
+          {d.producao.ultimas.length === 0 ? <Empty children="Nenhuma ordem aberta." /> :
+            <ul className="alerts">{d.producao.ultimas.map((o) => <li key={o.id}>
+              <span>#{o.numero} · {Number(o.quantidade).toLocaleString('pt-BR')} × {o.produto}</span>
+              {o.origem === 'AUTOMATICA' ? <span className="badge auto">Automática</span> : <span className="muted">{date(o.data)}</span>}
+            </li>)}</ul>}
+          <Link to="/ordens-producao" className="see-more">Ver produção</Link>
+        </section>}
+
+        {d.clientes && <section className="panel"><h2>Clientes</h2>
+          <p><strong>{d.clientes.total}</strong> cliente(s) cadastrados.</p>
+          <p>{d.clientes.paraReativar > 0 ? <><strong>{d.clientes.paraReativar}</strong> cliente(s) sem comprar há mais de 2 meses: bom momento para chamar no WhatsApp.</> : 'Nenhum cliente parado há mais de 2 meses.'}</p>
+          <Link to="/clientes" className="see-more">Ver clientes</Link>
+        </section>}
+      </div>
 
       {d.estoqueBaixo && <section className="panel"><h2>Estoque que exige atenção</h2>
         {semFicha.length > 0 && <p className="notice">{semFicha.length} produto(s) com estoque baixo sem ficha técnica: a ordem automática não é criada para eles. Cadastre a ficha em Estoque.</p>}
         {baixos.length === 0 ? <Empty children="Nenhum alerta de estoque no momento." /> :
-          <ul className="alerts">{baixos.slice(0, 8).map((p) => <li key={p.id}>
-            <span><strong>{p.nome}</strong><small className="muted"> · comercial {p.comercial} (mín. {p.minimoComercial}) · produção {p.producao}</small></span>
+          <ul className="alerts estoque">{baixos.slice(0, 8).map((p) => <li key={p.id}>
+            <span><strong>{p.nome}</strong><small className="muted">comercial {p.comercial} (mín. {p.minimoComercial}) · produção {p.producao}</small></span>
             <span className="row-actions">{p.semFichaTecnica && <span className="badge atencao">Sem ficha</span>}<span className={`badge ${p.esgotado ? 'esgotado' : 'baixo'}`}>{p.esgotado ? 'Esgotado' : 'Baixo'}</span></span>
           </li>)}</ul>}
         <Link to="/produtos" className="see-more">Ver estoque</Link>
-      </section>}
-
-      {d.clientes && <section className="panel"><h2>Clientes</h2>
-        <p><strong>{d.clientes.total}</strong> cliente(s) cadastrados.</p>
-        <p>{d.clientes.paraReativar > 0 ? <><strong>{d.clientes.paraReativar}</strong> cliente(s) sem comprar há mais de 2 meses: bom momento para chamar no WhatsApp.</> : 'Nenhum cliente parado há mais de 2 meses.'}</p>
-        <Link to="/clientes" className="see-more">Ver clientes</Link>
       </section>}
     </div>
   </>;

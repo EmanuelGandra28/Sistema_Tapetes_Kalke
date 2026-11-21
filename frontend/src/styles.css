@@ -142,6 +142,14 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .dash-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1rem; align-items:start; }
 .dash-grid.wide-left { grid-template-columns:minmax(0,2fr) minmax(280px,1fr); }
 .dash-grid .panel { min-width:0; }
+/* Cartões curtos à esquerda e o estoque (lista longa) em coluna própria à direita, para a lista não empurrar os outros para baixo. */
+.dash-split { display:grid; grid-template-columns:minmax(0,2fr) minmax(280px,1fr); gap:1rem; align-items:start; }
+.dash-split > .dash-grid { grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); }
+.dash-split .panel { margin-bottom:0; }
+.alerts .row-actions { flex-shrink:0; flex-wrap:nowrap; align-items:flex-start; }
+.alerts.estoque li { flex-wrap:wrap; gap:.35rem .75rem; align-items:center; }
+.alerts.estoque li > span:first-child { flex:1 1 180px; min-width:0; }
+.alerts.estoque li strong { display:block; color:var(--text); }
 .bar-chart { display:flex; align-items:flex-end; gap:3px; height:180px; padding-top:.5rem; border-bottom:1px solid var(--border); }
 .bar-col { flex:1; height:100%; display:flex; align-items:flex-end; }
 .bar { width:100%; background:var(--primary); border-radius:3px 3px 0 0; min-height:0; }
@@ -153,7 +161,7 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .rank-bar span { display:block; height:100%; background:var(--accent); border-radius:4px; }
 .see-more { display:inline-block; margin-top:.75rem; color:var(--primary); font-weight:600; text-decoration:none; } .see-more:hover { text-decoration:underline; }
 .notice { padding:.6rem .8rem; border-radius:8px; background:var(--warning-soft); color:var(--warning); font-size:.88rem; }
-@media(max-width:900px){ .dash-grid.wide-left { grid-template-columns:1fr; } }
+@media(max-width:900px){ .dash-grid.wide-left, .dash-split { grid-template-columns:1fr; } }
 /* Logomarca */
 :root { --logo-menu-fill:#f3e9d8; } [data-theme="contraste"] { --logo-menu-fill:#ffffff; }
 .logo { display:flex; align-items:center; gap:.7rem; }
