@@ -6,6 +6,7 @@ import {Loading, Failure, Empty} from '../components/State';
 import {useAuth} from '../contexts/AuthContext';
 import Abas from '../components/Abas';
 import MensagensConfig from '../components/MensagensConfig';
+import AlertaProducaoConfig from '../components/AlertaProducaoConfig';
 
 import {CARGOS_USUARIO} from '../services/codigos';
 import {TEMAS} from '../utils/tema';
@@ -198,6 +199,7 @@ export default function Configuracoes() {
         <EscolhaTema/>
         <ReverTutoriais/>
         {canAction("configuracoes_editar") && <DadosLoja/>}
+        {canAction("configuracoes_editar") && <AlertaProducaoConfig/>}
         {ehGestor(user?.cargo) ? <EditorPermissoes/> : <section className="split">
             <article className="panel"><h2>Acesso às páginas</h2>
                 <ul className="permission-list">{Object.entries(pages).map(([name, allowed]) => <li key={name}>

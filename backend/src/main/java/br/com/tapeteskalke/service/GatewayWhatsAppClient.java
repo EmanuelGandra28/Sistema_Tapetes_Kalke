@@ -54,15 +54,44 @@ public class GatewayWhatsAppClient implements WhatsAppProvider {
         corpo.put("texto", texto);
         corpo.put("finalidade", finalidade);
         if (evidencia != null && !evidencia.isBlank()) corpo.put("consentimento", java.util.Map.of("evidencia", evidencia));
-        JsonNode r;
-        try {
-            r = chamar(() -> enviar(corpo, idempotencyKey, token(false)));
-        } catch (GatewayException e) {
-            // Token vencido ou revogado: renova e repete UMA vez, com a mesma chave de idempotência.
-            if (e.status() != 401) throw e;
-            r = chamar(() -> enviar(corpo, idempotencyKey, token(true)));
-        }
+        var r = comToken((t) -> enviar(corpo, idempotencyKey, t));
         return new Enviada(r.path("mensagem_id").asText(), r.path("situacao").asText("na_fila"));
+    }
+
+    @Override
+    public Enviada enviarImagem(String destinatario, byte[] dados, String contentType, String legenda, String finalidade, String idempotencyKey, String evidencia) {
+        if (!configurado()) throw new GatewayException(503, "GATEWAY_NAO_CONFIGURADO", "A chave do gateway de WhatsApp não está configurada no servidor", null);
+        var arquivo = comToken((t) -> upload(dados, contentType, t)).path("arquivo_id").asText();
+        var corpo = new LinkedHashMap<String, Object>();
+        corpo.put("destinatario", destinatario);
+        corpo.put("arquivo_id", arquivo);
+        if (legenda != null && !legenda.isBlank()) corpo.put("legenda", legenda);
+        corpo.put("finalidade", finalidade);
+        if (evidencia != null && !evidencia.isBlank()) corpo.put("consentimento", java.util.Map.of("evidencia", evidencia));
+        var r = comToken((t) -> enviar(corpo, idempotencyKey, t));
+        return new Enviada(r.path("mensagem_id").asText(), r.path("situacao").asText("na_fila"));
+    }
+
+    // Token vencido ou revogado: renova e repete UMA vez, com a mesma chave de idempotência.
+    private JsonNode comToken(java.util.function.Function<String, JsonNode> acao) {
+        try {
+            return chamar(() -> acao.apply(token(false)));
+        } catch (GatewayException e) {
+            if (e.status() != 401) throw e;
+            return chamar(() -> acao.apply(token(true)));
+        }
+    }
+
+    private JsonNode upload(byte[] dados, String contentType, String bearer) {
+        // Montagem manual (o MultipartBodyBuilder do Spring exige uma biblioteca reativa que o projeto não usa).
+        var cabecalho = new org.springframework.http.HttpHeaders();
+        cabecalho.setContentType(MediaType.parseMediaType(contentType));
+        var parte = new org.springframework.http.HttpEntity<>(new org.springframework.core.io.ByteArrayResource(dados) {
+            @Override public String getFilename() { return "foto"; }
+        }, cabecalho);
+        var corpo = new org.springframework.util.LinkedMultiValueMap<String, Object>();
+        corpo.add("arquivo", parte);
+        return http.post().uri("/v1/arquivos").header("Authorization", "Bearer " + bearer).contentType(MediaType.MULTIPART_FORM_DATA).body(corpo).retrieve().body(JsonNode.class);
     }
 
     private JsonNode enviar(Object corpo, String idempotencyKey, String bearer) {

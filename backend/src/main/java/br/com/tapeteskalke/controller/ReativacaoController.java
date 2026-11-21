@@ -1,6 +1,7 @@
 package br.com.tapeteskalke.controller;
 
 import br.com.tapeteskalke.dto.ApiResponse;
+import br.com.tapeteskalke.service.AlertaProducaoService;
 import br.com.tapeteskalke.service.PermissionService;
 import br.com.tapeteskalke.service.ReativacaoService;
 import jakarta.validation.Valid;
@@ -20,11 +21,13 @@ public class ReativacaoController {
     public record CriarRequest(@NotBlank String nome, @NotNull List<String> clienteIds, Integer intervaloDias, Integer limiteDiario) {}
 
     private final ReativacaoService service;
+    private final AlertaProducaoService alertas;
     private final PermissionService permissions;
     private final String cronSecret;
 
-    public ReativacaoController(ReativacaoService service, PermissionService permissions, @Value("${app.whatsapp.cron-secret:}") String cronSecret) {
+    public ReativacaoController(ReativacaoService service, AlertaProducaoService alertas, PermissionService permissions, @Value("${app.whatsapp.cron-secret:}") String cronSecret) {
         this.service = service;
+        this.alertas = alertas;
         this.permissions = permissions;
         this.cronSecret = cronSecret == null ? "" : cronSecret.trim();
     }
@@ -82,6 +85,9 @@ public class ReativacaoController {
     public ResponseEntity<ApiResponse<?>> processar(@RequestHeader(value = "X-Cron-Secret", required = false) String segredo) {
         if (cronSecret.isEmpty() || segredo == null || !MessageDigest.isEqual(cronSecret.getBytes(StandardCharsets.UTF_8), segredo.getBytes(StandardCharsets.UTF_8)))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.ok(ApiResponse.ok(service.processarFila()));
+        // Uma só rotina cuida de tudo que sai pelo WhatsApp: a fila das campanhas e os alertas de produção pendentes.
+        var campanhas = service.processarFila();
+        var alertasProducao = alertas.processar();
+        return ResponseEntity.ok(ApiResponse.ok(java.util.Map.of("reativacao", campanhas, "alertasProducao", alertasProducao)));
     }
 }

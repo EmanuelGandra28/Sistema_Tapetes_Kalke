@@ -97,4 +97,18 @@ class GatewayWhatsAppClientTest {
         assertFalse(sem.configurado());
         assertEquals(503, assertThrows(GatewayException.class, () -> sem.enviarTexto("+5511987654321", "a", "f", "k", null)).status());
     }
+
+    @Test
+    void enviaFotoEmDuasEtapasUploadEDepoisMensagemComLegenda() {
+        token(TOKEN);
+        server.expect(requestTo("http://gw/v1/arquivos")).andExpect(method(HttpMethod.POST)).andExpect(header("Authorization", "Bearer tok-1"))
+                .andExpect(header("Content-Type", org.hamcrest.Matchers.startsWith("multipart/form-data")))
+                .andRespond(withStatus(org.springframework.http.HttpStatus.ACCEPTED).body("{\"arquivo_id\":\"f-1\",\"situacao\":\"disponivel\"}").contentType(MediaType.APPLICATION_JSON));
+        server.expect(requestTo("http://gw/v1/mensagens")).andExpect(header("Idempotency-Key", "chave-1")).andExpect(jsonPath("$.arquivo_id").value("f-1"))
+                .andExpect(jsonPath("$.legenda").value("Tapete Floral")).andExpect(jsonPath("$.destinatario").value("+5511987654321"))
+                .andRespond(withSuccess(ACEITA, MediaType.APPLICATION_JSON));
+        var r = client.enviarImagem("+5511987654321", new byte[]{1, 2, 3}, "image/webp", "Tapete Floral", "aviso_operacional", "chave-1", "Dona ativou o alerta");
+        assertEquals("m-1", r.mensagemId());
+        server.verify();
+    }
 }

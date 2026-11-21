@@ -170,6 +170,7 @@ export const AJUDA = {
       { texto: 'Em "Minha senha" você troca a sua senha. Os outros aparelhos conectados saem da conta.' },
       { texto: 'Escolha o tema que for mais confortável; ele fica salvo na sua conta.' },
       { texto: 'Na aba "Mensagens", edite os textos enviados aos clientes. Use os botões de campos e confira a prévia antes de salvar.', acao: 'mensagens_gerenciar' },
+      { texto: 'Em "Alerta de produção por WhatsApp", informe o número da dona e ligue o aviso: quando o sistema abrir uma ordem automática, ela recebe a lista dos tapetes e as fotos.', acao: 'configuracoes_editar' },
       { texto: 'Em "Permissões", o Dono define o que cada cargo pode ver e fazer.', acao: 'configuracoes_editar' }
     ],
     exemplos: [], duvidas: [{ p: 'Como rever os tutoriais?', r: 'Em Configurações → Geral, use o botão "Rever os tutoriais das telas".' }]

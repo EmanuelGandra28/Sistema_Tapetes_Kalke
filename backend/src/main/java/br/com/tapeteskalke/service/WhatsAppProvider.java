@@ -12,4 +12,7 @@ public interface WhatsAppProvider {
      * escrita por uma pessoa; o provedor a recebe junto no primeiro envio. A chave de idempotência garante que repetir não duplica.
      */
     Enviada enviarTexto(String destinatario, String texto, String finalidade, String idempotencyKey, String evidencia);
+
+    /** Envia uma foto (JPEG, PNG ou WEBP) com legenda. Mesmas regras de idempotência e consentimento do texto. */
+    Enviada enviarImagem(String destinatario, byte[] dados, String contentType, String legenda, String finalidade, String idempotencyKey, String evidencia);
 }
