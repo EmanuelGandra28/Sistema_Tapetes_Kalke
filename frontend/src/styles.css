@@ -301,3 +301,4 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .dica { position:relative; display:inline-block; vertical-align:middle; } .dica-botao { width:1.3rem; height:1.3rem; border-radius:50%; border:1px solid var(--primary); background:var(--primary-soft); color:var(--primary); font-weight:800; font-size:.75rem; cursor:pointer; padding:0; line-height:1; }
 .dica-texto { display:block; margin-top:.3rem; padding:.5rem .7rem; max-width:320px; border-radius:8px; background:var(--surface-alt); border:1px solid var(--border); color:var(--text); font-size:.82rem; font-weight:400; line-height:1.4; }
 @media (max-width:620px) { .ajuda-botao span { display:none; } .ajuda-botao { bottom:4.5rem; } }
+.consentimento { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin:.4rem 0; font-size:.85rem; }

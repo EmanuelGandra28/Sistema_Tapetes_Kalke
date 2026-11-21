@@ -12,7 +12,7 @@ describe('ajudaDaRota', () => {
     expect(ajudaDaRota('/qualquer-coisa')).toBeNull();
   });
   it('todas as telas do menu têm ajuda', () => {
-    for (const rota of ['/dashboard', '/clientes', '/funcionarios', '/produtos', '/vendas', '/compras', '/fornecedores', '/ordens-producao', '/entregas', '/despesas', '/relatorios', '/configuracoes'])
+    for (const rota of ['/dashboard', '/clientes', '/funcionarios', '/produtos', '/vendas', '/compras', '/fornecedores', '/ordens-producao', '/entregas', '/despesas', '/reativacao', '/relatorios', '/configuracoes'])
       expect(ajudaDaRota(rota), rota).not.toBeNull();
   });
 });

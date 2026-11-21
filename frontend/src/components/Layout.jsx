@@ -6,6 +6,7 @@ import {
     Factory,
     LayoutDashboard,
     LogOut,
+    MessageCircle,
     Receipt,
     Settings,
     ShoppingBag,
@@ -18,7 +19,7 @@ import Logo from './Logo';
 import Ajuda from './Ajuda';
 import {CARGO_ROTULO} from '../services/permissoes';
 
-const links = [['dashboard', '/dashboard', 'Dashboard', LayoutDashboard], ['clientes', '/clientes', 'Clientes', Users], ['funcionarios', '/funcionarios', 'Funcionários', Users], ['produtos', '/produtos', 'Estoque', Box], ['vendas', '/vendas', 'Vendas', ShoppingBag], ['compras', '/compras', 'Compras', WalletCards], ['fornecedores', '/fornecedores', 'Fornecedores', Users], ['producao', '/ordens-producao', 'Produção', Factory], ['entregas', '/entregas', 'Entregas', Truck], ['despesas', '/despesas', 'Despesas', Receipt],['relatorios', '/relatorios', 'Relatórios', BarChart3], ['configuracoes', '/configuracoes', 'Configurações', Settings]];
+const links = [['dashboard', '/dashboard', 'Dashboard', LayoutDashboard], ['clientes', '/clientes', 'Clientes', Users], ['funcionarios', '/funcionarios', 'Funcionários', Users], ['produtos', '/produtos', 'Estoque', Box], ['vendas', '/vendas', 'Vendas', ShoppingBag], ['compras', '/compras', 'Compras', WalletCards], ['fornecedores', '/fornecedores', 'Fornecedores', Users], ['producao', '/ordens-producao', 'Produção', Factory], ['entregas', '/entregas', 'Entregas', Truck], ['despesas', '/despesas', 'Despesas', Receipt],['reativacao', '/reativacao', 'Reativação', MessageCircle], ['relatorios', '/relatorios', 'Relatórios', BarChart3], ['configuracoes', '/configuracoes', 'Configurações', Settings]];
 export default function Layout({children}) {
     const {user, canPage, logout} = useAuth();
     const navigate = useNavigate();

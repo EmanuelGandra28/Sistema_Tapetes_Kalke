@@ -33,6 +33,24 @@ export const AJUDA = {
       { p: 'O botão não aparece.', r: 'Ele só aparece com 2 meses ou mais sem comprar.' }
     ]
   },
+  reativacao: {
+    rota: '/reativacao', pagina: 'reativacao', titulo: 'Reativação de clientes',
+    resumo: 'Traz de volta pelo WhatsApp quem está há 2 meses ou mais sem comprar. Você monta a campanha, aprova, e o sistema envia até 3 mensagens a cada cliente, no horário comercial.',
+    passos: [
+      { texto: 'Confira o painel do topo: se o envio está ligado, quantas mensagens do plano já foram usadas no mês e se está dentro do horário (8h às 20h).' },
+      { texto: 'Em "Quem pode receber" estão os clientes com 2 meses ou mais sem comprar, telefone válido e autorização registrada. Para aparecer, registre a autorização na tela de Clientes.' },
+      { texto: 'Clique em "Nova campanha", dê um nome, marque os clientes e escolha os dias entre as mensagens e o máximo por dia.', acao: 'reativacao_gerenciar' },
+      { texto: 'A campanha nasce como rascunho. Só depois de "Aprovar e iniciar" as mensagens começam a sair.', acao: 'reativacao_gerenciar' },
+      { texto: 'Use "Pausar" ou "Cancelar campanha" a qualquer momento. Quem responder, ou pedir para sair, para de receber.', acao: 'reativacao_gerenciar' },
+      { texto: '"Ver resultados" mostra quantos receberam, quantos responderam, o que disseram e quantos voltaram a comprar em até 30 dias.' }
+    ],
+    exemplos: ['Em novembro há 30 clientes autorizados sem comprar. Você cria a campanha "Volta de novembro", marca os 30, aprova e acompanha os resultados nos dias seguintes.'],
+    duvidas: [
+      { p: 'Posso mandar para qualquer cliente?', r: 'Não. Só para quem autorizou. A autorização é registrada na tela de Clientes, e o cliente pode pedir para sair respondendo SAIR.' },
+      { p: 'Os textos podem ser mudados?', r: 'Sim, em Configurações → Mensagens (as 3 mensagens da reativação).' },
+      { p: 'Aprovei e nada foi enviado.', r: 'As mensagens só saem entre 8h e 20h, respeitando o limite por dia e a cota do mês. O painel do topo mostra o motivo.' }
+    ]
+  },
   produtos: {
     rota: '/produtos', pagina: 'produtos', titulo: 'Estoque e produtos',
     resumo: 'Os tapetes e as matérias-primas. Cada produto tem dois saldos separados: o Comercial (pronto para vender) e o de Produção (matéria-prima para fabricar).',

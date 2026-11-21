@@ -6,6 +6,7 @@ import {api} from '../services/api';
 import {Loading, Failure, Empty} from '../components/State';
 import Modal from '../components/Modal';
 import Paginacao from '../components/Paginacao';
+import AutorizacaoModal from '../components/AutorizacaoModal';
 import HistoricoClienteModal from '../components/HistoricoClienteModal';
 import {useExportar} from '../hooks/useExportar';
 import {useAuth} from '../contexts/AuthContext';
@@ -36,6 +37,7 @@ export default function Clientes() {
     const exportar = useExportar();
     const [search, setSearch] = useState('');
     const [pagina, setPagina] = useState(0);
+    const [autorizando, setAutorizando] = useState(null);
     const termo = useDebounce(search.trim());
     const {canAction} = useAuth();
     const queryClient = useQueryClient();
@@ -47,6 +49,9 @@ export default function Clientes() {
     // Texto do botão de WhatsApp vem do modelo editável em Configurações → Mensagens (desativado = abre a conversa em branco).
     const botao = useQuery({queryKey: ['mensagens', 'botao'], queryFn: () => api.get('/mensagens/botao-whatsapp'), staleTime: 60000});
     const modeloBotao = botao.isSuccess ? (botao.data.data.texto ?? '') : MENSAGEM_REATIVACAO_PADRAO;
+    const consentimentos = useQuery({queryKey: ['clientes', 'consentimentos'], queryFn: () => api.get('/clientes/consentimentos'), enabled: canAction('clientes_consentimento')});
+    const autorizados = new Set(consentimentos.data?.data ?? []);
+    const revogar = useMutation({mutationFn: (id) => api.delete(`/clientes/${id}/consentimento`), onSuccess: () => queryClient.invalidateQueries({queryKey: ['clientes']})});
     const form = useForm({defaultValues: defaults});
     const refresh = () => {
         queryClient.invalidateQueries({queryKey: ['clientes']});
@@ -90,6 +95,9 @@ export default function Clientes() {
                 return link ? <a className="whatsapp" href={link} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>
                     : <span className="whatsapp disabled" title="Cliente sem telefone válido">Chamar no WhatsApp</span>;
             })()}
+            {canAction('clientes_consentimento') && <div className="consentimento">{autorizados.has(c.id)
+                ? <><span className="badge faixa-boa">Autorizou mensagens</span> <button className="link danger" disabled={revogar.isPending} onClick={() => window.confirm(`Revogar a autorização de ${c.nome}? Ele deixa de receber campanhas.`) && revogar.mutate(c.id)}>Revogar autorização</button></>
+                : <button className="link" onClick={() => setAutorizando(c)}>Registrar autorização de WhatsApp</button>}</div>}
             <div className="row-actions">
                 <button className="link" onClick={() => setHistorico(c)}>Histórico</button>
                 {canAction('clientes_editar') && <button className="link" onClick={() => open(c)}>Editar</button>}
@@ -97,6 +105,7 @@ export default function Clientes() {
             </div>
         </article>) : <Empty/>}</section>}
         <Paginacao page={pagina} data={q.data?.data} onChange={setPagina}/>
+        {autorizando && <AutorizacaoModal cliente={autorizando} onClose={() => setAutorizando(null)} onDone={() => queryClient.invalidateQueries({queryKey: ['clientes']})}/>}
         {historico && <HistoricoClienteModal cliente={historico} onClose={() => setHistorico(null)}/>}
         {editing !== null && <Modal title={editing.id ? 'Editar cliente' : 'Novo cliente'} onClose={close}>
             <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>
