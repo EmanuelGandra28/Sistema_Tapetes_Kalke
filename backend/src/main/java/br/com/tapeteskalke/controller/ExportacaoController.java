@@ -64,6 +64,13 @@ public class ExportacaoController {
 
     private static List<Object> linha(Object... valores) { return Arrays.asList(valores); }
 
+    // Título da marca, período e data de geração no topo da planilha; totais opcionais no rodapé.
+    private Aba com(String titulo, LocalDate[] p, boolean totais, Aba a) {
+        var dia = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        var agora = LocalDateTime.now(clock).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        return new Aba(a.nome(), a.colunas(), a.linhas(), "Tapetes Kalke — " + titulo, "Período: " + p[0].format(dia) + " a " + p[1].format(dia) + " · Gerado em " + agora, totais);
+    }
+
     @GetMapping("/vendas/exportar")
     @Transactional(readOnly = true)
     public ResponseEntity<byte[]> vendas(@RequestParam(required = false) LocalDate inicio, @RequestParam(required = false) LocalDate fim) {
@@ -126,35 +133,34 @@ public class ExportacaoController {
         var p = periodo(inicio, fim);
         var dados = financeiro.financial(p[0], p[1]);
         var linhas = new ArrayList<List<Object>>();
-        linhas.add(linha("Período: " + p[0].format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a " + p[1].format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")), null));
         FINANCEIRO.forEach((chave, rotulo) -> linhas.add(linha(rotulo, dados.get(chave))));
-        return excel.exportar("relatorio-financeiro", new Aba("Financeiro", List.of(new Coluna("Indicador", TEXTO), new Coluna("Valor", MOEDA)), linhas));
+        return excel.exportar("relatorio-financeiro", com("Resultado financeiro", p, false, new Aba("Financeiro", List.of(new Coluna("Indicador", TEXTO), new Coluna("Valor", MOEDA)), linhas)));
     }
 
     @GetMapping("/relatorios/curva-abc/exportar")
     public ResponseEntity<byte[]> relAbc(@RequestParam(required = false) LocalDate inicio, @RequestParam(required = false) LocalDate fim) {
         permissions.action("relatorios_visualizar");
         var p = periodo(inicio, fim);
-        return excel.exportar("relatorio-curva-abc", new Aba("Curva ABC", List.of(new Coluna("Classe", TEXTO), new Coluna("Produto", TEXTO), new Coluna("Quantidade", NUMERO),
+        return excel.exportar("relatorio-curva-abc", com("Curva ABC — produtos que mais dão dinheiro", p, true, new Aba("Curva ABC", List.of(new Coluna("Classe", TEXTO), new Coluna("Produto", TEXTO), new Coluna("Quantidade", NUMERO),
                 new Coluna("Receita", MOEDA), new Coluna("% da receita", NUMERO), new Coluna("% acumulado", NUMERO)),
-                analitico.curvaAbc(p[0], p[1]).stream().map(a -> linha(a.classe(), a.produto(), a.quantidade(), a.receita(), a.percentual(), a.acumulado())).toList()));
+                analitico.curvaAbc(p[0], p[1]).stream().map(a -> linha(a.classe(), a.produto(), a.quantidade(), a.receita(), a.percentual(), a.acumulado())).toList())));
     }
 
     @GetMapping("/relatorios/margem-produtos/exportar")
     public ResponseEntity<byte[]> relMargem(@RequestParam(required = false) LocalDate inicio, @RequestParam(required = false) LocalDate fim) {
         permissions.action("relatorios_visualizar");
         var p = periodo(inicio, fim);
-        return excel.exportar("relatorio-margem", new Aba("Margem", List.of(new Coluna("Produto", TEXTO), new Coluna("Quantidade", NUMERO), new Coluna("Receita", MOEDA),
+        return excel.exportar("relatorio-margem", com("Margem por produto — quanto sobra em cada tapete", p, true, new Aba("Margem", List.of(new Coluna("Produto", TEXTO), new Coluna("Quantidade", NUMERO), new Coluna("Receita", MOEDA),
                 new Coluna("Custo", MOEDA), new Coluna("Margem", MOEDA), new Coluna("Margem %", NUMERO), new Coluna("Custo estimado", TEXTO)),
-                analitico.margem(p[0], p[1]).stream().map(m -> linha(m.produto(), m.quantidade(), m.receita(), m.custo(), m.margem(), m.margemPercentual(), m.custoEstimado() ? "Sim" : "Não")).toList()));
+                analitico.margem(p[0], p[1]).stream().map(m -> linha(m.produto(), m.quantidade(), m.receita(), m.custo(), m.margem(), m.margemPercentual(), m.custoEstimado() ? "Sim" : "Não")).toList())));
     }
 
     @GetMapping("/relatorios/vendas-por-vendedor/exportar")
     public ResponseEntity<byte[]> relVendedores(@RequestParam(required = false) LocalDate inicio, @RequestParam(required = false) LocalDate fim) {
         permissions.action("relatorios_visualizar");
         var p = periodo(inicio, fim);
-        return excel.exportar("relatorio-vendedores", new Aba("Vendedores", List.of(new Coluna("Vendedor", TEXTO), new Coluna("Vendas", NUMERO), new Coluna("Total vendido", MOEDA),
+        return excel.exportar("relatorio-vendedores", com("Vendas por vendedor", p, false, new Aba("Vendedores", List.of(new Coluna("Vendedor", TEXTO), new Coluna("Vendas", NUMERO), new Coluna("Total vendido", MOEDA),
                 new Coluna("Ticket médio", MOEDA), new Coluna("Descontos", MOEDA)),
-                analitico.porVendedor(p[0], p[1]).stream().map(v -> linha(v.vendedor(), v.vendas(), v.total(), v.ticketMedio(), v.descontos())).toList()));
+                analitico.porVendedor(p[0], p[1]).stream().map(v -> linha(v.vendedor(), v.vendas(), v.total(), v.ticketMedio(), v.descontos())).toList())));
     }
 }

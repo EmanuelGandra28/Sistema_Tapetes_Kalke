@@ -51,4 +51,23 @@ class ExcelServiceTest {
             assertEquals(190.0, sheet.getRow(2).getCell(1).getNumericCellValue(), 0.001);
         }
     }
+
+    @Test
+    void tituloSubtituloCabecalhoColoridoETotais() throws Exception {
+        var aba = new Aba("Relatório", List.of(new Coluna("Produto", Tipo.TEXTO), new Coluna("Receita", Tipo.MOEDA), new Coluna("Qtd", Tipo.NUMERO)),
+                List.of(List.of("Tapete A", new BigDecimal("100.50"), 2), List.of("Tapete B", new BigDecimal("49.50"), 1)),
+                "Tapetes Kalke — Curva ABC", "Período: 01/11/2026 a 14/11/2026", true);
+        try (var wb = new XSSFWorkbook(new ByteArrayInputStream(service.planilha(List.of(aba))))) {
+            var sheet = wb.getSheet("Relatório");
+            assertEquals("Tapetes Kalke — Curva ABC", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("Período: 01/11/2026 a 14/11/2026", sheet.getRow(1).getCell(0).getStringCellValue());
+            // linha 2 em branco, cabeçalho na linha 3 e dados a partir da 4
+            assertEquals("Produto", sheet.getRow(3).getCell(0).getStringCellValue());
+            assertEquals("Tapete A", sheet.getRow(4).getCell(0).getStringCellValue());
+            var total = sheet.getRow(6);
+            assertEquals("Total", total.getCell(0).getStringCellValue());
+            assertEquals(150.0, total.getCell(1).getNumericCellValue(), 0.001);
+            assertNotEquals(org.apache.poi.ss.usermodel.FillPatternType.NO_FILL, sheet.getRow(3).getCell(0).getCellStyle().getFillPattern());
+        }
+    }
 }

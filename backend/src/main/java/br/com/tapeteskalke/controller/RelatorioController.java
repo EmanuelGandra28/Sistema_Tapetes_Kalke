@@ -16,10 +16,12 @@ public class RelatorioController {
 
     private final RelatorioService service;
     private final RelatorioAnaliticoService analitico;
+    private final RelatorioResumoService resumo;
     private final PermissionService permissions;
     private final Clock clock;
 
-    public RelatorioController(RelatorioService service, RelatorioAnaliticoService analitico, PermissionService permissions, Clock clock) {
+    public RelatorioController(RelatorioService service, RelatorioAnaliticoService analitico, RelatorioResumoService resumo, PermissionService permissions, Clock clock) {
+        this.resumo = resumo;
         this.service = service;
         this.analitico = analitico;
         this.permissions = permissions;
@@ -34,6 +36,12 @@ public class RelatorioController {
         if (start.isAfter(end))
             throw new BusinessException("PERIODO_INVALIDO", "A data inicial deve ser anterior ou igual à data final", HttpStatus.BAD_REQUEST);
         return new Periodo(start, end);
+    }
+
+    @GetMapping("/resumo")
+    public ApiResponse<RelatorioResumoService.Resumo> resumo(@RequestParam(required = false) LocalDate inicio, @RequestParam(required = false) LocalDate fim) {
+        var p = periodo(inicio, fim);
+        return ApiResponse.ok(resumo.resumo(p.inicio(), p.fim()));
     }
 
     @GetMapping("/financeiro")
