@@ -17,10 +17,18 @@ public class VistoService {
 
     private final UsuarioVistoRepository repo;
     private final AuditService audit;
+    private final br.com.tapeteskalke.repository.UsuarioRepository usuarios;
 
-    public VistoService(UsuarioVistoRepository repo, AuditService audit) {
+    public VistoService(UsuarioVistoRepository repo, AuditService audit, br.com.tapeteskalke.repository.UsuarioRepository usuarios) {
         this.repo = repo;
         this.audit = audit;
+        this.usuarios = usuarios;
+    }
+
+    /** Quando a conta do usuário logado foi criada: quem já existia vê as novidades de uma atualização; quem chega depois já entra na versão nova. */
+    @Transactional(readOnly = true)
+    public java.time.OffsetDateTime contaCriadaEm() {
+        return usuarios.findById(audit.userId()).map(br.com.tapeteskalke.entity.Usuario::getCreatedAt).orElse(null);
     }
 
     @Transactional(readOnly = true)

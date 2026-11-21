@@ -13,7 +13,8 @@ import org.junit.jupiter.api.Test;
 class VistoServiceTest {
     private final UsuarioVistoRepository repo = mock(UsuarioVistoRepository.class);
     private final AuditService audit = mock(AuditService.class);
-    private final VistoService service = new VistoService(repo, audit);
+    private final br.com.tapeteskalke.repository.UsuarioRepository usuarios = mock(br.com.tapeteskalke.repository.UsuarioRepository.class);
+    private final VistoService service = new VistoService(repo, audit, usuarios);
 
     private static UsuarioVisto visto(String chave) {
         var v = new UsuarioVisto();
@@ -55,5 +56,16 @@ class VistoServiceTest {
         service.limpar("ajuda:");
         verify(repo).deleteAll(List.of(a));
         verify(repo, never()).findAllByIdUsuarioAndChaveStartingWith(eq("u2"), any());
+    }
+
+    @Test
+    void contaCriadaEmVemDoUsuarioLogado() {
+        when(audit.userId()).thenReturn("u1");
+        var u = new br.com.tapeteskalke.entity.Usuario();
+        u.setCreatedAt(java.time.OffsetDateTime.parse("2026-01-10T12:00:00Z"));
+        when(usuarios.findById("u1")).thenReturn(java.util.Optional.of(u));
+        assertEquals(java.time.OffsetDateTime.parse("2026-01-10T12:00:00Z"), service.contaCriadaEm());
+        when(usuarios.findById("u1")).thenReturn(java.util.Optional.empty());
+        assertNull(service.contaCriadaEm());
     }
 }

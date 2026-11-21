@@ -17,6 +17,7 @@ import {
 import {useAuth} from '../contexts/AuthContext';
 import Logo from './Logo';
 import Ajuda from './Ajuda';
+import Novidades from './Novidades';
 import {CARGO_ROTULO} from '../services/permissoes';
 
 const links = [['dashboard', '/dashboard', 'Dashboard', LayoutDashboard], ['clientes', '/clientes', 'Clientes', Users], ['funcionarios', '/funcionarios', 'Funcionários', Users], ['produtos', '/produtos', 'Estoque', Box], ['vendas', '/vendas', 'Vendas', ShoppingBag], ['compras', '/compras', 'Compras', WalletCards], ['fornecedores', '/fornecedores', 'Fornecedores', Users], ['producao', '/ordens-producao', 'Produção', Factory], ['entregas', '/entregas', 'Entregas', Truck], ['despesas', '/despesas', 'Despesas', Receipt],['reativacao', '/reativacao', 'Reativação', MessageCircle], ['relatorios', '/relatorios', 'Relatórios', BarChart3], ['configuracoes', '/configuracoes', 'Configurações', Settings]];
@@ -37,7 +38,7 @@ export default function Layout({children}) {
             </div>
         </aside>
         <div className="content">
-            <header className="topbar"><span><ClipboardList size={18}/> Gestão operacional</span></header>
+            <header className="topbar"><span><ClipboardList size={18}/> Gestão operacional</span><Novidades/></header>
             <main>{children}</main>
             <Ajuda/>
         </div>

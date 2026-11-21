@@ -302,3 +302,11 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .dica-texto { display:block; margin-top:.3rem; padding:.5rem .7rem; max-width:320px; border-radius:8px; background:var(--surface-alt); border:1px solid var(--border); color:var(--text); font-size:.82rem; font-weight:400; line-height:1.4; }
 @media (max-width:620px) { .ajuda-botao span { display:none; } .ajuda-botao { bottom:4.5rem; } }
 .consentimento { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin:.4rem 0; font-size:.85rem; }
+
+/* ---- Novidades ---- */
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.novidades-botao { position:relative; display:flex; align-items:center; gap:.4rem; border:1px solid var(--input-border); background:var(--surface); color:var(--text); border-radius:999px; padding:.35rem .8rem; font-size:.85rem; font-weight:600; cursor:pointer; }
+.novidades-ponto { position:absolute; top:-3px; right:-3px; width:11px; height:11px; border-radius:50%; background:var(--accent); border:2px solid var(--surface); }
+.novidade-versao h3 { margin:.2rem 0; } .novidade-itens { list-style:none; padding:0; margin:.8rem 0 0; display:grid; gap:.9rem; }
+.novidade-itens li { padding:.7rem .9rem; border-left:4px solid var(--accent); background:var(--surface-alt); border-radius:0 8px 8px 0; } .novidade-itens p { margin:.3rem 0; line-height:1.45; color:var(--label); }
+@media (max-width:620px) { .novidades-botao span { display:none; } }

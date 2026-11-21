@@ -23,6 +23,13 @@ public class VistoController {
         return ApiResponse.ok(service.listar());
     }
 
+    public record ContaResponse(java.time.OffsetDateTime criadaEm) {}
+
+    @GetMapping("/conta")
+    public ApiResponse<ContaResponse> conta() {
+        return ApiResponse.ok(new ContaResponse(service.contaCriadaEm()));
+    }
+
     @PostMapping
     public ApiResponse<?> marcar(@Valid @RequestBody MarcarRequest r) {
         service.marcar(r.chave());
