@@ -5,6 +5,7 @@ import { ask } from '../services/codigos';
 import { Loading, Failure, Empty } from '../components/State';
 import Modal from '../components/Modal';
 import Paginacao from '../components/Paginacao';
+import FotoProduto, { useFotosPrincipais } from '../components/FotoProduto';
 import SearchSelect from '../components/SearchSelect';
 import { useAuth } from '../contexts/AuthContext';
 import { date } from '../utils/format';
@@ -63,6 +64,7 @@ export default function Producao() {
   const { canAction } = useAuth();
   const queryClient = useQueryClient();
   const [pagina, setPagina] = useState(0);
+  const fotosPrincipais = useFotosPrincipais();
   const q = useQuery({ queryKey: ['ordens', 'pagina', pagina], queryFn: () => api.get('/ordens-producao', { params: { page: pagina, size: 20 } }), placeholderData: keepPreviousData });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['ordens'] }); queryClient.invalidateQueries({ queryKey: ['/produtos'] }); };
   const finish = useMutation({ mutationFn: (id) => api.post(`/ordens-producao/${id}/finalizar`), onSuccess: refresh });
@@ -75,7 +77,7 @@ export default function Producao() {
     <section className="page-heading"><div><h1>Ordens de produção</h1><p>Consumo de matéria-prima e entrada do produto acabado.</p></div>{canAction('producao_criar') && <button onClick={() => setOpen(true)}>Nova ordem</button>}</section>
     {error && <p className="error">{error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Nº</th><th>Produto</th><th>Quantidade</th><th>Data</th><th>Origem</th><th>Status</th><th></th></tr></thead><tbody>
-      {rows.map((o) => <tr key={o.id}><td>#{o.numeroOrdem}</td><td>{o.produto}</td><td>{o.quantidade}</td><td>{date(o.data)}</td><td>{o.origem === 'AUTOMATICA' ? <span className="badge auto" title={o.observacoes ?? ''}>Automática</span> : 'Manual'}</td><td><span className={`badge ${o.status === 'CANCELADA' ? 'inativo' : o.status === 'ABERTA' ? 'atencao' : ''}`}>{o.status}</span></td>
+      {rows.map((o) => <tr key={o.id}><td>#{o.numeroOrdem}</td><td><div className="celula-produto"><FotoProduto imagemId={fotosPrincipais[o.produtoId]} nome={o.produto} tamanho={56} /><span>{o.produto}</span></div></td><td>{o.quantidade}</td><td>{date(o.data)}</td><td>{o.origem === 'AUTOMATICA' ? <span className="badge auto" title={o.observacoes ?? ''}>Automática</span> : 'Manual'}</td><td><span className={`badge ${o.status === 'CANCELADA' ? 'inativo' : o.status === 'ABERTA' ? 'atencao' : ''}`}>{o.status}</span></td>
         <td className="row-actions">{o.status === 'ABERTA' && <>
           {canAction('producao_finalizar') && <button className="link" onClick={() => finalizar(o)} disabled={finish.isPending}>Finalizar produção</button>}
           {canAction('producao_cancelar') && <button className="link danger" onClick={() => cancelar(o)}>Cancelar ordem</button>}

@@ -216,3 +216,12 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .modal-footer { display:flex; justify-content:flex-end; margin-top:1rem; }
 .whatsapp.disabled { color:var(--muted, #777); opacity:.6; cursor:not-allowed; }
 .paginacao { display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+.foto-produto { border-radius:8px; object-fit:cover; background:var(--primary-soft); flex:none; vertical-align:middle; }
+.foto-produto.vazia { display:inline-grid; place-items:center; }
+.celula-produto { display:flex; align-items:center; gap:10px; }
+.galeria { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:12px; margin:12px 0; }
+.galeria figure { margin:0; border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--surface); }
+.galeria figure.principal { border-color:var(--accent); border-width:2px; }
+.galeria img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+.galeria figcaption { padding:6px 8px; display:grid; gap:2px; font-size:.85rem; }
+.botao-arquivo { display:inline-block; padding:8px 14px; border:1px solid var(--input-border); border-radius:8px; cursor:pointer; font-weight:600; }

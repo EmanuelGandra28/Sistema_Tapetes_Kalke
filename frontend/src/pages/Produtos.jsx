@@ -15,6 +15,8 @@ import SugestaoCompra from './estoque/SugestaoCompra';
 import { useAuth } from '../contexts/AuthContext';
 import { money } from '../utils/format';
 import Paginacao from '../components/Paginacao';
+import FotoProduto, { useFotosPrincipais } from '../components/FotoProduto';
+import FotosProdutoModal from '../components/FotosProdutoModal';
 
 const defaults = { nome: '', tipo: 'TAPETE', categoria: '', cor: '', tamanho: '', unidadeMedida: 'UNIDADE', podeSerVendido: true, podeSerMateriaPrima: false, estoqueMinimoComercial: 1, estoqueMinimoProducao: 1, precoCusto: 0, precoVenda: 0, codigoBarras: '', fornecedorPrincipalId: '', observacoes: '', ativo: true };
 const toForm = (p) => Object.fromEntries(Object.keys(defaults).map((k) => [k, p[k] ?? defaults[k]]));
@@ -40,6 +42,8 @@ export default function Produtos() {
   const [editing, setEditing] = useState(null); // null = fechado, {} = novo, produto = edição
   const [ajuste, setAjuste] = useState(null);
   const [ficha, setFicha] = useState(null);
+  const [fotos, setFotos] = useState(null);
+  const fotosPrincipais = useFotosPrincipais();
   const [search, setSearch] = useState('');
   const [pagina, setPagina] = useState(0);
   const termo = useDebounce(search.trim());
@@ -68,17 +72,19 @@ export default function Produtos() {
     <input className="search" placeholder="Buscar por nome ou código de barras" value={search} onChange={(e) => { setSearch(e.target.value); setPagina(0); }} />
     {remove.isError && <p className="error">{remove.error.message}</p>}
     <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Produto</th><th>Comercial</th><th>Produção</th><th>Custo</th><th>Venda</th><th>Status</th><th></th></tr></thead><tbody>
-      {rows.map((p) => <tr key={p.id}><td>{p.nome}<small>{p.unidadeMedida}{p.ativo ? '' : ' · inativo'}</small></td><td>{p.estoqueComercial}</td><td>{p.estoqueProducao}</td><td>{money(p.precoCusto)}</td><td>{money(p.precoVenda)}</td>
+      {rows.map((p) => <tr key={p.id}><td><div className="celula-produto"><FotoProduto imagemId={fotosPrincipais[p.id]} nome={p.nome} /><div>{p.nome}<small>{p.unidadeMedida}{p.ativo ? '' : ' · inativo'}</small></div></div></td><td>{p.estoqueComercial}</td><td>{p.estoqueProducao}</td><td>{money(p.precoCusto)}</td><td>{money(p.precoVenda)}</td>
         <td><span className={`badge ${p.statusComercial.toLowerCase()}`}>{p.statusComercial}</span></td>
         <td className="row-actions">
           {canAction('produtos_editar') && <button className="link" onClick={() => open(p)}>Editar</button>}
           {canAction('estoque_ajustar') && <button className="link" onClick={() => setAjuste(p)}>Ajustar estoque</button>}
+          <button className="link" onClick={() => setFotos(p)}>Fotos</button>
           {p.podeSerVendido && <button className="link" onClick={() => setFicha(p)}>Ficha técnica</button>}
           {canAction('produtos_excluir') && <button className="link danger" onClick={() => excluir(p)}>Excluir</button>}
         </td></tr>)}
     </tbody></table></div> : <Empty />}<Paginacao page={pagina} data={q.data?.data} onChange={setPagina} /></section>
     </>}
     {ajuste && <AjusteModal produto={ajuste} onClose={() => setAjuste(null)} onDone={refresh} />}
+    {fotos && <FotosProdutoModal produto={fotos} podeEditar={canAction('produtos_imagens')} onClose={() => setFotos(null)} />}
     {ficha && <FichaTecnicaModal produto={ficha} podeEditar={canAction('produtos_editar')} onClose={() => setFicha(null)} />}
     {editing !== null && <Modal title={editing.id ? 'Editar produto' : 'Novo produto'} onClose={close}>
       <form className="form-grid" onSubmit={form.handleSubmit((data) => save.mutate(data))}>

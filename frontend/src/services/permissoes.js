@@ -22,6 +22,7 @@ const ROTULOS = {
   produtos_criar: ['Cadastrar produtos e fornecedores', 'Estoque'],
   produtos_editar: ['Editar produtos e fornecedores', 'Estoque'],
   produtos_excluir: ['Excluir produtos e fornecedores', 'Estoque'],
+  produtos_imagens: ['Anexar e remover fotos dos produtos', 'Estoque'],
   estoque_ajustar: ['Ajustar estoque e fazer inventário', 'Estoque'],
   vendas_criar: ['Registrar vendas', 'Vendas'],
   vendas_cancelar: ['Cancelar vendas', 'Vendas'],
