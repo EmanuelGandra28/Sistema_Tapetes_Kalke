@@ -9,6 +9,7 @@ import HistoricoClienteModal from '../components/HistoricoClienteModal';
 import {useExportar} from '../hooks/useExportar';
 import {useAuth} from '../contexts/AuthContext';
 import {date, money} from '../utils/format';
+import {linkWhatsapp, MENSAGEM_REATIVACAO_PADRAO, preencher} from '../utils/whatsapp';
 
 const defaults = {
     nome: '',
@@ -78,8 +79,12 @@ export default function Clientes() {
             <div><h2>{c.nome}</h2><span
                 className={`badge ${c.classificacao.toLowerCase()}`}>{c.classificacao.replace('_', ' ')}</span></div>
             <p>{c.telefone} · {c.cidade ?? 'Cidade não informada'}</p><p>Última compra: {date(c.ultimaCompra)}</p>
-            <strong>{money(c.totalCompras)}</strong>{(['ATENCAO', 'ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) &&
-            <a className="whatsapp" href={`https://wa.me/${c.telefone}`} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>}
+            <strong>{money(c.totalCompras)}</strong>{(['ATENCAO_INATIVO', 'INATIVO'].includes(c.classificacao)) && (() => {
+                // Só com 2 meses ou mais sem comprar; o link leva o 55 do Brasil e uma mensagem pronta com o nome do cliente.
+                const link = linkWhatsapp(c.telefone, preencher(MENSAGEM_REATIVACAO_PADRAO, {nome: c.nome.split(' ')[0]}));
+                return link ? <a className="whatsapp" href={link} target="_blank" rel="noreferrer">Chamar no WhatsApp</a>
+                    : <span className="whatsapp disabled" title="Cliente sem telefone válido">Chamar no WhatsApp</span>;
+            })()}
             <div className="row-actions">
                 <button className="link" onClick={() => setHistorico(c)}>Histórico</button>
                 {canAction('clientes_editar') && <button className="link" onClick={() => open(c)}>Editar</button>}
