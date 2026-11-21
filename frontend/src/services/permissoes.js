@@ -33,6 +33,8 @@ const ROTULOS = {
   entregas_criar: ['Agendar entregas', 'Entregas'],
   entregas_atualizar_status: ['Atualizar status das entregas', 'Entregas'],
   despesas_criar: ['Lançar despesas', 'Financeiro'],
+  despesas_editar: ['Editar despesas', 'Financeiro'],
+  despesas_excluir: ['Excluir despesas', 'Financeiro'],
   relatorios_visualizar: ['Ver relatórios e exportar', 'Financeiro'],
   funcionarios_criar: ['Cadastrar funcionários', 'Equipe'],
   funcionarios_editar: ['Editar funcionários', 'Equipe'],

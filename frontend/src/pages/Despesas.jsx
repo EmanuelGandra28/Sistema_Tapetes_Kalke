@@ -10,11 +10,21 @@ import { date, money, today } from '../utils/format';
 // Mesmos códigos aceitos pelo servidor; usados enquanto a lista do banco não chega.
 const TIPOS_PADRAO = [{ codigo: 'SALARIOS', nome: 'Salários' }, { codigo: 'FRETES', nome: 'Fretes' }, { codigo: 'MANUTENCAO', nome: 'Manutenção' }, { codigo: 'OUTROS', nome: 'Outros' }];
 
-function NovaDespesa({ tipos, onClose, onDone }) {
-  const [form, setForm] = useState({ tipo: 'OUTROS', descricao: '', valor: '', dataDespesa: today(), observacoes: '' });
+// Serve para lançar uma despesa nova (despesa = null) e para editar uma existente.
+function FormDespesa({ despesa, tipos, onClose, onDone }) {
+  const [form, setForm] = useState({
+    tipo: despesa?.tipo ?? 'OUTROS', descricao: despesa?.descricao ?? '', valor: despesa?.valor ?? '',
+    dataDespesa: despesa?.dataDespesa ?? today(), observacoes: despesa?.observacoes ?? ''
+  });
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const save = useMutation({ mutationFn: () => api.post('/despesas', { ...form, valor: Number(form.valor), observacoes: form.observacoes.trim() || null }), onSuccess: () => { onDone(); onClose(); } });
-  return <Modal title="Nova despesa" onClose={onClose}>
+  const save = useMutation({
+    mutationFn: () => {
+      const body = { ...form, valor: Number(form.valor), observacoes: form.observacoes.trim() || null };
+      return despesa ? api.put(`/despesas/${despesa.id}`, body) : api.post('/despesas', body);
+    },
+    onSuccess: () => { onDone(); onClose(); }
+  });
+  return <Modal title={despesa ? 'Editar despesa' : 'Nova despesa'} onClose={onClose}>
     <form className="form-grid" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
       <label>Tipo<select value={form.tipo} onChange={set('tipo')}>{tipos.map((t) => <option key={t.codigo} value={t.codigo}>{t.nome}</option>)}</select></label>
       <label>Data<input required type="date" value={form.dataDespesa} onChange={set('dataDespesa')} /></label>
@@ -22,13 +32,13 @@ function NovaDespesa({ tipos, onClose, onDone }) {
       <label>Valor (R$)<input required type="number" min="0.01" step="0.01" value={form.valor} onChange={set('valor')} /></label>
       <label className="full">Observações<input value={form.observacoes} onChange={set('observacoes')} /></label>
       {save.isError && <p className="error full">{save.error.message}</p>}
-      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : 'Registrar despesa'}</button></footer>
+      <footer><button type="button" className="secondary" onClick={onClose}>Fechar</button><button disabled={save.isPending}>{save.isPending ? 'Salvando…' : despesa ? 'Salvar alterações' : 'Registrar despesa'}</button></footer>
     </form>
   </Modal>;
 }
 
 export default function Despesas() {
-  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null); // null = fechado, {} = nova, despesa = edição
   const { canAction } = useAuth();
   const { tiposDespesa } = useCodigos();
   const tipos = tiposDespesa.length ? tiposDespesa : TIPOS_PADRAO;
@@ -36,12 +46,23 @@ export default function Despesas() {
   const queryClient = useQueryClient();
   const q = useQuery({ queryKey: ['despesas'], queryFn: () => api.get('/despesas') });
   const refresh = () => { queryClient.invalidateQueries({ queryKey: ['despesas'] }); queryClient.invalidateQueries({ queryKey: ['relatorio'] }); };
+  const remove = useMutation({ mutationFn: ({ id, motivo }) => api.delete(`/despesas/${id}`, { params: { motivo } }), onSuccess: refresh });
+  const excluir = (d) => {
+    const motivo = window.prompt(`Excluir a despesa "${d.descricao}" (${money(d.valor)})?\nInforme o motivo da exclusão:`);
+    if (motivo && motivo.trim()) remove.mutate({ id: d.id, motivo: motivo.trim() });
+  };
   const rows = q.data?.data ?? [];
+  const acoes = canAction('despesas_editar') || canAction('despesas_excluir');
   return <>
-    <section className="page-heading"><div><h1>Despesas</h1><p>Salários, fretes, manutenção e outros gastos. Entram em "Salários" e "Outras despesas" nos relatórios.</p></div>{canAction('despesas_criar') && <button onClick={() => setOpen(true)}>Nova despesa</button>}</section>
-    <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th></tr></thead><tbody>
-      {rows.map((d) => <tr key={d.id}><td>{date(d.dataDespesa)}</td><td>{nomeTipo(d.tipo)}</td><td>{d.descricao}{d.observacoes && <small>{d.observacoes}</small>}</td><td>{money(d.valor)}</td></tr>)}
+    <section className="page-heading"><div><h1>Despesas</h1><p>Salários, fretes, manutenção e outros gastos. Entram em "Salários" e "Outras despesas" nos relatórios.</p></div>{canAction('despesas_criar') && <button onClick={() => setEditing({})}>Nova despesa</button>}</section>
+    {remove.isError && <p className="error">{remove.error.message}</p>}
+    <section className="panel">{q.isPending ? <Loading /> : q.isError ? <Failure error={q.error} /> : rows.length ? <div className="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th>{acoes && <th>Ações</th>}</tr></thead><tbody>
+      {rows.map((d) => <tr key={d.id}><td>{date(d.dataDespesa)}</td><td>{nomeTipo(d.tipo)}</td><td>{d.descricao}{d.observacoes && <small>{d.observacoes}</small>}</td><td>{money(d.valor)}</td>
+        {acoes && <td><div className="row-actions">
+          {canAction('despesas_editar') && <button className="link" onClick={() => setEditing(d)}>Editar despesa</button>}
+          {canAction('despesas_excluir') && <button className="link danger" onClick={() => excluir(d)} disabled={remove.isPending}>Excluir despesa</button>}
+        </div></td>}</tr>)}
     </tbody></table></div> : <Empty />}</section>
-    {open && <NovaDespesa tipos={tipos} onClose={() => setOpen(false)} onDone={refresh} />}
+    {editing !== null && <FormDespesa despesa={editing.id ? editing : null} tipos={tipos} onClose={() => setEditing(null)} onDone={refresh} />}
   </>;
 }

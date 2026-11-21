@@ -1,1 +1,19 @@
-package br.com.tapeteskalke.repository; import br.com.tapeteskalke.entity.Despesa; import java.math.BigDecimal; import java.time.LocalDate; import java.util.List; import org.springframework.data.jpa.repository.*; import org.springframework.data.repository.query.Param; public interface DespesaRepository extends JpaRepository<Despesa,String> { @Query("select coalesce(sum(d.valor),0) from Despesa d where d.dataDespesa between :from and :to") BigDecimal totalByPeriod(@Param("from")LocalDate from,@Param("to")LocalDate to); @Query("select coalesce(sum(d.valor),0) from Despesa d where d.tipo=:tipo and d.dataDespesa between :from and :to") BigDecimal totalByTipo(@Param("tipo")String tipo,@Param("from")LocalDate from,@Param("to")LocalDate to); List<Despesa> findAllByOrderByDataDespesaDesc(); }
+package br.com.tapeteskalke.repository;
+
+import br.com.tapeteskalke.entity.Despesa;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
+
+public interface DespesaRepository extends JpaRepository<Despesa, String> {
+    // Despesas excluídas (excluidaEm preenchido) nunca entram nas somas do relatório.
+    @Query("select coalesce(sum(d.valor),0) from Despesa d where d.excluidaEm is null and d.dataDespesa between :from and :to")
+    BigDecimal totalByPeriod(@Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    @Query("select coalesce(sum(d.valor),0) from Despesa d where d.excluidaEm is null and d.tipo=:tipo and d.dataDespesa between :from and :to")
+    BigDecimal totalByTipo(@Param("tipo") String tipo, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    List<Despesa> findAllByExcluidaEmIsNullOrderByDataDespesaDesc();
+}
