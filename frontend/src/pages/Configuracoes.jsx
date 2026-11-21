@@ -63,6 +63,17 @@ function EditorPermissoes() {
     </>;
 }
 
+function ReverTutoriais() {
+    const queryClient = useQueryClient();
+    const limpar = useMutation({mutationFn: () => api.delete('/vistos', {params: {prefixo: 'ajuda:'}}), onSuccess: () => queryClient.invalidateQueries({queryKey: ['vistos']})});
+    return <section className="panel"><h2>Ajuda e tutoriais</h2>
+        <p className="hint">Cada tela tem um botão "Ajuda". Na primeira vez que você abre uma tela, um passeio rápido aparece sozinho. Quer ver de novo?</p>
+        <button type="button" className="secondary" disabled={limpar.isPending} onClick={() => limpar.mutate()}>Rever os tutoriais das telas</button>
+        {limpar.isSuccess && <p className="hint" role="status">Pronto! Na próxima vez que abrir cada tela, o passeio aparece de novo.</p>}
+        {limpar.isError && <p className="error">{limpar.error.message}</p>}
+    </section>;
+}
+
 function MinhaSenha() {
     const {endSession} = useAuth();
     const [form, setForm] = useState({senhaAtual: '', novaSenha: ''});
@@ -185,6 +196,7 @@ export default function Configuracoes() {
         <MinhaSenha/>
         {ehGestor(user?.cargo) && <Usuarios/>}
         <EscolhaTema/>
+        <ReverTutoriais/>
         {canAction("configuracoes_editar") && <DadosLoja/>}
         {ehGestor(user?.cargo) ? <EditorPermissoes/> : <section className="split">
             <article className="panel"><h2>Acesso às páginas</h2>

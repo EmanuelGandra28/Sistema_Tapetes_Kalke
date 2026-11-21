@@ -15,6 +15,8 @@ import SugestaoCompra from './estoque/SugestaoCompra';
 import { useAuth } from '../contexts/AuthContext';
 import { money } from '../utils/format';
 import Paginacao from '../components/Paginacao';
+import Dica from '../components/Dica';
+import { DICAS } from '../content/ajuda';
 import FotoProduto, { useFotosPrincipais } from '../components/FotoProduto';
 import FotosProdutoModal from '../components/FotosProdutoModal';
 
@@ -97,8 +99,8 @@ export default function Produtos() {
         <label>Código de barras<input {...form.register('codigoBarras')} /></label>
         <label>Preço de venda<input required type="number" min="0" step="0.01" {...form.register('precoVenda')} /></label>
         <label>Preço de custo<input type="number" min="0" step="0.01" {...form.register('precoCusto')} /></label>
-        <label>Estoque mínimo comercial<input type="number" min="0" step="0.001" {...form.register('estoqueMinimoComercial')} /></label>
-        <label>Estoque mínimo produção<input type="number" min="0" step="0.001" {...form.register('estoqueMinimoProducao')} /></label>
+        <label>Estoque mínimo comercial <Dica texto={DICAS.estoqueMinimo} /><input type="number" min="0" step="0.001" {...form.register('estoqueMinimoComercial')} /></label>
+        <label>Estoque mínimo produção <Dica texto={DICAS.estoqueMinimo} /><input type="number" min="0" step="0.001" {...form.register('estoqueMinimoProducao')} /></label>
         <label className="full">Fornecedor principal<select {...form.register('fornecedorPrincipalId')}><option value="">Nenhum</option>{(fornecedores.data?.data ?? []).map((f) => <option key={f.id} value={f.id}>{f.nomeEmpresa}</option>)}</select></label>
         <label className="full">Observações<input {...form.register('observacoes')} /></label>
         <label className="check"><input type="checkbox" {...form.register('podeSerVendido')} /> Pode ser vendido</label>

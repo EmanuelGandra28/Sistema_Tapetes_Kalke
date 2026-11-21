@@ -287,3 +287,17 @@ a.button { display:inline-block; border-radius:8px; padding:.65rem 1rem; color:v
 .badge.tipo-aviso_pedido { color:var(--primary); background:var(--primary-soft); } .badge.tipo-campanha { color:var(--warning); background:var(--warning-soft); }
 .badge.tipo-interna { color:var(--text-muted); background:var(--primary-soft); } .badge.tipo-atendimento { color:var(--success-text); background:var(--success-soft); }
 @media (max-width:620px) { .lista-mensagens li { flex-direction:column; } }
+
+/* ---- Ajuda contextual ---- */
+.ajuda-botao { position:fixed; right:1rem; bottom:1rem; z-index:40; display:flex; align-items:center; gap:.4rem; padding:.6rem .9rem; border-radius:999px; border:0; background:var(--primary); color:var(--on-primary); font-weight:700; box-shadow:var(--shadow-lg); cursor:pointer; }
+.ajuda-fundo { position:fixed; inset:0; z-index:60; background:var(--overlay); display:flex; justify-content:flex-end; }
+.ajuda-painel { width:min(420px,100%); height:100%; overflow-y:auto; background:var(--surface); color:var(--text); padding:1.2rem; box-shadow:var(--shadow-lg); }
+.ajuda-painel header { display:flex; justify-content:space-between; gap:.6rem; align-items:flex-start; } .ajuda-painel h2 { margin:0; font-size:1.2rem; } .ajuda-painel h3 { margin:1.2rem 0 .4rem; font-size:1rem; color:var(--primary); }
+.ajuda-fechar { border:0; background:transparent; color:var(--text); cursor:pointer; padding:.2rem; }
+.ajuda-resumo { line-height:1.5; color:var(--label); } .ajuda-painel ol { padding-left:1.2rem; display:grid; gap:.6rem; line-height:1.45; }
+.ajuda-passo { font-size:1.1rem; line-height:1.55; padding:1rem; border-radius:12px; background:var(--primary-soft); }
+.ajuda-acoes { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:flex-end; } .ajuda-exemplo { padding:.7rem .9rem; border-left:4px solid var(--accent); background:var(--surface-alt); }
+.ajuda-painel dt { font-weight:700; margin-top:.6rem; } .ajuda-painel dd { margin:.2rem 0 0; color:var(--label); }
+.dica { position:relative; display:inline-block; vertical-align:middle; } .dica-botao { width:1.3rem; height:1.3rem; border-radius:50%; border:1px solid var(--primary); background:var(--primary-soft); color:var(--primary); font-weight:800; font-size:.75rem; cursor:pointer; padding:0; line-height:1; }
+.dica-texto { display:block; margin-top:.3rem; padding:.5rem .7rem; max-width:320px; border-radius:8px; background:var(--surface-alt); border:1px solid var(--border); color:var(--text); font-size:.82rem; font-weight:400; line-height:1.4; }
+@media (max-width:620px) { .ajuda-botao span { display:none; } .ajuda-botao { bottom:4.5rem; } }
